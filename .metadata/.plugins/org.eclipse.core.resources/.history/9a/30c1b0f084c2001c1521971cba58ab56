@@ -1,0 +1,218 @@
+//needs to be rewritten to allow for dynamic adjustment (allow the ai to adjust structure)
+package agiStruct;
+
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.time.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
+
+public class Env {
+	//instance variables for each sense
+	
+	//mouse location (x, y)
+	Point mouseLocation;
+	
+	//is mouse pressed ([0] = left mouse data; [1] = middle mouse data; [2] = right mouse data;
+	//[3] = scroll wheel up data; [4] = scroll wheel down data;)
+	int[] mouseButtonPressedInfo;
+	boolean leftMouseButtonPressed;
+	boolean middleMouseButtonPressed;
+	boolean rightMouseButtonPressed;
+	boolean scrollWheelUpPressed;
+	boolean scrollWheelDownPressed;
+	
+	//keypress info (the series of strings pressed at the current moment)
+	String keyPressed;
+	
+	//current monitor display (2d array of pixels)
+	BufferedImage currentDisplay;
+	//number of mouse buttons
+	int numOfMouseButtons;
+	
+	//current date, time, timezone, etc.
+	LocalDateTime calendar;
+	
+	public Env() {
+		
+	}
+	
+	//gets
+	public String getEnvVarsString() throws InterruptedException {
+		String mousePointVar = "java.awt.Point mouseLocation = new java.awt.Point(" + (int)this.getMouseLocation().getX() + ", " + (int)this.getMouseLocation().getY() + ");";
+		String leftMousePressedVar = "boolean leftMouseButtonPressed = " + this.getLeftMouseButtonPressed() + ";";
+		String middleMousePressedVar = "boolean middleMouseButtonPressed = " + this.getMiddleMouseButtonPressed() + ";";
+		String rightMousePressedVar = "boolean rightMouseButtonPressed = " + this.getRightMouseButtonPressed() + ";";
+		String keyPressedVar = "String keyPressed = \"" + this.getKeyPressed() + "\";";
+		String numOfMouseButtonsVar = "int numOfMouseButtons = " + this.getNumOfMouseButtons() + ";";
+		String currentDisplayInitVar = "java.awt.image.BufferedImage currentDisplay = new java.awt.image.BufferedImage(" +
+				this.getCurrentDisplay().getWidth() + ", " + this.getCurrentDisplay().getHeight() + ",1);";
+		
+		String calendarVar = "java.time.LocalDateTime calendar = java.time.LocalDateTime.parse(\"" + this.getCalendar().toString() + "\");";
+		String envVars = mousePointVar + leftMousePressedVar + middleMousePressedVar + rightMousePressedVar 
+				+ keyPressedVar + numOfMouseButtonsVar + currentDisplayInitVar + this.BIDeepCopyStringCreation() + calendarVar;
+		return envVars;
+	}
+	public String BIDeepCopyStringCreation() throws InterruptedException {
+		//figure out how to do this in parallel (can do 400 pixels per thread)
+		//BufferedImage test = new BufferedImage(this.getCurrentDisplay().getWidth(), this.getCurrentDisplay().getHeight(), 1);
+		int totalPixels = this.getCurrentDisplay().getWidth() * this.getCurrentDisplay().getHeight();
+		int totalThreads = (totalPixels / 400) + 1;
+		System.out.println("Total Threads Needed: " + totalThreads);
+		ExecutorService exec = Executors.newFixedThreadPool(totalThreads);
+		System.out.println("ExecutorService: " + exec.toString());
+		System.out.println("Starting image creation");
+		List<Callable<String>> callableTasks = new ArrayList<>();
+		class ThreadCreator implements Callable<String>{
+			private final int threadNumber;
+			private BufferedImage image;
+			public ThreadCreator(int inputIn, BufferedImage imageIn){
+				threadNumber = inputIn;
+				image = imageIn;
+			}
+			public String call() {
+				String indOutput = "";
+				int xMin = (threadNumber/20) * 20;
+				int xMax = xMin + 20;
+				int yMin = (19 - (threadNumber % 20)) * 20;
+				int yMax = yMin + 20;
+				for (int i = xMin; i < xMax; i++) {
+					for (int j = yMin; j < yMax; j++) {
+						indOutput += "currentDisplay.setRGB(" + i +", " + j +", " + this.image.getRGB(i, j) + ");";
+					}
+				}
+				System.out.println("Thread " + threadNumber + " Done");
+			    return indOutput;
+			}
+		}
+		for (int k = 0; k < totalThreads; k++) {
+				ThreadCreator creator = new ThreadCreator(k, this.getCurrentDisplay());
+			callableTasks.add(creator);
+		}
+
+		List<Future<String>> execOutput = exec.invokeAll(callableTasks);
+		String total = "";
+		System.out.println("Deep Copy Complete");
+		try {
+			//put all strings together
+			for (int i = 0; i < execOutput.size(); i++) {
+				total += execOutput.get(i).get();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		exec.shutdown();
+		//return the concatentation
+		return total;
+
+	}
+	public String getKeyPressed() {
+		return keyPressed;
+	}
+	public BufferedImage getCurrentDisplay() {
+		return currentDisplay;
+	}
+	
+	public boolean getLeftMouseButtonPressed() {
+		return this.leftMouseButtonPressed;
+	}
+	
+	public boolean getMiddleMouseButtonPressed() {
+		return this.middleMouseButtonPressed;
+	}
+	
+	public boolean getRightMouseButtonPressed() {
+		return this.rightMouseButtonPressed;
+	}
+	
+	public boolean getScrollWheelUpPressed() {
+		return this.scrollWheelUpPressed;
+	}
+	
+	public boolean getScrollWheelDownPressed() {
+		return this.scrollWheelDownPressed;
+	}
+	
+	public Point getMouseLocation() {
+		return mouseLocation;
+	}
+	
+	public int[] getMouseButtonPressedInfo() {
+		return mouseButtonPressedInfo;
+	}
+	
+	public int getNumOfMouseButtons() {
+		return numOfMouseButtons;
+	}
+	
+	public LocalDateTime getCalendar() {
+		return calendar;
+	}
+	//sets
+	public void setKeyPressed(String keyIn) {
+		this.keyPressed = keyIn;
+	}
+	public void setCurrentDisplay(BufferedImage imageIn) {
+		this.currentDisplay = imageIn;
+	}
+	
+	public void setMouseLocation(Point inputLocation) {
+		this.mouseLocation = inputLocation;
+	}
+
+	public void setMouseButtonsPressed (int[] buttonsInfoIn) throws Exception {
+		if (buttonsInfoIn[0] == 0) {
+			this.leftMouseButtonPressed = false;
+		} else {
+			this.leftMouseButtonPressed = true;
+		}
+		
+		if (buttonsInfoIn[1] == 0) {
+			this.middleMouseButtonPressed = false;
+		} else {
+			this.middleMouseButtonPressed = true;
+		}
+		
+		if (buttonsInfoIn[2] == 0) {
+			this.rightMouseButtonPressed = false;
+		} else {
+			this.rightMouseButtonPressed = true;
+		}
+	}
+	
+	public void setNumOfMouseButtons(int numButtons) {
+		numOfMouseButtons = numButtons;
+	}
+	
+	public void setCalendar (LocalDateTime c) {
+		calendar = c;
+	}
+	@Override
+	public boolean equals(Object o) {
+		if (o == this){
+			return true;
+		}
+		if (o instanceof Env){
+			Env c = (Env) o;
+			boolean output = false;
+			if ((c.getMouseLocation() == this.getMouseLocation()) 
+					&& (c.getMouseButtonPressedInfo() == this.getMouseButtonPressedInfo())
+					&& (c.getNumOfMouseButtons() == this.getNumOfMouseButtons())
+					&& (c.getCalendar().toString() == this.getCalendar().toString())){ //variables (that describe conditions) are the same
+				output = true;
+			} else {
+				output = false;
+			}
+			return output;
+		} else {
+			return false;
+		}
+		
+	}
+
+	@Override
+	public String toString(){
+		return "MouseLocation: " + this.getMouseLocation().toString();
+	}
+}

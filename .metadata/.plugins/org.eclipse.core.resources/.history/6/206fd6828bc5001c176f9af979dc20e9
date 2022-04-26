@@ -1,0 +1,34 @@
+package agiStruct;
+
+public class GoalResult {
+	String className;
+	boolean result;
+	public GoalResult() {
+		
+	}
+	public GoalResult(String classNameIn, boolean resultIn) {
+		this.className = classNameIn;
+		this.result = resultIn;
+	}
+	
+	public boolean getResult() {
+		return this.result;
+	}
+	
+	public String getClassName() {
+		return this.className;
+	}
+	
+	public void setResult(boolean resultIn) {
+		this.result = resultIn;
+	}
+	
+	public void setClassName(String nameIn) {
+		this.className = nameIn;
+	}
+	
+	@Override
+	public String toString() {
+		return 
+	}
+}

@@ -1,0 +1,17 @@
+package agiStruct;
+import agiStruct.KeyTag;
+import java.util.*;
+
+
+import AGIUtil.randomAction;
+public class Belief {
+	//knowledge about itself
+	private LinkedList<KeyTag> tags = new LinkedList<KeyTag>() {};
+	private randomAction randActObj = new randomAction();
+	public Belief (){
+		//agi can write code between here (including its own imports)
+		
+		//and here
+	}
+
+}

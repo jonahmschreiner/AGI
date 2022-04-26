@@ -1,0 +1,202 @@
+package topLevelMethods;
+
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileWriter;
+import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.Scanner;
+
+import agiStruct.BeliefConnector;
+import agiStruct.Env;
+import coreMethods.SenseEnv;
+import agiStruct.GoalResult;
+//import java.io.*;
+//import java.util.*;
+//import java.lang.StringBuilder;
+//import AGIUtil.Util;
+//main class
+
+public class LLF {
+	public Env prevEnv;
+	public LLF(){
+		
+	}
+	//main function loops life function
+	public static void main(String[] args) throws Exception{
+		int satisfaction;
+		String prevExecBelief = "";
+		BeliefConnector nada = new BeliefConnector();
+		String path = nada.getClass().getProtectionDomain().getCodeSource().getLocation().toString();
+		path = path.substring(5);
+		LLF agi = new LLF();
+		
+		//form context variables from contextSource.txt
+		try {		
+			File contextSource = new File(path + "contextSource.txt");
+			Scanner satScanner = new Scanner(contextSource);
+			satScanner.useDelimiter(",");
+			satisfaction = satScanner.nextInt();
+			prevExecBelief = satScanner.next();
+			//Form Mouse Location
+			int mlX = satScanner.nextInt();
+			int mlY = satScanner.nextInt();
+			Point mlPoint = new Point(mlX, mlY);
+			
+			//Key Pressed
+			String prevKeyPress = satScanner.next();
+			
+			//Num of Mouse Buttons
+			int mbNum = satScanner.nextInt();
+			
+			//Form Mouse Buttons Pressed
+			int [] btnsPressed = new int[5];
+			int leftMousePressed = satScanner.nextInt();
+			int middleMousePressed = satScanner.nextInt();
+			int rightMousePressed = satScanner.nextInt();
+			int scrollUpPressed = satScanner.nextInt();
+			int scrollDownPressed = satScanner.nextInt();
+			btnsPressed[0] = leftMousePressed;
+			btnsPressed[1] = middleMousePressed;
+			btnsPressed[2] = rightMousePressed;
+			btnsPressed[3] = scrollUpPressed;
+			btnsPressed[4] = scrollDownPressed;
+			
+			//Form Prev Calendar
+			LocalDateTime calendar = java.time.LocalDateTime.parse(satScanner.next());
+			//Form Prev Display
+			File prevDisplayFile = new File(path + "CurrentDisplayVisuals.jpg");
+			BufferedImage prevDisplay = javax.imageio.ImageIO.read(prevDisplayFile);
+			
+			
+			
+			
+			Env recEnv = new Env();
+			recEnv.setCalendar(calendar);
+			recEnv.setCurrentDisplay(prevDisplay);
+			recEnv.setKeyPressed(prevKeyPress);
+			recEnv.setMouseButtonsPressed(btnsPressed);
+			recEnv.setMouseLocation(mlPoint);
+			recEnv.setNumOfMouseButtons(mbNum);
+			
+			agi.prevEnv = recEnv;
+			satScanner.close();
+		} catch (Exception e) {
+			satisfaction = 0;
+			File contextSource = new File(path + "contextSource.txt");
+			FileWriter writer = new FileWriter(contextSource);
+			writer.write("0,none,");
+			writer.close();
+		}
+		while (true){
+			File contextSource = new File(path + "contextSource.txt");
+			Scanner satScanner = new Scanner(contextSource);
+			satisfaction = satScanner.nextInt();
+			prevExecBelief = satScanner.next();
+			satScanner.close();		
+			agi.prevEnv = agi.LF(satisfaction, prevExecBelief, agi.prevEnv);
+		}
+	}
+	//agi life force
+	public Env LF(int satisfactionIn, String prevExecBeliefIn, Env prevEnvIn) throws Exception{ //Context = previous environment data
+		int satisfaction = satisfactionIn;
+		String prevExecBelief = prevExecBeliefIn;
+		String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().toString();
+		path = path.substring(5);
+		File contextSource = new File(path + "contextSource.txt");
+		FileWriter writer = new FileWriter(contextSource, false);
+		//Pull in prev iteration's sensing data
+		SenseEnv sense = new SenseEnv();
+		Env currentEnv = sense.recordEnv();
+		BeliefConnector init = new BeliefConnector();
+		LinkedList<String> tagsIn = new LinkedList<String>();
+		//Assess and copy data to appropriate places (prevbeliefs, optbeliefs, etc.)
+		
+		//read in and evaluate goals, and package the evals into a GoalResult LinkedList
+		//answers the question: were my goals accomplished ?
+		tagsIn.add("Goal");
+		LinkedList<BeliefConnector> goalBeliefs = init.retrieveBeliefs(tagsIn);
+		LinkedList<GoalResult> goalResults = new LinkedList<GoalResult>();
+		File goalResultFile = new File(path + "GoalEvalResult.java");
+		Scanner fileScanner = new Scanner(goalResultFile);
+		FileWriter fileWriter = new FileWriter(goalResultFile, false);
+		fileScanner.useDelimiter(":");
+		for (int i = 0; i < goalBeliefs.size(); i++) {
+			init = goalBeliefs.get(i);
+			init.setEnvHardcodedVariables(currentEnv.getEnvVarsString());
+			init.Fire("Goal");
+			GoalResult goalResult = new GoalResult();
+			String className = fileScanner.next();
+			int result = Integer.getInteger(fileScanner.next());
+			goalResult.setClassName(className);
+			goalResult.setResult(result);
+			goalResults.add(goalResult);
+			fileWriter.write("");
+		}
+		
+		//answers the question: for each goal, did I move closer or further from completing it ?
+		//maybe combine this with the earlier question (return integer rather than boolean)
+		
+		
+		
+		
+		
+		//output determined total satisfaction
+		writer.write(satisfaction);
+		writer.close();
+		//Call Modify Behavior Block
+		
+		
+		//Call Execution Block
+		
+			//Sense Beliefs
+			tagsIn.clear();
+			tagsIn.add("Sense");
+			LinkedList<BeliefConnector> senseBeliefs = init.retrieveBeliefs(tagsIn);
+			for (int i = 0; i < senseBeliefs.size(); i++) {
+				init = senseBeliefs.get(i);
+				init.setEnvHardcodedVariables(currentEnv.getEnvVarsString());
+				init.Fire("Sense");
+			}
+			tagsIn.clear();
+			
+			//Action Beliefs
+			File source = new File("/home/agi/Desktop/eclipse/AGI/bin/tagsCalled.java");
+			Scanner reader = new Scanner(source);
+			reader.useDelimiter(",");
+			while(reader.hasNext()) {
+				String currentTag = reader.next();
+				if (tagsIn.contains(currentTag)) {
+				
+				} else {
+					tagsIn.add(currentTag);
+				}
+			}
+			LinkedList<BeliefConnector> beliefsToRun = init.retrieveBeliefs(tagsIn);
+			init.updateNeuralToHighestConf(beliefsToRun, tagsIn);
+			init.Fire("Behavior");
+			reader.close();
+			
+			//For testing
+//			BeliefConnector test2 = new BeliefConnector();
+//			LinkedList<String> tagsIn2 = new LinkedList<String>();
+//			tagsIn2.add("Rect");
+//			tagsIn2.add("Alpacka");
+//			tagsIn2.add("TestingExtra");
+//			test2.updateNeuralToHighestConf(test2.retrieveBeliefs(tagsIn2), tagsIn2);
+//			test2.Fire("Behavior");
+			//clean up previous iteration recursiveTags
+			Runtime run = Runtime.getRuntime();
+			String command = "rm " + path + "tagsCalled.java";
+			run.exec(command);
+			
+			//write the executed belief to context for use in the next iteration
+			FileWriter writer2 = new FileWriter(contextSource, true);
+			writer2.write("," + init.getClassName() + "," + currentEnv.toString());
+			writer2.close();
+			return currentEnv; //comment out exit to run forever
+			//return "not yet";
+		
+	}
+}

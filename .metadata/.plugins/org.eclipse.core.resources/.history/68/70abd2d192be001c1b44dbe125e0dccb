@@ -1,0 +1,971 @@
+package AGIUtil;
+
+import java.awt.MouseInfo;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+//whenever I add in the mouse button press util functions, be sure to write the update to CurrentMouseData
+//		so SenseEnv gets the correct data
+public class Util {
+	public static Runtime run = Runtime.getRuntime();
+	public static String command;
+	public static void copyContent(File a, File b) throws Exception
+    	{
+        	FileInputStream in = new FileInputStream(a);
+        	FileOutputStream out = new FileOutputStream(b);
+  
+        	try { 
+            		int n;
+            		while ((n = in.read()) != -1) {
+                		out.write(n);
+            		}
+        	} finally {
+            		if (in != null) {
+                		in.close();
+            		}
+            		
+            		if (out != null) {
+                		out.close();
+            		}
+        	}
+    	}
+    //helper function called by others to reduce class size
+	public static void runCommand() {
+		try {
+			run.exec(command);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public static void main(String[] args) {
+		for (int i = 0; i < 200; i++) {
+			Util.moveMouseLeft();
+		}
+		for (int i = 0; i < 200; i++) {
+			Util.moveMouseDown();
+		}
+		for (int i = 0; i < 200; i++) {
+			Util.moveMouseRight();
+		}
+		for (int i = 0; i < 200; i++) {
+			Util.moveMouseUp();
+		}
+		
+	}
+	//move mouse left
+	public static void moveMouseLeft() {
+		if (MouseInfo.getPointerInfo().getLocation().getX() > 0) {
+			command = "xdotool mousemove " + (MouseInfo.getPointerInfo().getLocation().getX() - 1)
+				+ " " + MouseInfo.getPointerInfo().getLocation().getY();
+			runCommand();
+		}
+	}
+	//move mouse right
+	public static void moveMouseRight() {
+		if (MouseInfo.getPointerInfo().getLocation().getX() < 1680) {
+			command = "xdotool mousemove " + (MouseInfo.getPointerInfo().getLocation().getX() + 1)
+				+ " " + MouseInfo.getPointerInfo().getLocation().getY();
+			runCommand();
+		}
+	}
+	//move mouse down
+	public static void moveMouseDown() {
+		if (MouseInfo.getPointerInfo().getLocation().getY() < 1049) {
+			command = "xdotool mousemove " + MouseInfo.getPointerInfo().getLocation().getX()
+				+ " " + (MouseInfo.getPointerInfo().getLocation().getY() + 1);
+			runCommand();
+		}
+	}
+	//move mouse up
+	public static void moveMouseUp() {
+		if (MouseInfo.getPointerInfo().getLocation().getY() > 0) {
+			command = "xdotool mousemove " + MouseInfo.getPointerInfo().getLocation().getX()
+					+ " " + (MouseInfo.getPointerInfo().getLocation().getY() - 1);
+			runCommand();
+		}
+	}
+	//toggle left mouse pressing
+	
+	//toggle middle mouse pressing
+	
+	//toggle right mouse pressing
+	
+	//toggle scroll up pressing
+	
+	//toggle scroll down pressing
+	
+	//press esc key
+	
+	//press F1 key
+	
+	//press F2 key
+	
+	//press F3 key
+	
+	//press F4 key
+	
+	//press F5 key
+	
+	//press F6 key
+	
+	//press F7 key
+	
+	//press F8 key
+	
+	//press F9 key
+	
+	//press F10 key
+	
+	//press F11 key
+	
+	//press F12 key
+	
+	//press print screen key
+	
+	//press scroll lock key
+	
+	//press pause/break key
+	
+	//press tilde key
+	
+	//press 1 key
+	
+	//press 2 key
+	
+	//press 3 key
+	
+	//press 4 key
+	
+	//press 5 key
+	
+	//press 6 key
+	
+	//press 7 key
+	
+	//press 8 key
+	
+	//press 9 key
+	
+	//press 0 key
+	
+	//press - key
+	
+	//press = key
+	
+	//press backspace key
+	
+	//press insert key
+	
+	//press home key
+	
+	//press page up key
+	
+	//press tab key
+	
+	//press q key
+	
+	//press w key
+	
+	//press e key
+	
+	//press r key
+	
+	//press t key
+	
+	//press y key
+	
+	//press u key
+	
+	//press i key
+	
+	//press o key
+	
+	//press p key
+	
+	//press [ key
+	
+	//press ] key
+	
+	//press \ key
+	
+	//press delete key
+	
+	//press end key
+	
+	//press page down key
+	
+	//press a key
+	
+	//press s key
+	
+	//press d key
+	
+	//press f key
+	
+	//press g key
+	
+	//press h key
+	
+	//press j key
+	
+	//press k key
+	
+	//press l key
+	
+	//press ; key
+	
+	//press ' key
+	
+	//press enter key
+	
+	//press shift key
+	
+	//press z key
+	
+	//press x key
+	
+	//press c key
+	
+	//press v key
+	
+	//press b key
+	
+	//press n key
+	
+	//press m key
+	
+	//press , key
+	
+	//press . key
+	
+	//press / key
+	
+	//press ctrl key
+	
+	//press windows key
+	
+	//press alt key
+	
+	//press space key
+	
+	//press right alt key
+	
+	//press menu key
+	
+	//press up arrow key
+	
+	//press left arrow key
+	
+	//press down arrow key
+	
+	//press right arrow key
+	
+	//press shift + tilde keys
+	
+	//press shift + 1 keys
+	
+	//press shift + 2 keys
+	
+	//press shift + 3 keys
+	
+	//press shift + 4 keys
+	
+	//press shift + 5 keys
+	
+	//press shift + 6 keys
+	
+	//press shift + 7 keys
+	
+	//press shift + 8 keys
+	
+	//press shift + 9 keys
+	
+	//press shift + 0 keys
+	
+	//press shift + - keys
+	
+	//press shift + = keys
+	
+	//press shift + tab keys
+	
+	//press shift + q key
+	
+	//press shift + w key
+	
+	//press shift + e key
+	
+	//press shift + r key
+	
+	//press shift + t key
+	
+	//press shift + y key
+	
+	//press shift + u key
+	
+	//press shift + i key
+	
+	//press shift + o key
+	
+	//press shift + p key
+	
+	//press shift + [ key
+	
+	//press shift + ] key
+	
+	//press shift + \ key
+	
+	//press shift + delete key
+	
+	//press shift + end key
+	
+	//press shift + page down key
+	
+	//press shift + a key
+	
+	//press shift + s key
+	
+	//press shift + d key
+	
+	//press shift + f key
+	
+	//press shift + g key
+	
+	//press shift + h key
+	
+	//press shift + j key
+	
+	//press shift + k key
+	
+	//press shift + l key
+	
+	//press shift + ; key
+	
+	//press shift + ' key
+	
+	//press shift + enter key
+	
+	//press shift + z key
+	
+	//press shift + x key
+	
+	//press shift + c key
+	
+	//press shift + v key
+	
+	//press shift + b key
+	
+	//press shift + n key
+	
+	//press shift + m key
+	
+	//press shift + , key
+	
+	//press shift + . key
+	
+	//press shift + / key
+	
+	//press shift + up arrow key
+	
+	//press shift + left arrow key
+	
+	//press shift + down arrow key
+	
+	//press shift + right arrow key
+	
+	//press shift + space key
+	
+
+	//press control + shift + tilde keys
+	
+	//press control + shift + 1 keys
+	
+	//press control + shift + 2 keys
+	
+	//press control + shift + 3 keys
+	
+	//press control + shift + 4 keys
+	
+	//press control + shift + 5 keys
+	
+	//press control + shift + 6 keys
+	
+	//press control + shift + 7 keys
+	
+	//press control + shift + 8 keys
+	
+	//press control + shift + 9 keys
+	
+	//press control + shift + 0 keys
+	
+	//press control + shift + - keys
+	
+	//press control + shift + = keys
+	
+	//press control + shift + tab keys
+	
+	//press control + shift + q key
+	
+	//press control + shift + w key
+	
+	//press control + shift + e key
+	
+	//press control + shift + r key
+	
+	//press control + shift + t key
+	
+	//press control + shift + y key
+	
+	//press control + shift + u key
+	
+	//press control + shift + i key
+	
+	//press control + shift + o key
+	
+	//press control + shift + p key
+	
+	//press control + shift + [ key
+	
+	//press control + shift + ] key
+	
+	//press control + shift + \ key
+	
+	//press control + shift + delete key
+	
+	//press control + shift + end key
+	
+	//press control + shift + page down key
+	
+	//press control + shift + a key
+	
+	//press control + shift + s key
+	
+	//press control + shift + d key
+	
+	//press control + shift + f key
+	
+	//press control + shift + g key
+	
+	//press control + shift + h key
+	
+	//press control + shift + j key
+	
+	//press control + shift + k key
+	
+	//press control + shift + l key
+	
+	//press control + shift + ; key
+	
+	//press control + shift + ' key
+	
+	//press control + shift + enter key
+	
+	//press control + shift + z key
+	
+	//press control + shift + x key
+	
+	//press control + shift + c key
+	
+	//press control + shift + v key
+	
+	//press control + shift + b key
+	
+	//press control + shift + n key
+	
+	//press control + shift + m key
+	
+	//press control + shift + , key
+	
+	//press control + shift + . key
+	
+	//press control + shift + / key
+	
+	//press control + shift + up arrow key
+	
+	//press control + shift + left arrow key
+	
+	//press control + shift + down arrow key
+	
+	//press control + shift + right arrow key
+	
+	//press control + shift + space key
+	
+	
+	//press control + tilde keys
+	
+	//press control + 1 keys
+	
+	//press control + 2 keys
+	
+	//press control + 3 keys
+	
+	//press control + 4 keys
+	
+	//press control + 5 keys
+	
+	//press control + 6 keys
+	
+	//press control + 7 keys
+	
+	//press control + 8 keys
+	
+	//press control + 9 keys
+	
+	//press control + 0 keys
+	
+	//press control + - keys
+	
+	//press control + = keys
+	
+	//press control + tab keys
+	
+	//press control + q key
+	
+	//press control + w key
+	
+	//press control + e key
+	
+	//press control + r key
+	
+	//press control + t key
+	
+	//press control + y key
+	
+	//press control + u key
+	
+	//press control + i key
+	
+	//press control + o key
+	
+	//press control + p key
+	
+	//press control + [ key
+	
+	//press control + ] key
+	
+	//press control + \ key
+	
+	//press control + delete key
+	
+	//press control + end key
+	
+	//press control + page down key
+	
+	//press control + a key
+	
+	//press control + s key
+	
+	//press control + d key
+	
+	//press control + f key
+	
+	//press control + g key
+	
+	//press control + h key
+	
+	//press control + j key
+	
+	//press control + k key
+	
+	//press control + l key
+	
+	//press control + ; key
+	
+	//press control + ' key
+	
+	//press control + enter key
+	
+	//press control + z key
+	
+	//press control + x key
+	
+	//press control + c key
+	
+	//press control + v key
+	
+	//press control + b key
+	
+	//press control + n key
+	
+	//press control + m key
+	
+	//press control + , key
+	
+	//press control + . key
+	
+	//press control + / key
+	
+	//press control + up arrow key
+	
+	//press control + left arrow key
+	
+	//press control + down arrow key
+	
+	//press control + right arrow key
+	
+	//press control + space key
+	
+	
+	//press alt + tilde keys
+	
+	//press alt + 1 keys
+	
+	//press alt + 2 keys
+	
+	//press alt + 3 keys
+	
+	//press alt + 4 keys
+	
+	//press alt + 5 keys
+	
+	//press alt + 6 keys
+	
+	//press alt + 7 keys
+	
+	//press alt + 8 keys
+	
+	//press alt + 9 keys
+	
+	//press alt + 0 keys
+	
+	//press alt + - keys
+	
+	//press alt + = keys
+	
+	//press alt + tab keys
+	
+	//press alt + q key
+	
+	//press alt + w key
+	
+	//press alt + e key
+	
+	//press alt + r key
+	
+	//press alt + t key
+	
+	//press alt + y key
+	
+	//press alt + u key
+	
+	//press alt + i key
+	
+	//press alt + o key
+	
+	//press alt + p key
+	
+	//press alt + [ key
+	
+	//press alt + ] key
+	
+	//press alt + \ key
+	
+	//press alt + delete key
+	
+	//press alt + end key
+	
+	//press alt + page down key
+	
+	//press alt + a key
+	
+	//press alt + s key
+	
+	//press alt + d key
+	
+	//press alt + f key
+	
+	//press alt + g key
+	
+	//press alt + h key
+	
+	//press alt + j key
+	
+	//press alt + k key
+	
+	//press alt + l key
+	
+	//press alt + ; key
+	
+	//press alt + ' key
+	
+	//press alt + enter key
+	
+	//press alt + z key
+	
+	//press alt + x key
+	
+	//press alt + c key
+	
+	//press alt + v key
+	
+	//press alt + b key
+	
+	//press alt + n key
+	
+	//press alt + m key
+	
+	//press alt + , key
+	
+	//press alt + . key
+	
+	//press alt + / key
+	
+	//press alt + up arrow key
+	
+	//press alt + left arrow key
+	
+	//press alt + down arrow key
+	
+	//press alt + right arrow key
+	
+	//press alt + space key
+	
+	
+	//press control + alt + tilde keys
+	
+	//press control + alt + 1 keys
+	
+	//press control + alt + 2 keys
+	
+	//press control + alt + 3 keys
+	
+	//press control + alt + 4 keys
+	
+	//press control + alt + 5 keys
+	
+	//press control + alt + 6 keys
+	
+	//press control + alt + 7 keys
+	
+	//press control + alt + 8 keys
+	
+	//press control + alt + 9 keys
+	
+	//press control + alt + 0 keys
+	
+	//press control + alt + - keys
+	
+	//press control + alt + = keys
+	
+	//press control + alt + tab keys
+	
+	//press control + alt + q key
+	
+	//press control + alt + w key
+	
+	//press control + alt + e key
+	
+	//press control + alt + r key
+	
+	//press control + alt + t key
+	
+	//press control + alt + y key
+	
+	//press control + alt + u key
+	
+	//press control + alt + i key
+	
+	//press control + alt + o key
+	
+	//press control + alt + p key
+	
+	//press control + alt + [ key
+	
+	//press control + alt + ] key
+	
+	//press control + alt + \ key
+	
+	//press control + alt + end key
+	
+	//press control + alt + page down key
+	
+	//press control + alt + a key
+	
+	//press control + alt + s key
+	
+	//press control + alt + d key
+	
+	//press control + alt + f key
+	
+	//press control + alt + g key
+	
+	//press control + alt + h key
+	
+	//press control + alt + j key
+	
+	//press control + alt + k key
+	
+	//press control + alt + l key
+	
+	//press control + alt + ; key
+	
+	//press control + alt + ' key
+	
+	//press control + alt + enter key
+	
+	//press control + alt + z key
+	
+	//press control + alt + x key
+	
+	//press control + alt + c key
+	
+	//press control + alt + v key
+	
+	//press control + alt + b key
+	
+	//press control + alt + n key
+	
+	//press control + alt + m key
+	
+	//press control + alt + , key
+	
+	//press control + alt + . key
+	
+	//press control + alt + / key
+	
+	//press control + alt + up arrow key
+	
+	//press control + alt + left arrow key
+	
+	//press control + alt + down arrow key
+	
+	//press control + alt + right arrow key
+	
+	//press control + alt + space key
+	
+	
+	//press control + esc key
+	
+	//press control + F1 key
+	
+	//press control + F2 key
+	
+	//press control + F3 key
+	
+	//press control + F4 key
+	
+	//press control + F5 key
+	
+	//press control + F6 key
+	
+	//press control + F7 key
+	
+	//press control + F8 key
+	
+	//press control + F9 key
+	
+	//press control + F10 key
+	
+	//press control + F11 key
+	
+	//press control + F12 key
+	
+	
+	//press shift + esc key
+	
+	//press shift + F1 key
+	
+	//press shift + F2 key
+	
+	//press shift + F3 key
+	
+	//press shift + F4 key
+	
+	//press shift + F5 key
+	
+	//press shift + F6 key
+	
+	//press shift + F7 key
+	
+	//press shift + F8 key
+	
+	//press shift + F9 key
+	
+	//press shift + F10 key
+	
+	//press shift + F11 key
+	
+	//press shift + F12 key
+	
+	
+	//press esc key
+	
+	//press alt + F1 key
+	
+	//press alt + F2 key
+	
+	//press alt + F3 key
+	
+	//press alt + F4 key
+	
+	//press alt + F5 key
+	
+	//press alt + F6 key
+	
+	//press alt + F7 key
+	
+	//press alt + F8 key
+	
+	//press alt + F9 key
+	
+	//press alt + F10 key
+	
+	//press alt + F11 key
+	
+	//press alt + F12 key
+	
+	
+	//press control + shift + esc key
+	
+	//press control + shift + F1 key
+	
+	//press control + shift + F2 key
+	
+	//press control + shift + F3 key
+	
+	//press control + shift + F4 key
+	
+	//press control + shift + F5 key
+	
+	//press control + shift + F6 key
+	
+	//press control + shift + F7 key
+	
+	//press control + shift + F8 key
+	
+	//press control + shift + F9 key
+	
+	//press control + shift + F10 key
+	
+	//press control + shift + F11 key
+	
+	//press control + shift + F12 key
+	
+	
+	//press control + alt + esc key
+	
+	//press control + alt + F1 key
+	
+	//press control + alt + F2 key
+	
+	//press control + alt + F3 key
+	
+	//press control + alt + F4 key
+	
+	//press control + alt + F5 key
+	
+	//press control + alt + F6 key
+	
+	//press control + alt + F7 key
+	
+	//press control + alt + F8 key
+	
+	//press control + alt + F9 key
+	
+	//press control + alt + F10 key
+	
+	//press control + alt + F11 key
+	
+	//press control + alt + F12 key
+}

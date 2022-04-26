@@ -1,0 +1,6 @@
+
+public class testStuff {
+	public static void main(String[] args) {
+		beliefSource source = new beliefSource();
+	}
+}

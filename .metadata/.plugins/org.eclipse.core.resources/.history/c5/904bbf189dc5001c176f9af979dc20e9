@@ -1,0 +1,28 @@
+Sense:40,,,TestClassName,,,Runtime run = Runtime.getRuntime();String command = "touch /home/agi/Desktop/eclipse/AGI/bin/hahaha.java";run.exec(command); 	
+		int color = currentDisplay.getRGB(223, 1027);
+	    int blue = color & 0xff;
+	    int green = (color & 0xff00) >> 8;
+	    int red = (color & 0xff0000) >> 16;
+	    //System.out.println("BGR: " + blue + "," + green + "," + red);
+	    if (blue < 70 && green > 170 && red > 200){
+	    	tagsRecursivelyCalled = "Rect,";
+		} else {
+			tagsRecursivelyCalled = "Test,";
+		}
+		
+uuuuuRect:50 Alpacka:70,,,TestClassName2,,,Runtime run = Runtime.getRuntime();String command = "touch /home/agi/Desktop/eclipse/AGI/bin/hohoho.java";run.exec(command);
+uuuuuTest:50 Alpacka:70,,,TestClassName3,,,Runtime run = Runtime.getRuntime();
+String command = "rm /home/agi/Desktop/eclipse/AGI/bin/hohoho.java";run.exec(command); 
+uuuuuGoal:50,,,MoveMouseToRightHalfOfScreen,,,
+
+//is goal complete
+if (mouseLocation.getX() < 800){
+	goalEvalResult.setComplete(false);
+} else {
+	goalEvalResult.setComplete(true);
+}
+
+//how much progress was made
+	goalEvalResult.setResult((mouseLocation.getX() - prevMouseLocation.getX()) / 10);
+
+uuuuu

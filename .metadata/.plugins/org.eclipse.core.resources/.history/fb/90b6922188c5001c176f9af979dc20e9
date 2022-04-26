@@ -1,0 +1,9 @@
+package agiStruct;
+
+public class Goal {
+	public boolean eval(Env envIn) {
+		//how does it evaluate
+		
+		//return boolean
+	}
+}

@@ -1,0 +1,8 @@
+Sense:40 Desktop:80,Runtime run = Runtime.getRuntime();String command = "touch /home/agi/Desktop/eclipse/AGI/bin/hahaha.java";run.exec(command); 
+		File displayOut = new File("/home/agi/Desktop/eclipse/AGI/bin/TestDisplayVisuals.jpg");
+		try {
+			ImageIO.write(this.currentDisplay, "jpg", displayOut);
+		} catch (Exception e) {
+		
+		}
+		uuuuuRect:50 Alpacka:70,Runtime run = Runtime.getRuntime();String command = "touch /home/agi/Desktop/eclipse/AGI/bin/hohoho.java";run.exec(command); uuuuu

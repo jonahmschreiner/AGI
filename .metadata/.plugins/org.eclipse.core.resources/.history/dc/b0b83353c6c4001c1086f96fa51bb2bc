@@ -1,0 +1,3 @@
+Sense:40 Desktop:80,,,Runtime run = Runtime.getRuntime();String command = "touch /home/agi/Desktop/eclipse/AGI/bin/hahaha.java";run.exec(command); 
+		//tagsRecursivelyCalled = "Rect,";
+uuuuuRect:50 Alpacka:70,,,Runtime run = Runtime.getRuntime();String command = "touch /home/agi/Desktop/eclipse/AGI/bin/hohoho.java";run.exec(command); uuuuu

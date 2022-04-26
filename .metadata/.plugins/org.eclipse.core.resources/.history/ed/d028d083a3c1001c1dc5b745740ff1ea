@@ -1,0 +1,3 @@
+Example Belief Storage File
+Tag Tag,"String of source code";;;Tag Tag,"String of source code";;;Tag Tag,"String of source code";;;Tag Tag,"String of source code";;;
+Rect Desktop,import java.io.*;public class beliefSource{public beliefSource() throws IOException { Runtime run = Runtime.getRuntime();String command = \"touch /home/agi/Desktop/eclipse/AGI/bin/hahaha.java\";run.exec(command); } } ;;;
