@@ -10,7 +10,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
-
+import qj.util.lang.DynamicClassLoader;
 import AGIUtil.randomAction;
 public class BeliefConnector {
 	private LinkedList<KeyTag> tags = new LinkedList<KeyTag>();
@@ -20,8 +20,8 @@ public class BeliefConnector {
 	private String BegMylein = "import java.io.*;import java.util.*;import agiStruct.*;import AGIUtil.*;import coreMethods.*; import topLevelMethods.*; public class " + this.className + "{ public " + this.className + "() throws Exception {  ";
 	final private String Goal2ndBegMylein = "agiStruct.GoalResult goalEvalResult = new agiStruct.GoalResult();";
 	final private String EndMylein = "} }";
-	final private String SenseEndishMylein = "String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().toString();path = path.substring(5);File tagsCalled = new File(path + \"tagsCalled.java\");FileWriter writer2 = new FileWriter(tagsCalled, true);writer2.write(tagsRecursivelyCalled);writer2.close();";
-	final private String GoalEndishMylein = "String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().toString();path = path.substring(5);File goalResult = new File(path + \"GoalEvalResult.java\");FileWriter writer2 = new FileWriter(goalResult, false);writer2.write(goalEvalResult.toString());writer2.close();";
+	final private String SenseEndishMylein = "File tagsCalled = new File(path + \"tagsCalled.java\");FileWriter writer2 = new FileWriter(tagsCalled, true);writer2.write(tagsRecursivelyCalled);writer2.close();";
+	final private String GoalEndishMylein = "File goalResult = new File(path + \"GoalEvalResult.java\");FileWriter writer2 = new FileWriter(goalResult, false);writer2.write(goalEvalResult.toString());writer2.close();";
 	private String envHardcodedVariables = "";
 	private String prevEnvHardcodedVariables = "";
 	private randomAction randActObj;
@@ -186,13 +186,13 @@ public class BeliefConnector {
 		path = path.substring(5);
 		File beliefSource = new File(path + this.className + ".java");
 		FileWriter writer = new FileWriter(beliefSource);
-		
+		String pathVar = "String path = \"" + path + "\";";
 		//the line below is only for testing/reference purposes
 		//this.NeuralPath = "Runtime run = Runtime.getRuntime();String command = \"touch /home/agi/Desktop/eclipse/AGI/bin/hahaha.java\";run.exec(command);";
 		if (fireType.equals("Sense")) {
-			writer.write(this.BegMylein + this.envHardcodedVariables + this.NeuralPath + this.SenseEndishMylein + this.EndMylein);
+			writer.write(this.BegMylein + this.envHardcodedVariables + pathVar + this.NeuralPath + this.SenseEndishMylein + this.EndMylein);
 		} else if (fireType.equals("Goal")){
-			writer.write(this.BegMylein + this.envHardcodedVariables + this.prevEnvHardcodedVariables + this.Goal2ndBegMylein + this.NeuralPath + "goalEvalResult.setClassName(\""+ this.className +"\");" + this.GoalEndishMylein + this.EndMylein);
+			writer.write(this.BegMylein + this.envHardcodedVariables + pathVar + this.prevEnvHardcodedVariables + this.Goal2ndBegMylein + this.NeuralPath + "goalEvalResult.setClassName(\""+ this.className +"\");" + this.GoalEndishMylein + this.EndMylein);
 		} else {
 			writer.write(this.BegMylein + this.NeuralPath + this.EndMylein);
 		}
@@ -204,16 +204,16 @@ public class BeliefConnector {
 		compiler.run(null, null, null, beliefSource.getPath());
 		//System.out.println("About to run");
 		//Run it
-		URL[] url = new URL[] {beliefSource.toURI().toURL()};
-		URLClassLoader loader = new URLClassLoader(url);	
+		Class<?> cls = new DynamicClassLoader(beliefSource.getPath().substring(0, 33)).load(this.getClassName()); //beliefSource
+		@SuppressWarnings("unused")
+		Object instance = cls.newInstance();
+//		URL[] url = new URL[] {beliefSource.toURI().toURL()};
+//		URLClassLoader loader = new URLClassLoader(url);	
+//
+//			Class<?> cls = Class.forName(this.getClassName(), false, loader);
+//			@SuppressWarnings("unused")
+//			Object instance = cls.newInstance();
 		
-		//how is this fucking up when used multiple times
-		//if(!fireType.equals("Sense")) {	
-			Class<?> cls = Class.forName(this.getClassName(), false, loader);
-			@SuppressWarnings("unused")
-			Object instance = cls.newInstance();
-			
-		//}
 		
 		//System.out.println("About to delete");
 		//Delete the .java and .class files

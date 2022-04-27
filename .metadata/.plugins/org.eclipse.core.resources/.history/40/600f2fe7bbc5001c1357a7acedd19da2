@@ -1,0 +1,5 @@
+package qj.util.lang;
+
+public class FileUtil {
+
+}

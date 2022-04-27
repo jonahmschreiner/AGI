@@ -28,6 +28,9 @@ public class Env {
 	
 	//current monitor display (2d array of pixels)
 	BufferedImage currentDisplay;
+	
+	//prev monitor display (2d array of pixels)
+	BufferedImage prevDisplay;
 	//number of mouse buttons
 	int numOfMouseButtons;
 	
@@ -76,7 +79,9 @@ public class Env {
 	public BufferedImage getCurrentDisplay() {
 		return currentDisplay;
 	}
-	
+	public BufferedImage getPrevDisplay() {
+		return prevDisplay;
+	}
 	public boolean getLeftMouseButtonPressed() {
 		return this.leftMouseButtonPressed;
 	}
@@ -121,7 +126,24 @@ public class Env {
 		
 		}
 	}
-	
+//	public void setPrevDisplay(BufferedImage imageIn) {
+//		this.prevDisplay = imageIn;
+//		File prevDisplayOut = new File("/home/agi/Desktop/eclipse/AGI/bin/PrevDisplayVisuals.jpg");
+//		try {
+//			ImageIO.write(this.prevDisplay, "jpg", prevDisplayOut);
+//		} catch (Exception e) {
+//			System.out.println(e.getMessage());
+//		}
+//	}
+//	public void obtainPrevDisplay() {
+//		File prevDisplayIn = new File("/home/agi/Desktop/eclipse/AGI/bin/PrevDisplayVisuals.jpg");
+//		try {
+//			BufferedImage prevDisplayImage = javax.imageio.ImageIO.read(prevDisplayIn);
+//			this.prevDisplay = prevDisplayImage;
+//		} catch (Exception e) {
+//			
+//		}
+//	}
 	public void setMouseLocation(Point inputLocation) {
 		this.mouseLocation = inputLocation;
 	}

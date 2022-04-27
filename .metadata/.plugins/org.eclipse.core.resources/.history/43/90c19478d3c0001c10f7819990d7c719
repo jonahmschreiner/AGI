@@ -1,3 +1,0 @@
-module agi {
-	requires java.desktop;
-}
