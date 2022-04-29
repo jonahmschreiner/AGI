@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -16,7 +17,7 @@ public class BeliefConnector {
 	private LinkedList<KeyTag> tags = new LinkedList<KeyTag>();
 	private String NeuralPath = "";
 	private String className = "";
-	private String beliefFilePath = "/home/agi/Desktop/eclipse/AGI/BeliefStorage/Beliefs1";
+	private String beliefFilePath = "/home/agi/Desktop/eclipse/AGI/BeliefStorage/";
 	private String BegMylein = "import java.io.*;import java.util.*;import agiStruct.*;import AGIUtil.*;import coreMethods.*; import topLevelMethods.*; public class " + this.className + "{ public " + this.className + "() throws Exception {  ";
 	final private String Goal2ndBegMylein = "agiStruct.GoalResult goalEvalResult = new agiStruct.GoalResult();";
 	final private String EndMylein = "} }";
@@ -93,51 +94,65 @@ public class BeliefConnector {
 	}
 	public LinkedList<BeliefConnector> retrieveBeliefs(LinkedList<String> tagsIn) throws FileNotFoundException {
 		LinkedList<BeliefConnector> beliefOutput = new LinkedList<BeliefConnector>();
-		File source = new File(this.beliefFilePath);
-		Scanner reader = new Scanner(source);
-		reader.useDelimiter("uuuuu");
-		while(reader.hasNext()) {
-			BeliefConnector belief = new BeliefConnector();
-			String currentString = reader.next();
-			Scanner lineReader = new Scanner(currentString);
-			lineReader.useDelimiter(",,,");
-			String tags = lineReader.next();
-			//read in tags for current belief
-			Scanner tagReader = new Scanner(tags);
-			tagReader.useDelimiter(" ");
-			while (tagReader.hasNext()) {
-				String tagCode = tagReader.next();
-				KeyTag tag = new KeyTag();
-				
-				//read in properties of individual tag
-				Scanner propertyReader = new Scanner(tagCode);
-				propertyReader.useDelimiter(":");
-				while(propertyReader.hasNext()) {
-					String tagProp = propertyReader.next();
-					try {
-						tag.setConfidenceRating(Integer.valueOf(tagProp));
-					} catch (Exception e) {
-						tag.setLabel(tagProp);
-					}				
-				}
-				belief.addTag(tag);
-				propertyReader.close();
-			}
-			//read in className
-			String classNameIn = lineReader.next();
-			belief.setClassName(classNameIn);
-			//read in neural path (dynamic code)
-			belief.setNeuralPath(lineReader.next());
-			lineReader.close();
-			tagReader.close();
-			for (int i = 0; i < belief.getTags().size(); i++) {
-				if (tagsIn.contains(belief.getTags().get(i).getLabel())) {
-					beliefOutput.add(belief);
-					break;
-				}
-			}			
+		String beliefDirPath;
+		try {
+			URI beliefDirPath1 = this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
+			beliefDirPath = (beliefDirPath1.getPath().endsWith("/") ? beliefDirPath1.resolve("..") : beliefDirPath1.resolve(".")).toString();
+			//beliefDirPath = (beliefDirPath2.getPath().endsWith("/") ? beliefDirPath2.resolve("..") : beliefDirPath2.resolve(".")).toString();
+			beliefDirPath = beliefDirPath + "BeliefStorage/";
+			beliefDirPath = beliefDirPath.substring(5);
+		} catch (Exception e) {
+			beliefDirPath = this.beliefFilePath;
 		}
+		File directory = new File(beliefDirPath);
+		String[] pathnames = directory.list();
+		for (String pathname : pathnames) {
+			File source = new File(beliefDirPath + pathname);
+			Scanner reader = new Scanner(source);
+			reader.useDelimiter("uuuuu");
+			while(reader.hasNext()) {
+				BeliefConnector belief = new BeliefConnector();
+				String currentString = reader.next();
+				Scanner lineReader = new Scanner(currentString);
+				lineReader.useDelimiter(",,,");
+				String tags = lineReader.next();
+				//read in tags for current belief
+				Scanner tagReader = new Scanner(tags);
+				tagReader.useDelimiter(" ");
+				while (tagReader.hasNext()) {
+					String tagCode = tagReader.next();
+					KeyTag tag = new KeyTag();
+				
+					//read in properties of individual tag
+					Scanner propertyReader = new Scanner(tagCode);
+					propertyReader.useDelimiter(":");
+					while(propertyReader.hasNext()) {
+						String tagProp = propertyReader.next();
+						try {
+							tag.setConfidenceRating(Integer.valueOf(tagProp));
+						} catch (Exception e) {
+							tag.setLabel(tagProp);
+						}				
+					}
+					belief.addTag(tag);
+					propertyReader.close();
+				}
+				//read in className
+				String classNameIn = lineReader.next();
+				belief.setClassName(classNameIn);
+				//read in neural path (dynamic code)
+				belief.setNeuralPath(lineReader.next());
+				lineReader.close();
+				tagReader.close();
+				for (int i = 0; i < belief.getTags().size(); i++) {
+					if (tagsIn.contains(belief.getTags().get(i).getLabel())) {
+						beliefOutput.add(belief);
+						break;
+					}
+				}			
+			}
 		reader.close();
+		}
 		return beliefOutput;
 	}
 		//select belief with the highest total confidence level

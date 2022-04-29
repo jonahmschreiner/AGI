@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <libraryInfos>
     <libraryInfo home="/home/agi" version="16.0.1"/>
-    <libraryInfo home="/usr/lib/jvm/java-11-openjdk-amd64" version="11.0.14.1"/>
+    <libraryInfo home="/usr/lib/jvm/java-11-openjdk-amd64" version="11.0.15"/>
     <libraryInfo home="/lib/jvm/java-8-openjdk-amd64" version="1.8.0_312">
         <bootpath>
             <entry path="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/resources.jar"/>

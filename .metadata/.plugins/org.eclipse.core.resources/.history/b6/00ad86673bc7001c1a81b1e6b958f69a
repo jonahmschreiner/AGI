@@ -1,0 +1,41 @@
+Goal:100,,,CoreBelief1StayAlive,,,
+
+//is goal complete
+
+long seconds = java.time.temporal.ChronoUnit.SECONDS.between(prevCalendar, calendar);
+System.out.println("Time since last iteration: " + seconds);
+
+if (seconds < 1){
+	goalEvalResult.setComplete(true);
+} else {
+	goalEvalResult.setComplete(false);
+	
+}
+
+
+//how much progress was made
+ int resultOutput = (int)seconds / 100;
+ resultOutput = resultOutput * -1;
+ if (goalEvalResult.getComplete()){
+ 	resultOutput = resultOutput + 1;
+ }
+ 
+  System.out.println("resultOutput: " + resultOutput);
+	goalEvalResult.setResult(resultOutput);
+		
+uuuuuGoal:100,,,CoreBelief2BeEfficientWithHardwareUsage,,,
+
+	Runtime run = Runtime.getRuntime();
+	String command = "mpstat | tail -n 1 | awk -F \" \" '{print $13}'";
+	//String command = "echo hello world";
+	System.out.println("Command: " + command);
+	try {
+    	Process p = run.exec(new String[] {"/bin/bash","-c",command});
+    	BufferedReader stdOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+		System.out.println("CMD OUTPUT: " + stdOutput.readLine());
+		System.out.println("CMD ERROR: " + stdError.readLine());
+    } catch (Exception e){
+    
+    }
+ 

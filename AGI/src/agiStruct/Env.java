@@ -5,6 +5,8 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -37,6 +39,12 @@ public class Env {
 	//current date, time, timezone, etc.
 	LocalDateTime calendar;
 	
+	//CPU Usage
+	Double currentCpuUsage;
+	
+	//Error Locations
+	Set<String, int> errorLocations;
+	
 	public Env() {
 		
 	}
@@ -52,8 +60,10 @@ public class Env {
 				"currentDisplay = javax.imageio.ImageIO.read(new File(\"/home/agi/Desktop/eclipse/AGI/bin/CurrentDisplayVisuals.jpg\"));}catch(Exception e){}" ;
 		String tagsRecursivelyCalledVar = "String tagsRecursivelyCalled = \"\";";
 		String calendarVar = "java.time.LocalDateTime calendar = java.time.LocalDateTime.parse(\"" + this.getCalendar().toString() + "\");";
+		String currentCpuUsageVar = "Double currentCpuUsage = " + this.getCurrentCpuUsage() + ";";
 		String envVars = mousePointVar + leftMousePressedVar + middleMousePressedVar + rightMousePressedVar 
-				+ keyPressedVar + numOfMouseButtonsVar + currentDisplayInitVar + calendarVar + tagsRecursivelyCalledVar;
+				+ keyPressedVar + numOfMouseButtonsVar + currentDisplayInitVar + calendarVar 
+				+ currentCpuUsageVar + tagsRecursivelyCalledVar;
 		return envVars;
 	}
 	
@@ -68,11 +78,16 @@ public class Env {
 				"prevDisplay = javax.imageio.ImageIO.read(new File(\"/home/agi/Desktop/eclipse/AGI/bin/CurrentDisplayVisuals.jpg\"));}catch(Exception e){}" ;
 		String tagsRecursivelyCalledVar = "String prevTagsRecursivelyCalled = \"\";";
 		String calendarVar = "java.time.LocalDateTime prevCalendar = java.time.LocalDateTime.parse(\"" + this.getCalendar().toString() + "\");";
+		String currentCpuUsageVar = "Double prevCpuUsage = " + this.getCurrentCpuUsage() + ";";
 		String prevEnvVars = mousePointVar + leftMousePressedVar + middleMousePressedVar + rightMousePressedVar 
-				+ keyPressedVar + numOfMouseButtonsVar + currentDisplayInitVar + calendarVar + tagsRecursivelyCalledVar;
+				+ keyPressedVar + numOfMouseButtonsVar + currentDisplayInitVar + calendarVar
+				+ currentCpuUsageVar + tagsRecursivelyCalledVar;
 		return prevEnvVars;
 	}
-
+	
+	public Double getCurrentCpuUsage() {
+		return this.currentCpuUsage;
+	}
 	public String getKeyPressed() {
 		return keyPressed;
 	}
@@ -114,6 +129,9 @@ public class Env {
 		return calendar;
 	}
 	//sets
+	public void setCurrentCpuUsage(Double usageIn) {
+		this.currentCpuUsage = usageIn;
+	}
 	public void setKeyPressed(String keyIn) {
 		this.keyPressed = keyIn;
 	}
@@ -197,7 +215,6 @@ public class Env {
 		} else {
 			return false;
 		}
-		
 	}
 
 	@Override
@@ -205,10 +222,23 @@ public class Env {
 		String output = (int)this.getMouseLocation().getX() + "," + (int)this.getMouseLocation().getY() + "," ;
 		output += this.getKeyPressed() + ",";
 		output += this.getNumOfMouseButtons() + ",";
-		output += this.leftMouseButtonPressed + ",";
-		output += this.middleMouseButtonPressed + ",";
-		output += this.rightMouseButtonPressed + ",";
-		output += this.getCalendar().toString();
+		if (this.leftMouseButtonPressed) {
+			output += 1 + ",";
+		} else {
+			output += 0 + ",";
+		}
+		if (this.middleMouseButtonPressed) {
+			output += 1 + ",";
+		} else {
+			output += 0 + ",";
+		}
+		if (this.rightMouseButtonPressed) {
+			output += 1 + ",";
+		} else {
+			output += 0 + ",";
+		}
+		output += this.getCalendar().toString() + ",";
+		output += this.getCurrentCpuUsage().toString() + ",";
 		return output;
 	}
 }

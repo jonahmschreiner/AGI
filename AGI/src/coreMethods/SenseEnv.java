@@ -16,7 +16,8 @@ public class SenseEnv {
 		LocalDateTime curr = LocalDateTime.now();
 		currentEnv.setCalendar(curr);
 		currentEnv.setCurrentDisplay(getScreenshot());
-		currentEnv.setKeyPressed(util.getCurrentKeyPressData());
+		currentEnv.setKeyPressed(util.getCurrentKeyPressData());		
+		currentEnv.setCurrentCpuUsage(util.getCurrentCpuUsage());
 		return currentEnv;
 	}
 	

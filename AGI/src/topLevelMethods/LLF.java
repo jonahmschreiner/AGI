@@ -66,6 +66,10 @@ public class LLF {
 			
 				//Form Prev Calendar
 				LocalDateTime calendar = java.time.LocalDateTime.parse(satScanner.next());
+				
+				//Form Prev CPU Usage
+				Double cpuUsage = Double.valueOf(satScanner.next());
+				
 				//Form Prev Display
 				File prevDisplayFile = new File(path + "CurrentDisplayVisuals.jpg");
 				BufferedImage prevDisplay = javax.imageio.ImageIO.read(prevDisplayFile);
@@ -78,6 +82,7 @@ public class LLF {
 				recEnv.setMouseButtonsPressed(btnsPressed[0], btnsPressed[1],btnsPressed[2]);
 				recEnv.setMouseLocation(mlPoint);
 				recEnv.setNumOfMouseButtons(mbNum);
+				recEnv.setCurrentCpuUsage(cpuUsage);
 			
 				agi.prevEnv = recEnv;
 			}
@@ -106,14 +111,16 @@ public class LLF {
 					int leftMousePressed = satScanner.nextInt();
 					int middleMousePressed = satScanner.nextInt();
 					int rightMousePressed = satScanner.nextInt();
-					int scrollUpPressed = satScanner.nextInt();
-					int scrollDownPressed = satScanner.nextInt();
 					btnsPressed[0] = leftMousePressed;
 					btnsPressed[1] = middleMousePressed;
 					btnsPressed[2] = rightMousePressed;
 				
 					//Form Prev Calendar
 					LocalDateTime calendar = java.time.LocalDateTime.parse(satScanner.next());
+					
+					//Form Prev Cpu Usage
+					Double cpuUsage = Double.valueOf(satScanner.next());
+					
 					//Form Prev Display
 					BufferedImage prevDisplay;
 					try{
@@ -133,11 +140,14 @@ public class LLF {
 					recEnv.setMouseButtonsPressed(btnsPressed[0], btnsPressed[1],btnsPressed[2]);
 					recEnv.setMouseLocation(mlPoint);
 					recEnv.setNumOfMouseButtons(mbNum);
+					recEnv.setCurrentCpuUsage(cpuUsage);
 				
 					agi.prevEnv = recEnv;
 				}
 				satScanner.close();
 			} catch (Exception f) {
+				System.out.println("had to overwrite contextSource");
+				f.printStackTrace();
 				satisfaction = 0;
 				File contextSource = new File(path + "contextSource.txt");
 				FileWriter writer = new FileWriter(contextSource);
@@ -162,18 +172,29 @@ public class LLF {
 				agi.prevEnv.setMouseButtonsPressed(btnsPressed[0], btnsPressed[1],btnsPressed[2]);
 				agi.prevEnv.setMouseLocation(new Point(0,0));
 				agi.prevEnv.setNumOfMouseButtons(8);
-				writer.write("0,none,");
+				agi.prevEnv.setCurrentCpuUsage(16.25);
+				writer.write("0,none,0,0,,8,0,0,0,2022-04-27T15:13:28.516,16.25");			
 				writer.close();
 			}
 		}
 		Util util = new Util();
 		while (true){
-			File contextSource = new File(path + "contextSource.txt");
-			Scanner satScanner = new Scanner(contextSource);
-			satScanner.useDelimiter(",");
-			satisfaction = satScanner.nextInt();
-			prevExecBelief = satScanner.next();
-			satScanner.close();		
+			File contextSource;
+			try {
+				contextSource = new File(path + "contextSource.txt");
+				Scanner satScanner = new Scanner(contextSource);
+				satScanner.useDelimiter(",");
+				satisfaction = satScanner.nextInt();
+				prevExecBelief = satScanner.next();
+				satScanner.close();	
+			} catch (Exception e) {
+				contextSource = new File(path + "contextBackupSource.txt");
+				Scanner satScanner = new Scanner(contextSource);
+				satScanner.useDelimiter(",");
+				satisfaction = satScanner.nextInt();
+				prevExecBelief = satScanner.next();
+				satScanner.close();	
+			}
 			agi.prevEnv = agi.LF(satisfaction, prevExecBelief, agi.prevEnv);
 			File contextBackupSource = new File(path + "contextBackupSource.txt");
 			util.copyContent(contextSource, contextBackupSource);
@@ -196,7 +217,7 @@ public class LLF {
 		//Pull in current sensing data
 		SenseEnv sense = new SenseEnv();
 		Env currentEnv = sense.recordEnv();
-
+		//System.out.println("prevEnvStr: " + prevEnv.getPrevEnvVarsString());
 		
 		//read in and evaluate goals, and package the evals into a GoalResult LinkedList
 		//answers the question: were my goals accomplished ?
@@ -206,6 +227,7 @@ public class LLF {
 		File goalResultFile = new File(path + "GoalEvalResult.java");
 		FileWriter fileWriter = new FileWriter(goalResultFile, false);
 		fileWriter.write("");
+		fileWriter.close();
 		Scanner fileScanner = new Scanner(goalResultFile);
 		fileScanner.useDelimiter(":");
 		for (int i = 0; i < goalBeliefs.size(); i++) {
@@ -214,34 +236,52 @@ public class LLF {
 			init.setPrevEnvHardcodedVariables(prevEnv.getPrevEnvVarsString());
 			init.Fire("Goal");
 			GoalResult goalResult = new GoalResult();
-			String className = fileScanner.next();
-			int result = fileScanner.nextInt();
-			boolean complete = Boolean.valueOf(fileScanner.next());
+			Scanner fileScannerIn = new Scanner(goalResultFile);
+			fileScannerIn.useDelimiter(":");
+			String className = fileScannerIn.next();
+			int result;
+			try{
+				result = fileScannerIn.nextInt();
+			} catch (Exception e) {
+				String negativeResult = fileScannerIn.next();
+				result = Integer.valueOf(negativeResult);
+			}
+			boolean complete = Boolean.valueOf(fileScannerIn.next());
 			goalResult.setClassName(className);
 			goalResult.setResult(result);
 			goalResult.setComplete(complete);
 			goalResults.add(goalResult);
-			fileWriter.write("");
+			fileScannerIn.close();
+			FileWriter fileWriter2 = new FileWriter(goalResultFile, false);
+			fileWriter2.write("");
+			fileWriter2.close();
 		}
 		Runtime run2 = Runtime.getRuntime();
 		String removeCommand = "rm " + path + "GoalEvalResult.java";
 		run2.exec(removeCommand);
 		fileScanner.close();
 		fileWriter.close();
+		
 		//test
-		System.out.println("Goal Result Class Name: " + goalResults.get(0).getClassName());
-		System.out.println("Goal Result Complete: " + goalResults.get(0).getComplete());
-		System.out.println("Goal Result Result: " + goalResults.get(0).getResult());
-		//Copy data to appropriate places (prevbeliefs, optbeliefs, etc.)
-		
+//		for (int i = 0; i < goalResults.size(); i++) {
+//			System.out.println("Goal Result Class Name: " + goalResults.get(i).getClassName());
+//			System.out.println("Goal Result Complete: " + goalResults.get(i).getComplete());
+//			System.out.println("Goal Result Result: " + goalResults.get(i).getResult());
+//		}
+
+
 
 		
-		//output determined total satisfaction
-
+		//calculate and output determined total satisfaction
+		//System.out.println("Sat before iteration: " + satisfaction);
+		for (int i = 0; i < goalResults.size(); i++) {
+			satisfaction = satisfaction + goalResults.get(i).getResult();
+		}	
+		System.out.println("Total Satisfaction: " + satisfaction);
 		FileWriter writer = new FileWriter(contextSource, false);
 		writer.write(String.valueOf(satisfaction));
 		writer.close();
-
+		//Copy data to appropriate places (prevbeliefs, optbeliefs, etc.)
 		
 		//Call Modify Behavior Block
 		

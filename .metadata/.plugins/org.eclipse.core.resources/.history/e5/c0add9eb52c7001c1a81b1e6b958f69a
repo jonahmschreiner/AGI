@@ -1,0 +1,44 @@
+Goal:100,,,CoreBelief1StayAlive,,,
+
+//is goal complete
+
+long seconds = java.time.temporal.ChronoUnit.SECONDS.between(prevCalendar, calendar);
+System.out.println("Time since last iteration: " + seconds);
+
+if (seconds < 1){
+	goalEvalResult.setComplete(true);
+} else {
+	goalEvalResult.setComplete(false);
+	
+}
+
+
+//how much progress was made
+ int resultOutput = (int)seconds / 100;
+ resultOutput = resultOutput * -1;
+ if (goalEvalResult.getComplete()){
+ 	resultOutput = resultOutput + 1;
+ }
+ 
+  System.out.println("resultOutput: " + resultOutput);
+	goalEvalResult.setResult(resultOutput);
+		
+uuuuuGoal:100,,,CoreBelief2BeEfficientWithHardwareUsage,,,
+	
+
+    
+    //is goal complete (ignore NoSuchElementException error, will happen until we write out a goal eval
+    if (currentCpuUsage < 4){
+    	goalEvalResult.setComplete(true);
+    } else {
+    	goalEvalResult.setComplete(false);
+    }   
+    
+    //are we moving closer to goal
+    int resultOutput = (prevCpuUsage - currentCpuUsage) * 3;
+    if (goalEvalResult.getComplete()){
+    	goalEvalResult.setResult(resultOutput);
+    } else {
+    	goalEvalResult.setResult(resultOutput);
+    }
+ 	

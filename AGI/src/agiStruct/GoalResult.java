@@ -2,6 +2,7 @@ package agiStruct;
 
 public class GoalResult {
 	String className;
+	//The satisfaction output of this goal evaluation
 	int result;
 	boolean complete;
 	public GoalResult() {

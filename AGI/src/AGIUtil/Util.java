@@ -1,10 +1,12 @@
 package AGIUtil;
 
 import java.awt.MouseInfo;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 //whenever I add in the mouse button press util functions, be sure to write the update to CurrentMouseData
 //		so SenseEnv gets the correct data
 public class Util {
@@ -17,6 +19,39 @@ public class Util {
 	public int rightMousePressed = 0;
 	public Util(){
 		setCurrentMouseData();
+	}
+	public Double getCurrentCpuUsage() {
+		//Cpu Usage
+		try {
+			Runtime run = Runtime.getRuntime();
+			//String command = "pidstat | grep \"java\"| awk -F \" \" '{print $9}'";
+			String command = "pidstat | awk -F \" \" '{print $9}'";
+	    	Process p = run.exec(new String[] {"/bin/bash","-c",command});
+	    	BufferedReader stdOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			//BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			String cpuUsage = "";
+			double totalCpuUsage = 0;
+			
+			//useless variables to throw away the non double lines
+			@SuppressWarnings("unused")
+			String trash = stdOutput.readLine();
+			@SuppressWarnings("unused")
+			String trash2 = stdOutput.readLine();
+			@SuppressWarnings("unused")
+			String trash3 = stdOutput.readLine();
+			
+			cpuUsage = stdOutput.readLine();
+			while (cpuUsage != null){
+				double usage = Double.valueOf(cpuUsage);
+				totalCpuUsage += usage;
+				cpuUsage = stdOutput.readLine();
+			}
+			return totalCpuUsage;
+	    } catch (Exception e){
+	    	e.printStackTrace();
+	    	return -1.0;
+	    }
+		
 	}
 	//write current variable data to MouseDataFile
 	public String getCurrentKeyPressData() {

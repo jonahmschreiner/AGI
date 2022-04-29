@@ -13,15 +13,4 @@ Sense:40,,,TestClassName,,,Runtime run = Runtime.getRuntime();String command = "
 uuuuuRect:50 Alpacka:70,,,TestClassName2,,,Runtime run = Runtime.getRuntime();String command = "touch /home/agi/Desktop/eclipse/AGI/bin/hohoho.java";run.exec(command);
 uuuuuTest:50 Alpacka:70,,,TestClassName3,,,Runtime run = Runtime.getRuntime();
 String command = "rm /home/agi/Desktop/eclipse/AGI/bin/hohoho.java";run.exec(command); 
-uuuuuGoal:50,,,MoveMouseToRightHalfOfScreen,,,
-
-//is goal complete
-if (mouseLocation.getX() < 800){
-	goalEvalResult.setComplete(false);
-} else {
-	goalEvalResult.setComplete(true);
-}
-
-//how much progress was made
-	goalEvalResult.setResult((int)(mouseLocation.getX() - prevMouseLocation.getX()) / 10);
 uuuuu

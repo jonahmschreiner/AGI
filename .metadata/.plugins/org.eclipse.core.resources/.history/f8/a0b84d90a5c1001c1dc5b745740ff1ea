@@ -1,2 +1,0 @@
-Rect:0.4 Desktop:0.8,Runtime run = Runtime.getRuntime();String command = \"touch /home/agi/Desktop/eclipse/AGI/bin/hahaha.java\";run.exec(command); ;;;
-Rect:0.5 Alpacka:0.7,Runtime run = Runtime.getRuntime();String command = \"touch /home/agi/Desktop/eclipse/AGI/bin/hohoho.java\";run.exec(command); ;;;
