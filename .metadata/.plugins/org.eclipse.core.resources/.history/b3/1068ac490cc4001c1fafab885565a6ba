@@ -1,9 +1,0 @@
-Sense:40 Desktop:80,,,Runtime run = Runtime.getRuntime();String command = "touch /home/agi/Desktop/eclipse/AGI/bin/hahaha.java";run.exec(command); 
-		tagsRecursivelyCalled = "Rect,";
-uuuuuRect:50 Alpacka:70,,,Runtime run = Runtime.getRuntime();String command = "touch /home/agi/Desktop/eclipse/AGI/bin/hohoho.java";run.exec(command);
-		String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().toString();
-		path = path.substring(5);
-		java.io.File testThis = new java.io.File(path + "TestThis.java");
-		java.io.FileWriter test = new java.io.FileWriter(testThis);
-		test.write("flkdalfja");
- uuuuu

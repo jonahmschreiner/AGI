@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
@@ -14,6 +15,7 @@ import agiStruct.BeliefConnector;
 import agiStruct.Env;
 import coreMethods.SenseEnv;
 import agiStruct.GoalResult;
+import agiStruct.Instruction;
 //import java.io.*;
 //import java.util.*;
 //import java.lang.StringBuilder;
@@ -26,6 +28,7 @@ public class LLF {
 		
 	}
 	//main function loops life function
+	@SuppressWarnings("null")
 	public static void main(String[] args) throws Exception{
 		int satisfaction;
 		String prevExecBelief = "";
@@ -58,8 +61,6 @@ public class LLF {
 				int leftMousePressed = satScanner.nextInt();
 				int middleMousePressed = satScanner.nextInt();
 				int rightMousePressed = satScanner.nextInt();
-				int scrollUpPressed = satScanner.nextInt();
-				int scrollDownPressed = satScanner.nextInt();
 				btnsPressed[0] = leftMousePressed;
 				btnsPressed[1] = middleMousePressed;
 				btnsPressed[2] = rightMousePressed;
@@ -69,6 +70,23 @@ public class LLF {
 				
 				//Form Prev CPU Usage
 				Double cpuUsage = Double.valueOf(satScanner.next());
+				
+				//Form Error Locations
+				List<Instruction> errors = null;
+				while (satScanner.hasNext()) {
+					String instructionObj = satScanner.next();
+					if (instructionObj.equals("ENDERRORS")) {
+						break;
+					}
+					Scanner instScan = new Scanner(instructionObj);
+					instScan.useDelimiter(":");
+					String parentClass = instScan.next();
+					int instNum = Integer.valueOf(instScan.next());
+					String instructionCode = instScan.next();
+					Instruction inst = new Instruction(parentClass, instNum, instructionCode);
+					errors.add(inst);
+					instScan.close();
+				}
 				
 				//Form Prev Display
 				File prevDisplayFile = new File(path + "CurrentDisplayVisuals.jpg");
@@ -83,7 +101,7 @@ public class LLF {
 				recEnv.setMouseLocation(mlPoint);
 				recEnv.setNumOfMouseButtons(mbNum);
 				recEnv.setCurrentCpuUsage(cpuUsage);
-			
+				recEnv.setErrorLocations(errors);
 				agi.prevEnv = recEnv;
 			}
 			satScanner.close();
@@ -121,6 +139,26 @@ public class LLF {
 					//Form Prev Cpu Usage
 					Double cpuUsage = Double.valueOf(satScanner.next());
 					
+					//Form Error Locations
+					List<Instruction> errors = null;
+					while (satScanner.hasNext()) {
+						String instructionObj = satScanner.next();
+						if (instructionObj.equals("ENDERRORS")) {
+							break;
+						}
+						Scanner instScan = new Scanner(instructionObj);
+						instScan.useDelimiter(":");
+						String parentClass = instScan.next();
+						int instNum = Integer.valueOf(instScan.next());
+						String instructionCode = instScan.next();
+						
+						//
+						
+						Instruction inst = new Instruction(parentClass, instNum, instructionCode);
+						errors.add(inst);
+						instScan.close();
+					}
+
 					//Form Prev Display
 					BufferedImage prevDisplay;
 					try{
@@ -141,7 +179,7 @@ public class LLF {
 					recEnv.setMouseLocation(mlPoint);
 					recEnv.setNumOfMouseButtons(mbNum);
 					recEnv.setCurrentCpuUsage(cpuUsage);
-				
+					recEnv.setErrorLocations(errors);
 					agi.prevEnv = recEnv;
 				}
 				satScanner.close();
@@ -173,7 +211,7 @@ public class LLF {
 				agi.prevEnv.setMouseLocation(new Point(0,0));
 				agi.prevEnv.setNumOfMouseButtons(8);
 				agi.prevEnv.setCurrentCpuUsage(16.25);
-				writer.write("0,none,0,0,,8,0,0,0,2022-04-27T15:13:28.516,16.25");			
+				writer.write("0,none,0,0,,8,0,0,0,2022-04-27T15:13:28.516,16.25,");			
 				writer.close();
 			}
 		}
@@ -206,6 +244,7 @@ public class LLF {
 		
 		//Setup
 		int satisfaction = satisfactionIn;
+		@SuppressWarnings("unused")
 		String prevExecBelief = prevExecBeliefIn;
 		Env prevEnv = prevEnvIn;
 		String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().toString();

@@ -1,0 +1,23 @@
+package agiStruct;
+
+public class Instruction {
+	private String label;
+	private String instruction;
+	
+	public Instruction() {
+		
+	}
+	
+	public Instruction(String labelIn, String instructionIn) {
+		this.label = labelIn;
+		this.instruction = instructionIn;
+	}
+	
+	public String getLabel() {
+		return this.label;
+	}
+	
+	public String getInstruction() {
+		return this.instruction;
+	}
+}

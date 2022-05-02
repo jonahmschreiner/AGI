@@ -1,13 +1,10 @@
 package agiStruct;
 import agiStruct.KeyTag;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -15,6 +12,7 @@ import qj.util.lang.DynamicClassLoader;
 import AGIUtil.randomAction;
 public class BeliefConnector {
 	private LinkedList<KeyTag> tags = new LinkedList<KeyTag>();
+	private List<Instruction> instructions;
 	private String NeuralPath = "";
 	private String className = "";
 	private String beliefFilePath = "/home/agi/Desktop/eclipse/AGI/BeliefStorage/";
@@ -26,6 +24,7 @@ public class BeliefConnector {
 	private String envHardcodedVariables = "";
 	private String prevEnvHardcodedVariables = "";
 	private randomAction randActObj;
+	private boolean doneSubParsing;
 	public BeliefConnector (){
 	
 	}
@@ -43,7 +42,18 @@ public class BeliefConnector {
 		this.tags = tagsIn;
 		this.randActObj = randActObjIn;
 	}
+	//instructions management
+	public List<Instruction> getInstructions(){
+		return this.instructions;
+	}
 	
+	public void setInstructions(List<Instruction> instructionsIn) {
+		this.instructions = instructionsIn;
+	}
+	
+	public void addInstruction(Instruction instIn) {
+		this.instructions.add(instIn);
+	}
 	//className management
 	public String getClassName() {
 		return this.className;
@@ -92,6 +102,7 @@ public class BeliefConnector {
 	public void removeTag(KeyTag tag) {
 		tags.remove(tag);
 	}
+	@SuppressWarnings({ "null", "unused" })
 	public LinkedList<BeliefConnector> retrieveBeliefs(LinkedList<String> tagsIn) throws FileNotFoundException {
 		LinkedList<BeliefConnector> beliefOutput = new LinkedList<BeliefConnector>();
 		String beliefDirPath;
@@ -140,8 +151,24 @@ public class BeliefConnector {
 				//read in className
 				String classNameIn = lineReader.next();
 				belief.setClassName(classNameIn);
-				//read in neural path (dynamic code)
-				belief.setNeuralPath(lineReader.next());
+				//read in dynamic code, pipe it to instruction list and use that to generate the document
+					//instReader is looking through the belief's source code
+				Scanner instReader = new Scanner(lineReader.next());
+				instReader.useDelimiter(";");	
+				int instNumber = 0;
+				List<Instruction> insts = null;
+//				while (instReader.hasNext()) {
+//					insts.addAll(parseInstructions(instReader.next(), this.getClassName(), instNumber));
+//				}
+				instReader.close();
+				String neural = "";
+				if (insts != null) {
+					for(int i = 0; i < insts.size(); i++) {
+						neural = neural + "try {"+ insts.get(i).getInstruction() +"}catch(Exception e){}";
+					}
+				}
+
+				belief.setNeuralPath(neural);
 				lineReader.close();
 				tagReader.close();
 				for (int i = 0; i < belief.getTags().size(); i++) {
@@ -154,6 +181,73 @@ public class BeliefConnector {
 		reader.close();
 		}
 		return beliefOutput;
+	}
+	
+	//Parse instructions from source string
+	@SuppressWarnings("null")
+	public List<Instruction> parseInstructions(String source, String classNameIn, int instNumIn, int codeBlockIn){
+		List<Instruction> decodedInst = new ArrayList<Instruction>();
+		Scanner instReader = new Scanner(source);
+		instReader.useDelimiter(";/");
+		while (instReader.hasNext()) {
+			instReader.useDelimiter(";/");
+			Instruction begInst = new Instruction();
+			begInst.setParentClass(classNameIn);
+			begInst.setInstructionNumber(instNumIn);
+			begInst.setInstruction("try {");
+			decodedInst.add(begInst);
+			instNumIn++;
+			String test = instReader.next();
+			System.out.println("Test: " + test);
+			Instruction inst = new Instruction();
+			inst.setParentClass(classNameIn);
+			inst.setInstructionNumber(instNumIn); //?
+			if (test.endsWith(":")) {
+				//a normal instruction was found
+				inst.setInstruction(test.substring(0, test.length() - 1));
+				decodedInst.add(inst);
+				instNumIn++;
+				Instruction endEndInst = new Instruction();
+				endEndInst.setInstruction("} catch (Exception e){}");
+				endEndInst.setParentClass(classNameIn);
+				endEndInst.setInstructionNumber(instNumIn);
+				decodedInst.add(endEndInst);
+				instNumIn++;
+				
+			} else if (test.endsWith("/" + codeBlockIn)){
+				//a subcode block was found
+				inst.setInstruction(test.substring(0, test.length() - 2));
+				instNumIn++;
+				instReader.useDelimiter("/" + codeBlockIn + ";/");
+				if (instReader.hasNext()) {
+					String subcode = instReader.next();
+					subcode = subcode.substring(2, subcode.length() - 1);
+					System.out.println("Subcode: " + subcode);
+					inst.setSubCodeBlock(subcode);
+					decodedInst.add(inst);
+					List<Instruction> subDecodedInst = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
+					decodedInst.addAll(subDecodedInst);
+					instNumIn = instNumIn + subDecodedInst.size();
+					Instruction endInst = new Instruction();
+					endInst.setInstruction("}");
+					endInst.setParentClass(classNameIn);
+					endInst.setInstructionNumber(instNumIn);
+					decodedInst.add(endInst);
+					instNumIn++;
+					Instruction endEndInst = new Instruction();
+					endEndInst.setInstruction("} catch (Exception e){}");
+					endEndInst.setParentClass(classNameIn);
+					endEndInst.setInstructionNumber(instNumIn);
+					decodedInst.add(endEndInst);
+					instNumIn++;
+				}
+			} else {
+				//error
+			}
+		}
+			
+		instReader.close();	
+		return decodedInst;
 	}
 		//select belief with the highest total confidence level
 	public void updateNeuralToHighestConf(LinkedList<BeliefConnector> beliefOutput, LinkedList<String> tagsIn) {
@@ -185,13 +279,22 @@ public class BeliefConnector {
 	//main method is for testing
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException{
 		BeliefConnector test = new BeliefConnector();
-		LinkedList<String> tagsIn = new LinkedList<String>();
-		tagsIn.add("Rect");
-		tagsIn.add("Alpacka");
-		tagsIn.add("TestingExtra");
-		test.updateNeuralToHighestConf(test.retrieveBeliefs(tagsIn), tagsIn);
-		System.out.println("Neural: " + test.getNeuralPath());
-		test.Fire("Behavior");
+//		LinkedList<String> tagsIn = new LinkedList<String>();
+//		tagsIn.add("Rect");
+//		tagsIn.add("Alpacka");
+//		tagsIn.add("TestingExtra");
+//		test.updateNeuralToHighestConf(test.retrieveBeliefs(tagsIn), tagsIn);
+//		System.out.println("Neural: " + test.getNeuralPath());
+//		test.Fire("Behavior");
+		String source = "if(test == 1){/0;/test = 2;:;/if(test == 2) {/1;/test = 3;:;/}/1;/}/0;/";
+		test.doneSubParsing = false;
+		List<Instruction> testInsts = test.parseInstructions(source, "EXAMPLECLASSNAME", 0, 0);
+		System.out.println(testInsts.size());
+		for (int i = 0; i < testInsts.size(); i++) {
+			System.out.println(testInsts.get(i).getParentClass() + testInsts.get(i).getInstructionNumber()
+					+ ": " + testInsts.get(i).getInstruction() + " | " + testInsts.get(i).getSubCodeBlock());
+		}
+		
 	}
 	
 	//Neural Pathway Fire (Execution of belief based on stimuli)

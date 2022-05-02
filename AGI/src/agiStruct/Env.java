@@ -5,8 +5,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.time.*;
-import java.time.temporal.ChronoUnit;
-import java.util.Set;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -43,7 +42,7 @@ public class Env {
 	Double currentCpuUsage;
 	
 	//Error Locations
-	Set<String, int> errorLocations;
+	List<Instruction> errorLocations;
 	
 	public Env() {
 		
@@ -61,9 +60,19 @@ public class Env {
 		String tagsRecursivelyCalledVar = "String tagsRecursivelyCalled = \"\";";
 		String calendarVar = "java.time.LocalDateTime calendar = java.time.LocalDateTime.parse(\"" + this.getCalendar().toString() + "\");";
 		String currentCpuUsageVar = "Double currentCpuUsage = " + this.getCurrentCpuUsage() + ";";
+		String errorLocationsVar ="java.util.List<agiStruct.Instruction> currentErrorLocations;";
+		if (errorLocations != null) {
+			for (int i = 0; i < errorLocations.size(); i++) {
+				errorLocationsVar = errorLocationsVar + "agiStruct.Instruction inst" + i + " = new agiStruct.Instruction(";
+				errorLocationsVar = errorLocationsVar + errorLocations.get(i).getParentClass();
+				errorLocationsVar = errorLocationsVar + errorLocations.get(i).getInstructionNumber();
+				errorLocationsVar = errorLocationsVar + errorLocations.get(i).getInstruction();
+				errorLocationsVar = errorLocationsVar + "currentErrorLocations.add(inst" + i + ")";
+			}
+		}
 		String envVars = mousePointVar + leftMousePressedVar + middleMousePressedVar + rightMousePressedVar 
 				+ keyPressedVar + numOfMouseButtonsVar + currentDisplayInitVar + calendarVar 
-				+ currentCpuUsageVar + tagsRecursivelyCalledVar;
+				+ currentCpuUsageVar + errorLocationsVar + tagsRecursivelyCalledVar;
 		return envVars;
 	}
 	
@@ -78,11 +87,25 @@ public class Env {
 				"prevDisplay = javax.imageio.ImageIO.read(new File(\"/home/agi/Desktop/eclipse/AGI/bin/CurrentDisplayVisuals.jpg\"));}catch(Exception e){}" ;
 		String tagsRecursivelyCalledVar = "String prevTagsRecursivelyCalled = \"\";";
 		String calendarVar = "java.time.LocalDateTime prevCalendar = java.time.LocalDateTime.parse(\"" + this.getCalendar().toString() + "\");";
+		String errorLocationsVar ="java.util.List<agiStruct.Instruction> prevErrorLocations;";
+		if (errorLocations != null) {
+			for (int i = 0; i < errorLocations.size(); i++) {
+				errorLocationsVar = errorLocationsVar + "agiStruct.Instruction inst" + i + " = new agiStruct.Instruction(";
+				errorLocationsVar = errorLocationsVar + errorLocations.get(i).getParentClass();
+				errorLocationsVar = errorLocationsVar + errorLocations.get(i).getInstructionNumber();
+				errorLocationsVar = errorLocationsVar + errorLocations.get(i).getInstruction();
+				errorLocationsVar = errorLocationsVar + "prevErrorLocations.add(inst" + i + ")";
+			}
+		}
 		String currentCpuUsageVar = "Double prevCpuUsage = " + this.getCurrentCpuUsage() + ";";
 		String prevEnvVars = mousePointVar + leftMousePressedVar + middleMousePressedVar + rightMousePressedVar 
 				+ keyPressedVar + numOfMouseButtonsVar + currentDisplayInitVar + calendarVar
-				+ currentCpuUsageVar + tagsRecursivelyCalledVar;
+				+ currentCpuUsageVar + errorLocationsVar + tagsRecursivelyCalledVar;
 		return prevEnvVars;
+	}
+	
+	public List<Instruction> getErrorLocations(){
+		return this.errorLocations;
 	}
 	
 	public Double getCurrentCpuUsage() {
@@ -129,6 +152,12 @@ public class Env {
 		return calendar;
 	}
 	//sets
+	public void setErrorLocations(List<Instruction> instIn) {
+		this.errorLocations = instIn;
+	}
+	public void addErrorLocation(Instruction instIn) {
+		this.errorLocations.add(instIn);
+	}
 	public void setCurrentCpuUsage(Double usageIn) {
 		this.currentCpuUsage = usageIn;
 	}
@@ -239,6 +268,12 @@ public class Env {
 		}
 		output += this.getCalendar().toString() + ",";
 		output += this.getCurrentCpuUsage().toString() + ",";
+		if (this.errorLocations != null) {
+			for (int i = 0; i < this.getErrorLocations().size(); i++) {
+				output += this.getErrorLocations().get(i).toString();
+				output += ",";
+			}
+		}
 		return output;
 	}
 }
