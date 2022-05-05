@@ -1,58 +1,50 @@
 Goal:100,,,CoreBelief1StayAlive,,,
 
-//is goal complete
+long seconds = java.time.temporal.ChronoUnit.SECONDS.between(prevCalendar, calendar);eNdBrEaK
+System.out.println("Time since last iteration: " + seconds);eNdBrEaK
 
-long seconds = java.time.temporal.ChronoUnit.SECONDS.between(prevCalendar, calendar);
-System.out.println("Time since last iteration: " + seconds);
+if (seconds < 1)cblock0
+	goalEvalResult.setComplete(true);eNdBrEaK
+block0 else tblock0
+	goalEvalResult.setComplete(false);eNdBrEaK
+block0
 
-if (seconds < 1){
-	goalEvalResult.setComplete(true);
-} else {
-	goalEvalResult.setComplete(false);
-	
-}
-
-
-//how much progress was made
- int resultOutput = (int)seconds / 100;
- resultOutput = resultOutput * -1;
- if (goalEvalResult.getComplete()){
- 	resultOutput = resultOutput + 1;
- }
+ int resultOutput = (int)seconds / 100;eNdBrEaK
+ resultOutput = resultOutput * -1;eNdBrEaK
+ if (goalEvalResult.getComplete())block0
+ 	resultOutput = resultOutput + 1;eNdBrEaK
+block0
  
-  System.out.println("resultOutput: " + resultOutput);
-	goalEvalResult.setResult(resultOutput);
+  System.out.println("resultOutput: " + resultOutput);eNdBrEaK
+	goalEvalResult.setResult(resultOutput);eNdBrEaK
 		
 uuuuuGoal:100,,,CoreBelief2BeEfficientWithHardwareUsage,,,
 	
-
+    if (currentCpuUsage < 4)cblock0
+    	goalEvalResult.setComplete(true);eNdBrEaK
+    block0 else tblock0
+    	goalEvalResult.setComplete(false);eNdBrEaK
+    block0
     
-    //is goal complete (ignore NoSuchElementException error, will happen until we write out a goal eval
-    if (currentCpuUsage < 4){
-    	goalEvalResult.setComplete(true);
-    } else {
-    	goalEvalResult.setComplete(false);
-    }   
-    
-    //are we moving closer to goal
-    int resultOutput = (int)((prevCpuUsage - currentCpuUsage) * 3);
-    if (goalEvalResult.getComplete()){
-    	goalEvalResult.setResult(300);
-    } else {
-    	goalEvalResult.setResult(resultOutput);
-    }
- 	System.out.println("hardwareUsage result: " + resultOutput);
+    int resultOutput = (int)((prevCpuUsage - currentCpuUsage) * 3);eNdBrEaK
+    if (goalEvalResult.getComplete())cblock0
+    	goalEvalResult.setResult(300);eNdBrEaK
+    block0 else tblock0
+    	goalEvalResult.setResult(resultOutput);eNdBrEaK
+    block0
+ 	System.out.println("hardwareUsage result: " + resultOutput);eNdBrEaK
  	
  uuuuuGoal:100,,,CoreBelief3BeliefsShouldNotThrowErrors,,,
 	
 
-    
-    //is goal complete (ignore NoSuchElementException error, will happen until we write out a goal eval)
+	if (currentErrorLocations.size() == 0)cblock0
+		goalEvalResult.setComplete(true);eNdBrEaK
+	block0 else tblock0
+		goalEvalResult.setComplete(false);eNdBrEaK
+	block0
+    	
 
-    	goalEvalResult.setComplete(true);
-
-    
-    //are we moving closer to goal
-    //int resultOutput
-    	goalEvalResult.setResult(300);
+    int resultOutput = (prevErrorLocations.size() - currentErrorLocations.size()) * 100;eNdBrEaK
+    	
+    goalEvalResult.setResult(resultOutput);eNdBrEaK
 

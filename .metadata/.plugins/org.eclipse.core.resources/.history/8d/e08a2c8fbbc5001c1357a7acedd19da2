@@ -1,5 +1,0 @@
-package qt.util.lang;
-
-public class DynamicClassLoader {
-
-}

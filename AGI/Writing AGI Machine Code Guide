@@ -1,0 +1,25 @@
+Guide to writing AGI Code:
+
+Write java like normal except:
+
+After a semicolon add "end"   Ex: System.out.println("Test");end)
+
+After an if statement without any sort of else add "block" and the current layer of code instead of brackets
+								Ex: if (test == 1)block0
+										System.out.println("Test");end
+									block0
+									
+									
+									
+After an if statement with some sort of else replace opening brackets with "cblock#" (where # is the current
+	layer of code), "tcblock#" for the middle else ifs, "tblock#" for the final else
+	
+	
+								Ex: if (test == 1)cblock0
+										System.out.println("Test");end
+									block0 else if(test == 2)tcblock0
+										System.out.println("Test2");end
+									block0 else tblock0
+										System.out.println("Test3");end
+									block0
+		

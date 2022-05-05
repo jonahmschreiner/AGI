@@ -1,0 +1,14 @@
+Sense:40,,,TestClassName,,,Runtime run = Runtime.getRuntime();endString command = "touch /home/agi/Desktop/eclipse/AGI/bin/hahaha.java";endrun.exec(command);end	
+		int color = currentDisplay.getRGB(223, 1027);end
+	    int blue = color & 0xff;end
+	    int green = (color & 0xff00) >> 8;end
+	    int red = (color & 0xff0000) >> 16;end
+	    if (blue < 70 && green > 170 && red > 200)cblock0
+	    	tagsRecursivelyCalled = "Rect,";end
+		block0 else tblock0
+			tagsRecursivelyCalled = "Test,";end
+		block0
+		
+uuuuuRect:50 Alpacka:70,,,TestClassName2,,,Runtime run = Runtime.getRuntime();:;/String command = "touch /home/agi/Desktop/eclipse/AGI/bin/hohoho.java";:;/run.exec(command);:;/
+uuuuuTest:50 Alpacka:70,,,TestClassName3,,,Runtime run = Runtime.getRuntime();:;/
+String command = "rm /home/agi/Desktop/eclipse/AGI/bin/hohoho.java";run.exec(command);:;/

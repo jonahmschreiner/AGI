@@ -1,0 +1,5 @@
+Guide to writing AGI Code:
+
+Write java like normal except:
+
+After a semicolon add "end"   (Ex: System.out.println("Test");end)

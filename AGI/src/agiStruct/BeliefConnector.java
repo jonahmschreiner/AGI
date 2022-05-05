@@ -24,7 +24,6 @@ public class BeliefConnector {
 	private String envHardcodedVariables = "";
 	private String prevEnvHardcodedVariables = "";
 	private randomAction randActObj;
-	private boolean doneSubParsing;
 	public BeliefConnector (){
 	
 	}
@@ -153,18 +152,23 @@ public class BeliefConnector {
 				belief.setClassName(classNameIn);
 				//read in dynamic code, pipe it to instruction list and use that to generate the document
 					//instReader is looking through the belief's source code
-				Scanner instReader = new Scanner(lineReader.next());
-				instReader.useDelimiter(";");	
-				int instNumber = 0;
-				List<Instruction> insts = null;
+//				Scanner instReader = new Scanner(lineReader.next());
+//				instReader.useDelimiter("uuuuu");	
+//				int instNumber = 0;
+//				List<Instruction> insts = new ArrayList<Instruction>();
 //				while (instReader.hasNext()) {
-//					insts.addAll(parseInstructions(instReader.next(), this.getClassName(), instNumber));
+//					String next = instReader.next();
+//					
+//					if (instructions != null) {
+//						insts.addAll(instructions);
+//					}					
 //				}
-				instReader.close();
+				List<Instruction> instructions = parseInstructions(lineReader.next(), this.getClassName(), 0, 0);
+				//instReader.close();
 				String neural = "";
-				if (insts != null) {
-					for(int i = 0; i < insts.size(); i++) {
-						neural = neural + "try {"+ insts.get(i).getInstruction() +"}catch(Exception e){}";
+				if (instructions != null) {
+					for(int i = 0; i < instructions.size(); i++) {
+						neural = neural + instructions.get(i).getInstruction();
 					}
 				}
 
@@ -184,69 +188,196 @@ public class BeliefConnector {
 	}
 	
 	//Parse instructions from source string
-	@SuppressWarnings("null")
 	public List<Instruction> parseInstructions(String source, String classNameIn, int instNumIn, int codeBlockIn){
 		List<Instruction> decodedInst = new ArrayList<Instruction>();
 		Scanner instReader = new Scanner(source);
-		instReader.useDelimiter(";/");
+		instReader.useDelimiter("eNdBrEaK");
 		while (instReader.hasNext()) {
-			instReader.useDelimiter(";/");
-			Instruction begInst = new Instruction();
-			begInst.setParentClass(classNameIn);
-			begInst.setInstructionNumber(instNumIn);
-			begInst.setInstruction("try {");
-			decodedInst.add(begInst);
-			instNumIn++;
-			String test = instReader.next();
-			System.out.println("Test: " + test);
-			Instruction inst = new Instruction();
-			inst.setParentClass(classNameIn);
-			inst.setInstructionNumber(instNumIn); //?
-			if (test.endsWith(":")) {
-				//a normal instruction was found
-				inst.setInstruction(test.substring(0, test.length() - 1));
-				decodedInst.add(inst);
-				instNumIn++;
-				Instruction endEndInst = new Instruction();
-				endEndInst.setInstruction("} catch (Exception e){}");
-				endEndInst.setParentClass(classNameIn);
-				endEndInst.setInstructionNumber(instNumIn);
-				decodedInst.add(endEndInst);
+			String currentString = instReader.next();
+			int numOfLetters = 0;
+			int charLocation1 = 0;
+			while (numOfLetters == 0 && charLocation1 < currentString.length()) {
+				if (Character.isLetter(currentString.charAt(charLocation1))) {
+					numOfLetters++;
+				}
+				charLocation1++;
+			}
+			if (currentString == null || currentString.isEmpty() || numOfLetters == 0) {
+				instReader.close();
+				return decodedInst;
+			}
+			System.out.println("Current String: " + currentString);
+			if (currentString.substring(0, 5).equals("block") && currentString.length() < 8) {
+				break;
+			}
+		//	System.out.println("currentString:" + currentString);
+		
+			//determine the type of instruction
+			if (currentString.endsWith(";")) { //normal instruction
+				//add try
+				Instruction tryInst = new Instruction(classNameIn, instNumIn, "try {", null);
+				decodedInst.add(tryInst);
 				instNumIn++;
 				
-			} else if (test.endsWith("/" + codeBlockIn)){
-				//a subcode block was found
-				inst.setInstruction(test.substring(0, test.length() - 2));
+				//add instruction
+				Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
+				decodedInst.add(inst);
 				instNumIn++;
-				instReader.useDelimiter("/" + codeBlockIn + ";/");
-				if (instReader.hasNext()) {
-					String subcode = instReader.next();
-					subcode = subcode.substring(2, subcode.length() - 1);
-					System.out.println("Subcode: " + subcode);
-					inst.setSubCodeBlock(subcode);
-					decodedInst.add(inst);
-					List<Instruction> subDecodedInst = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
-					decodedInst.addAll(subDecodedInst);
-					instNumIn = instNumIn + subDecodedInst.size();
-					Instruction endInst = new Instruction();
-					endInst.setInstruction("}");
-					endInst.setParentClass(classNameIn);
-					endInst.setInstructionNumber(instNumIn);
-					decodedInst.add(endInst);
-					instNumIn++;
-					Instruction endEndInst = new Instruction();
-					endEndInst.setInstruction("} catch (Exception e){}");
-					endEndInst.setParentClass(classNameIn);
-					endEndInst.setInstructionNumber(instNumIn);
-					decodedInst.add(endEndInst);
-					instNumIn++;
-				}
-			} else {
-				//error
+				
+				//add catch
+				String catchString = "} catch (Exception e) {" + "}";
+				Instruction catchInst = new Instruction(classNameIn, instNumIn, catchString, null);
+				decodedInst.add(catchInst);
+				instNumIn++;
+			} else if(currentString.endsWith("tcblock" + codeBlockIn)) { //instruction with sub and no catch
+				//source = "if(test==6)cblock0endtest=5;endblock0else if(test==5)tcblock0endtest=8;endblock0"
+						//+ "elsetblock0endtest=9;endblock0";
+				//add instruction
+					//remove modifiers
+					int sizeToRemove = 8 + (codeBlockIn/10);
+					currentString = currentString.substring(sizeToRemove - 2, currentString.length() - sizeToRemove);
+				Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
+				decodedInst.add(inst);
+				instNumIn++;
+				
+				
+				//add open bracket
+				Instruction openInst = new Instruction(classNameIn, instNumIn, "{", null);
+				decodedInst.add(openInst);
+				instNumIn++;
+				
+				
+				//add subcode
+				instReader.useDelimiter("block" + codeBlockIn);
+				String subcode = instReader.next();
+					//remove modifiers
+					subcode = subcode.substring(3, subcode.length());
+				List<Instruction> subInsts = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
+				decodedInst.addAll(subInsts);
+					
+				//add close bracket
+				Instruction closeInst = new Instruction(classNameIn, instNumIn, "}", null);
+				decodedInst.add(closeInst);
+				instNumIn++;
+				
+				//switch delimiter back
+				instReader.useDelimiter("eNdBrEaK");
+			} else if(currentString.endsWith("cblock" + codeBlockIn)) { //instruction with sub and no catch
+				//add try
+				Instruction tryInst = new Instruction(classNameIn, instNumIn, "try {", null);
+				decodedInst.add(tryInst);
+				instNumIn++;
+				
+				
+				//add instruction
+					//remove modifiers
+					int sizeToRemove = 7 + (codeBlockIn/10);
+					currentString = currentString.substring(0, currentString.length() - sizeToRemove);
+				Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
+				decodedInst.add(inst);
+				instNumIn++;
+				
+				
+				//add open bracket
+				Instruction openInst = new Instruction(classNameIn, instNumIn, "{", null);
+				decodedInst.add(openInst);
+				instNumIn++;
+				
+
+				//add subcode
+				instReader.useDelimiter("block" + codeBlockIn);
+				String subcode = instReader.next();
+					//remove modifiers
+					subcode = subcode.substring(3, subcode.length());
+				List<Instruction> subInsts = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
+				decodedInst.addAll(subInsts);
+					
+				//add close bracket
+				Instruction closeInst = new Instruction(classNameIn, instNumIn, "}", null);
+				decodedInst.add(closeInst);
+				instNumIn++;
+				
+				//switch delimiter back
+				instReader.useDelimiter("eNdBrEaK");
+			} else if (currentString.endsWith("tblock" + codeBlockIn)){ //instruction with sub and no try
+				//add instruction
+				int sizeToRemove = 7 + (codeBlockIn/10);
+				currentString = currentString.substring(sizeToRemove - 1, currentString.length() - sizeToRemove);
+			Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
+			decodedInst.add(inst);
+			instNumIn++;
+				//add open bracket
+			Instruction openInst = new Instruction(classNameIn, instNumIn, "{", null);
+			decodedInst.add(openInst);
+			instNumIn++;
+				//add subcode
+			instReader.useDelimiter("block" + codeBlockIn);
+			String subcode = instReader.next();
+				//remove modifiers
+				subcode = subcode.substring(3, subcode.length());
+			List<Instruction> subInsts = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
+			decodedInst.addAll(subInsts);
+				//add close bracket
+			Instruction closeInst = new Instruction(classNameIn, instNumIn, "}", null);
+			decodedInst.add(closeInst);
+			instNumIn++;
+				//add catch
+				String catchString = "} catch (Exception e) {" + "}";
+				Instruction catchInst = new Instruction(classNameIn, instNumIn, catchString, null);
+				decodedInst.add(catchInst);
+				instNumIn++;
+				
+				//switch delimiter back
+				instReader.useDelimiter("eNdBrEaK");
+			} else if(currentString.endsWith("block" + codeBlockIn)) { //instruction with sub (if without else)
+				//add try
+				Instruction tryInst = new Instruction(classNameIn, instNumIn, "try {", null);
+				decodedInst.add(tryInst);
+				instNumIn++;
+				//add instruction
+				int sizeToRemove = 6 + (codeBlockIn/10);
+				currentString = currentString.substring(0, currentString.length() - sizeToRemove);
+			Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
+			decodedInst.add(inst);
+			instNumIn++;
+				//add open bracket
+				Instruction openInst = new Instruction(classNameIn, instNumIn, "{", null);
+				decodedInst.add(openInst);
+				instNumIn++;
+				
+				
+				//add subcode
+				instReader.useDelimiter("block" + codeBlockIn);
+				String subcode = instReader.next();
+					//remove modifiers
+					subcode = subcode.substring(3, subcode.length());
+				List<Instruction> subInsts = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
+				decodedInst.addAll(subInsts);
+				
+				
+				//add close bracket
+				Instruction closeInst = new Instruction(classNameIn, instNumIn, "}", null);
+				decodedInst.add(closeInst);
+				instNumIn++;
+				
+				
+				//add catch
+				String catchString = "} catch (Exception e) {" + "}";
+				Instruction catchInst = new Instruction(classNameIn, instNumIn, catchString, null);
+				decodedInst.add(catchInst);
+				instNumIn++;
+				
+				//switch delimiter back
+				instReader.useDelimiter("eNdBrEaK");
+			} else { //error
+				System.out.println("Code Block Error");
 			}
 		}
+		
+	
 			
-		instReader.close();	
+
+		instReader.close();
 		return decodedInst;
 	}
 		//select belief with the highest total confidence level
@@ -286,15 +417,33 @@ public class BeliefConnector {
 //		test.updateNeuralToHighestConf(test.retrieveBeliefs(tagsIn), tagsIn);
 //		System.out.println("Neural: " + test.getNeuralPath());
 //		test.Fire("Behavior");
-		String source = "if(test == 1){/0;/test = 2;:;/if(test == 2) {/1;/test = 3;:;/}/1;/}/0;/";
-		test.doneSubParsing = false;
+		test.setClassName("testClass");
+		//modifiers: c = no catch | t = no try|   block# = subcode block value  | end = instruction finisher
+		String source = "if(test==6)cblock0eNdBrEaKtest=5;eNdBrEaKblock0else if(test==5)tcblock0eNdBrEaKtest=8;eNdBrEaKblock0"
+				+ "elsetblock0eNdBrEaKtest=9;eNdBrEaKblock0";
+		//String source = "test=6;endtest=7;end";
+		//String source = "if(test==6)block0endtest=5;endblock0";
 		List<Instruction> testInsts = test.parseInstructions(source, "EXAMPLECLASSNAME", 0, 0);
-		System.out.println(testInsts.size());
-		for (int i = 0; i < testInsts.size(); i++) {
-			System.out.println(testInsts.get(i).getParentClass() + testInsts.get(i).getInstructionNumber()
-					+ ": " + testInsts.get(i).getInstruction() + " | " + testInsts.get(i).getSubCodeBlock());
-		}
 		
+		//printing out results to console
+//		System.out.println(testInsts.size());
+//		for (int i = 0; i < testInsts.size(); i++) {
+//			System.out.println(testInsts.get(i).getParentClass() + testInsts.get(i).getInstructionNumber()
+//					+ ": " + testInsts.get(i).getInstruction() + " | " + testInsts.get(i).getSubCodeBlock());
+//		}
+		
+		
+		//writing the code output to test file
+		String testSource2 = "";
+		for (int i = 0; i < testInsts.size(); i++) {
+			testSource2 = testSource2 + testInsts.get(i).getInstruction() + "\n";
+		}
+		String path = test.getClass().getProtectionDomain().getCodeSource().getLocation().toString();
+		path = path.substring(5);
+		File testSource = new File(path + test.className + ".java");
+		FileWriter writer = new FileWriter(testSource);
+		writer.write(testSource2);
+		writer.close();
 	}
 	
 	//Neural Pathway Fire (Execution of belief based on stimuli)
@@ -305,14 +454,24 @@ public class BeliefConnector {
 		File beliefSource = new File(path + this.className + ".java");
 		FileWriter writer = new FileWriter(beliefSource);
 		String pathVar = "String path = \"" + path + "\";";
+		String writeErrorsCode = "for (int i = 0; i < errorLocationsVar.size(); i++) {File contextSource"
+				+ "= new File(\"" + path + "contextSource.txt\"); FileWriter errorWriter = "
+						+ "new FileWriter(contextSource, true); "
+						+ "errorWriter.write(errorLocationsVar.get(i).getParentClass() "
+						+ "+ \", \" + errorLocationsVar.get(i).getInstructionNumber() + \", \" "
+						+ "+ errorLocationsVar.get(i).getInstruction());}";
 		//the line below is only for testing/reference purposes
 		//this.NeuralPath = "Runtime run = Runtime.getRuntime();String command = \"touch /home/agi/Desktop/eclipse/AGI/bin/hahaha.java\";run.exec(command);";
 		if (fireType.equals("Sense")) {
-			writer.write(this.BegMylein + this.envHardcodedVariables + pathVar + this.NeuralPath + this.SenseEndishMylein + this.EndMylein);
+			writer.write(this.BegMylein + this.envHardcodedVariables + pathVar + this.NeuralPath 
+					+ this.SenseEndishMylein + writeErrorsCode + this.EndMylein);
 		} else if (fireType.equals("Goal")){
-			writer.write(this.BegMylein + this.envHardcodedVariables + pathVar + this.prevEnvHardcodedVariables + this.Goal2ndBegMylein + this.NeuralPath + "goalEvalResult.setClassName(\""+ this.className +"\");" + this.GoalEndishMylein + this.EndMylein);
+			writer.write(this.BegMylein + this.envHardcodedVariables + pathVar 
+					+ this.prevEnvHardcodedVariables + this.Goal2ndBegMylein + this.NeuralPath 
+					+ "goalEvalResult.setClassName(\""+ this.className +"\");" + this.GoalEndishMylein 
+					+ writeErrorsCode + this.EndMylein);
 		} else {
-			writer.write(this.BegMylein + this.NeuralPath + this.EndMylein);
+			writer.write(this.BegMylein + this.NeuralPath + writeErrorsCode + this.EndMylein);
 		}
 		writer.close();
 		//System.out.println("About to compile");
