@@ -152,26 +152,16 @@ public class BeliefConnector {
 				belief.setClassName(classNameIn);
 				//read in dynamic code, pipe it to instruction list and use that to generate the document
 					//instReader is looking through the belief's source code
-//				Scanner instReader = new Scanner(lineReader.next());
-//				instReader.useDelimiter("uuuuu");	
-//				int instNumber = 0;
-//				List<Instruction> insts = new ArrayList<Instruction>();
-//				while (instReader.hasNext()) {
-//					String next = instReader.next();
-//					
-//					if (instructions != null) {
-//						insts.addAll(instructions);
-//					}					
-//				}
+
 				List<Instruction> instructions = parseInstructions(lineReader.next(), this.getClassName(), 0, 0);
-				//instReader.close();
 				String neural = "";
 				if (instructions != null) {
 					for(int i = 0; i < instructions.size(); i++) {
+						System.out.println("INST: " + instructions.get(i).getInstruction());
 						neural = neural + instructions.get(i).getInstruction();
 					}
 				}
-
+				//System.out.println("Neural: " + neural);
 				belief.setNeuralPath(neural);
 				lineReader.close();
 				tagReader.close();
@@ -190,10 +180,13 @@ public class BeliefConnector {
 	//Parse instructions from source string
 	public List<Instruction> parseInstructions(String source, String classNameIn, int instNumIn, int codeBlockIn){
 		List<Instruction> decodedInst = new ArrayList<Instruction>();
+		
 		Scanner instReader = new Scanner(source);
 		instReader.useDelimiter("eNdBrEaK");
 		while (instReader.hasNext()) {
 			String currentString = instReader.next();
+			
+			
 			int numOfLetters = 0;
 			int charLocation1 = 0;
 			while (numOfLetters == 0 && charLocation1 < currentString.length()) {
@@ -206,20 +199,30 @@ public class BeliefConnector {
 				instReader.close();
 				return decodedInst;
 			}
-			System.out.println("Current String: " + currentString);
 			if (currentString.substring(0, 5).equals("block") && currentString.length() < 8) {
 				break;
+			}
+			//remove excess shit
+			while (!Character.isLetterOrDigit(currentString.charAt(0))) {
+				currentString = currentString.substring(1);
+				static String fuck = "";
 			}
 		//	System.out.println("currentString:" + currentString);
 		
 			//determine the type of instruction
 			if (currentString.endsWith(";")) { //normal instruction
+				System.out.println("entered norm: " + codeBlockIn);
 				//add try
 				Instruction tryInst = new Instruction(classNameIn, instNumIn, "try {", null);
 				decodedInst.add(tryInst);
 				instNumIn++;
 				
 				//add instruction
+				
+				if (currentString.substring(0, 5).equals("block")) {
+					currentString = currentString.substring(6);
+				}
+				System.out.println("CURSTR: " + currentString);
 				Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
 				decodedInst.add(inst);
 				instNumIn++;
@@ -233,10 +236,12 @@ public class BeliefConnector {
 				//source = "if(test==6)cblock0endtest=5;endblock0else if(test==5)tcblock0endtest=8;endblock0"
 						//+ "elsetblock0endtest=9;endblock0";
 				//add instruction
+				System.out.println("entered tc");
 					//remove modifiers
 					int sizeToRemove = 8 + (codeBlockIn/10);
 					currentString = currentString.substring(sizeToRemove - 2, currentString.length() - sizeToRemove);
-				Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
+					System.out.println("CURSTR: " + currentString);
+					Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
 				decodedInst.add(inst);
 				instNumIn++;
 				
@@ -252,6 +257,11 @@ public class BeliefConnector {
 				String subcode = instReader.next();
 					//remove modifiers
 					subcode = subcode.substring(3, subcode.length());
+					//remove excess shit
+					while (!Character.isLetterOrDigit(subcode.charAt(0))) {
+						subcode = subcode.substring(1);
+					}
+					System.out.println("Subcode: " + subcode);
 				List<Instruction> subInsts = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
 				decodedInst.addAll(subInsts);
 					
@@ -264,6 +274,7 @@ public class BeliefConnector {
 				instReader.useDelimiter("eNdBrEaK");
 			} else if(currentString.endsWith("cblock" + codeBlockIn)) { //instruction with sub and no catch
 				//add try
+				System.out.println("entered cblock");
 				Instruction tryInst = new Instruction(classNameIn, instNumIn, "try {", null);
 				decodedInst.add(tryInst);
 				instNumIn++;
@@ -273,6 +284,7 @@ public class BeliefConnector {
 					//remove modifiers
 					int sizeToRemove = 7 + (codeBlockIn/10);
 					currentString = currentString.substring(0, currentString.length() - sizeToRemove);
+				System.out.println("CURSTR: " + currentString);
 				Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
 				decodedInst.add(inst);
 				instNumIn++;
@@ -288,7 +300,12 @@ public class BeliefConnector {
 				instReader.useDelimiter("block" + codeBlockIn);
 				String subcode = instReader.next();
 					//remove modifiers
-					subcode = subcode.substring(3, subcode.length());
+					subcode = subcode.substring(8, subcode.length());
+					//remove excess shit
+					while (!Character.isLetterOrDigit(subcode.charAt(0))) {
+						subcode = subcode.substring(1);
+					}
+					System.out.println("Subcode: " + subcode);
 				List<Instruction> subInsts = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
 				decodedInst.addAll(subInsts);
 					
@@ -301,9 +318,18 @@ public class BeliefConnector {
 				instReader.useDelimiter("eNdBrEaK");
 			} else if (currentString.endsWith("tblock" + codeBlockIn)){ //instruction with sub and no try
 				//add instruction
+				System.out.println("entered tblock");
 				int sizeToRemove = 7 + (codeBlockIn/10);
+				System.out.println("CURRRR: " + currentString);
 				currentString = currentString.substring(sizeToRemove - 1, currentString.length() - sizeToRemove);
-			Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
+				
+				//remove whitespace
+//				while (!Character.isLetterOrDigit(currentString.charAt(0)) || ) {
+//					currentString.substring(1);
+//				}
+				
+				System.out.println("CURSTR: " + currentString);
+				Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
 			decodedInst.add(inst);
 			instNumIn++;
 				//add open bracket
@@ -312,9 +338,15 @@ public class BeliefConnector {
 			instNumIn++;
 				//add subcode
 			instReader.useDelimiter("block" + codeBlockIn);
+			System.out.println("Code Block: " + codeBlockIn);
 			String subcode = instReader.next();
 				//remove modifiers
-				subcode = subcode.substring(3, subcode.length());
+				subcode = subcode.substring(8, subcode.length());
+				//remove excess shit
+				while (!Character.isLetterOrDigit(subcode.charAt(0))) {
+					subcode = subcode.substring(1);
+				}
+				System.out.println("Subcode2: " + subcode);
 			List<Instruction> subInsts = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
 			decodedInst.addAll(subInsts);
 				//add close bracket
@@ -330,6 +362,7 @@ public class BeliefConnector {
 				//switch delimiter back
 				instReader.useDelimiter("eNdBrEaK");
 			} else if(currentString.endsWith("block" + codeBlockIn)) { //instruction with sub (if without else)
+				System.out.println("entered just block");
 				//add try
 				Instruction tryInst = new Instruction(classNameIn, instNumIn, "try {", null);
 				decodedInst.add(tryInst);
@@ -337,6 +370,7 @@ public class BeliefConnector {
 				//add instruction
 				int sizeToRemove = 6 + (codeBlockIn/10);
 				currentString = currentString.substring(0, currentString.length() - sizeToRemove);
+			System.out.println("CURSTR: " + currentString);
 			Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
 			decodedInst.add(inst);
 			instNumIn++;
@@ -350,7 +384,12 @@ public class BeliefConnector {
 				instReader.useDelimiter("block" + codeBlockIn);
 				String subcode = instReader.next();
 					//remove modifiers
-					subcode = subcode.substring(3, subcode.length());
+					subcode = subcode.substring(8, subcode.length());
+					//remove excess shit
+					while (!Character.isLetterOrDigit(subcode.charAt(0))) {
+						subcode = subcode.substring(1);
+					}
+					System.out.println("Subcode: " + subcode);
 				List<Instruction> subInsts = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
 				decodedInst.addAll(subInsts);
 				
@@ -419,8 +458,8 @@ public class BeliefConnector {
 //		test.Fire("Behavior");
 		test.setClassName("testClass");
 		//modifiers: c = no catch | t = no try|   block# = subcode block value  | end = instruction finisher
-		String source = "if(test==6)cblock0eNdBrEaKtest=5;eNdBrEaKblock0else if(test==5)tcblock0eNdBrEaKtest=8;eNdBrEaKblock0"
-				+ "elsetblock0eNdBrEaKtest=9;eNdBrEaKblock0";
+		String source = "System.out.println(\"Test\");eNdBrEaKif (test==6)cblock0eNdBrEaKtest=5;eNdBrEaKblock0else if(test==5)tcblock0eNdBrEaKtest=8;eNdBrEaKblock0"
+				+ "elsetblock0eNdBrEaKtest=9;eNdBrEaKblock0test=5;eNdBrEaK";
 		//String source = "test=6;endtest=7;end";
 		//String source = "if(test==6)block0endtest=5;endblock0";
 		List<Instruction> testInsts = test.parseInstructions(source, "EXAMPLECLASSNAME", 0, 0);

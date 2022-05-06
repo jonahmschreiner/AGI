@@ -1,8 +1,11 @@
 try {
-if(test==6)
+System.out.println("Test");
+} catch (Exception e) {}
+try {
+if (test==6)
 {
 try {
-BrEaKtest=5;
+test=5;
 } catch (Exception e) {}
 }
 else if(test==5)
@@ -14,7 +17,10 @@ BrEaKtest=8;
 else
 {
 try {
-BrEaKtest=9;
+test=9;
 } catch (Exception e) {}
 }
+} catch (Exception e) {}
+try {
+test=5;
 } catch (Exception e) {}

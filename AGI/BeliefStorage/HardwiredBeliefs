@@ -3,15 +3,15 @@ Goal:100,,,CoreBelief1StayAlive,,,
 long seconds = java.time.temporal.ChronoUnit.SECONDS.between(prevCalendar, calendar);eNdBrEaK
 System.out.println("Time since last iteration: " + seconds);eNdBrEaK
 
-if (seconds < 1)cblock0
+if (seconds < 1)cblock0eNdBrEaK
 	goalEvalResult.setComplete(true);eNdBrEaK
-block0 else tblock0
+block0 else tblock0eNdBrEaK
 	goalEvalResult.setComplete(false);eNdBrEaK
 block0
 
  int resultOutput = (int)seconds / 100;eNdBrEaK
  resultOutput = resultOutput * -1;eNdBrEaK
- if (goalEvalResult.getComplete())block0
+ if (goalEvalResult.getComplete())block0eNdBrEaK
  	resultOutput = resultOutput + 1;eNdBrEaK
 block0
  
@@ -20,16 +20,16 @@ block0
 		
 uuuuuGoal:100,,,CoreBelief2BeEfficientWithHardwareUsage,,,
 	
-    if (currentCpuUsage < 4)cblock0
+    if (currentCpuUsage < 4)cblock0eNdBrEaK
     	goalEvalResult.setComplete(true);eNdBrEaK
-    block0 else tblock0
+    block0 else tblock0eNdBrEaK
     	goalEvalResult.setComplete(false);eNdBrEaK
     block0
     
     int resultOutput = (int)((prevCpuUsage - currentCpuUsage) * 3);eNdBrEaK
-    if (goalEvalResult.getComplete())cblock0
+    if (goalEvalResult.getComplete())cblock0eNdBrEaK
     	goalEvalResult.setResult(300);eNdBrEaK
-    block0 else tblock0
+    block0 else tblock0eNdBrEaK
     	goalEvalResult.setResult(resultOutput);eNdBrEaK
     block0
  	System.out.println("hardwareUsage result: " + resultOutput);eNdBrEaK
@@ -37,9 +37,9 @@ uuuuuGoal:100,,,CoreBelief2BeEfficientWithHardwareUsage,,,
  uuuuuGoal:100,,,CoreBelief3BeliefsShouldNotThrowErrors,,,
 	
 
-	if (currentErrorLocations.size() == 0)cblock0
+	if (currentErrorLocations.size() == 0)cblock0eNdBrEaK
 		goalEvalResult.setComplete(true);eNdBrEaK
-	block0 else tblock0
+	block0 else tblock0eNdBrEaK
 		goalEvalResult.setComplete(false);eNdBrEaK
 	block0
     	

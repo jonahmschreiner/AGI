@@ -3,9 +3,9 @@ Sense:40,,,TestClassName,,,Runtime run = Runtime.getRuntime();eNdBrEaKString com
 	    int blue = color & 0xff;eNdBrEaK
 	    int green = (color & 0xff00) >> 8;eNdBrEaK
 	    int red = (color & 0xff0000) >> 16;eNdBrEaK
-	    if (blue < 70 && green > 170 && red > 200)cblock0
+	    if (blue < 70 && green > 170 && red > 200)cblock0eNdBrEaK
 	    	tagsRecursivelyCalled = "Rect,";eNdBrEaK
-		block0 else tblock0
+		block0 else tblock0eNdBrEaK
 			tagsRecursivelyCalled = "Test,";eNdBrEaK
 		block0
 		
