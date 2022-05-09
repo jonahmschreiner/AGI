@@ -1,0 +1,23 @@
+package agiStruct;
+
+public class testingThis {
+	public static void main(String[] args) {
+		testingThis test = new testingThis();
+		test.test1(2);
+	}
+	public testingThis() {
+		
+	}
+	public void test1(int in) {
+		System.out.println("before");
+		if (in > 1) {
+			return;
+		}
+
+		System.out.println("after");
+	}
+	
+	public void test2() {
+		
+	}
+}

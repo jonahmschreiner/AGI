@@ -1,0 +1,21 @@
+/home/agi/Desktop/eclipse/AGI/bin/testClass.java:1: error: cannot find symbol
+import java.io.*;import java.util.*;public class testClass{ public testClass() throws Exception {  String path = "/home/agi/Desktop/eclipse/AGI/bin/";for (int i = 0; i < currentErrorLocations.size(); i++) {File contextSource= new File("/home/agi/Desktop/eclipse/AGI/bin/contextSource.txt"); FileWriter errorWriter = new FileWriter(contextSource, true); errorWriter.write(currentErrorLocations.get(i).getParentClass() + ", " + currentErrorLocations.get(i).getInstructionNumber() + ", " + currentErrorLocations.get(i).getInstruction());}} }
+                                                                                                                                                                          ^
+  symbol:   variable currentErrorLocations
+  location: class testClass
+/home/agi/Desktop/eclipse/AGI/bin/testClass.java:1: error: cannot find symbol
+import java.io.*;import java.util.*;public class testClass{ public testClass() throws Exception {  String path = "/home/agi/Desktop/eclipse/AGI/bin/";for (int i = 0; i < currentErrorLocations.size(); i++) {File contextSource= new File("/home/agi/Desktop/eclipse/AGI/bin/contextSource.txt"); FileWriter errorWriter = new FileWriter(contextSource, true); errorWriter.write(currentErrorLocations.get(i).getParentClass() + ", " + currentErrorLocations.get(i).getInstructionNumber() + ", " + currentErrorLocations.get(i).getInstruction());}} }
+                                                                                                                                                                                                                                                                                                                                                                                   ^
+  symbol:   variable currentErrorLocations
+  location: class testClass
+/home/agi/Desktop/eclipse/AGI/bin/testClass.java:1: error: cannot find symbol
+import java.io.*;import java.util.*;public class testClass{ public testClass() throws Exception {  String path = "/home/agi/Desktop/eclipse/AGI/bin/";for (int i = 0; i < currentErrorLocations.size(); i++) {File contextSource= new File("/home/agi/Desktop/eclipse/AGI/bin/contextSource.txt"); FileWriter errorWriter = new FileWriter(contextSource, true); errorWriter.write(currentErrorLocations.get(i).getParentClass() + ", " + currentErrorLocations.get(i).getInstructionNumber() + ", " + currentErrorLocations.get(i).getInstruction());}} }
+                                                                                                                                                                                                                                                                                                                                                                                                                                          ^
+  symbol:   variable currentErrorLocations
+  location: class testClass
+/home/agi/Desktop/eclipse/AGI/bin/testClass.java:1: error: cannot find symbol
+import java.io.*;import java.util.*;public class testClass{ public testClass() throws Exception {  String path = "/home/agi/Desktop/eclipse/AGI/bin/";for (int i = 0; i < currentErrorLocations.size(); i++) {File contextSource= new File("/home/agi/Desktop/eclipse/AGI/bin/contextSource.txt"); FileWriter errorWriter = new FileWriter(contextSource, true); errorWriter.write(currentErrorLocations.get(i).getParentClass() + ", " + currentErrorLocations.get(i).getInstructionNumber() + ", " + currentErrorLocations.get(i).getInstruction());}} }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ^
+  symbol:   variable currentErrorLocations
+  location: class testClass
+4 errors

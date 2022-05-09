@@ -44,7 +44,15 @@ uuuuuGoal:100,,,CoreBelief2BeEfficientWithHardwareUsage,,,
 	block0
     	
 
-    int resultOutput = (prevErrorLocations.size() - currentErrorLocations.size()) * 100;eNdBrEaK
-    	
+    int resultOutput = 0;eNdBrEaK
+    if (goalEvalResult.getComplete())cblock0eNdBrEaK
+    	resultOutput = 20;eNdBrEaK
+	block0 else if (currentErrorLocations.get(0).getInstructionNumber() != prevErrorLocations.get(0).getInstructionNumber())tcblock0eNdBrEaK
+		resultOutput = 200;eNdBrEaK
+	block0 else tblock0eNdBrEaK
+		resultOutput = -100;eNdBrEaK
+	block0
+     
+    System.out.println("ShouldNotThrowErrors result: " + resultOutput);eNdBrEaK
     goalEvalResult.setResult(resultOutput);eNdBrEaK
 

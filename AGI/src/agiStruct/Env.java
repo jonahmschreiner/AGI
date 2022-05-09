@@ -60,7 +60,7 @@ public class Env {
 		String tagsRecursivelyCalledVar = "String tagsRecursivelyCalled = \"\";";
 		String calendarVar = "java.time.LocalDateTime calendar = java.time.LocalDateTime.parse(\"" + this.getCalendar().toString() + "\");";
 		String currentCpuUsageVar = "Double currentCpuUsage = " + this.getCurrentCpuUsage() + ";";
-		String errorLocationsVar ="java.util.List<agiStruct.Instruction> currentErrorLocations;";
+		String errorLocationsVar ="java.util.List<agiStruct.Instruction> currentErrorLocations = new ArrayList<agiStruct.Instruction>();";
 		String errorLocationNumVar = "int errorLocationNum = 0;";
 		
 		if (errorLocations != null) {
@@ -89,7 +89,7 @@ public class Env {
 				"prevDisplay = javax.imageio.ImageIO.read(new File(\"/home/agi/Desktop/eclipse/AGI/bin/CurrentDisplayVisuals.jpg\"));}catch(Exception e){}" ;
 		String tagsRecursivelyCalledVar = "String prevTagsRecursivelyCalled = \"\";";
 		String calendarVar = "java.time.LocalDateTime prevCalendar = java.time.LocalDateTime.parse(\"" + this.getCalendar().toString() + "\");";
-		String errorLocationsVar ="java.util.List<agiStruct.Instruction> prevErrorLocations;";
+		String errorLocationsVar ="java.util.List<agiStruct.Instruction> prevErrorLocations = new ArrayList<agiStruct.Instruction>();";
 		if (errorLocations != null) {
 			for (int i = 0; i < errorLocations.size(); i++) {
 				errorLocationsVar = errorLocationsVar + "agiStruct.Instruction inst" + i + " = new agiStruct.Instruction(";
