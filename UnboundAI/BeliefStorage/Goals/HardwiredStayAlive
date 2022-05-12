@@ -1,0 +1,15 @@
+Goal:100,,,
+long seconds = java.time.temporal.ChronoUnit.SECONDS.between(prevCalendar, calendar);
+System.out.println("Time since last iteration: " + seconds);
+if (seconds < 1){
+goalEvalResult.setComplete(true);
+} else {
+goalEvalResult.setComplete(false);
+}
+int resultOutput = (int)seconds / 100;
+resultOutput = resultOutput * -1;
+if(goalEvalResult.complete){
+resultOutput = resultOutput + 1;
+}
+System.out.println("resultOutput: " + resultOutput);
+goalEvalResult.setResult(resultOutput);

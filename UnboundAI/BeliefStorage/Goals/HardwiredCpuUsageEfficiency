@@ -1,0 +1,13 @@
+Goal:100,,,
+if (currentCpuUsage < 4){
+goalEvalResult.setComplete(true);
+} else {
+goalEvalResult.setComplete(false);
+}
+int resultOutput = (int)((prevCpuUsage - currentCpuUsage) * 3);
+if (goalEvalResult.complete){
+goalEvalResult.setResult(300);
+} else {
+goalEvalResult.setResult(resultOutput);
+}
+System.out.println("hardwareUsage result: " + resultOutput);

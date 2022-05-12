@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -140,7 +141,7 @@ public class LLF {
 					Double cpuUsage = Double.valueOf(satScanner.next());
 					
 					//Form Error Locations
-					List<Instruction> errors = null;
+					List<Instruction> errors = new ArrayList<Instruction>();
 					while (satScanner.hasNext()) {
 						String instructionObj = satScanner.next();
 						if (instructionObj.equals("ENDERRORS")) {
@@ -153,8 +154,9 @@ public class LLF {
 						String instructionCode = instScan.next();
 						
 						//
-						
-						Instruction inst = new Instruction(parentClass, instNum, instructionCode, null);
+						System.out.println("Current Error: " + parentClass + "," + instNum
+								+ "," + instructionCode);
+						Instruction inst = new Instruction(parentClass, instNum, instructionCode, "");
 						errors.add(inst);
 						instScan.close();
 					}
@@ -361,10 +363,26 @@ public class LLF {
 			String command = "rm " + path + "tagsCalled.java";
 			run.exec(command);
 			
-			//output the executed belief and currentEnv to context file for use in the next iteration
+			
+			//read in current errors
+			File errorFile = new File(path + "errorContext.txt");
+			Scanner errorFileScanner = new Scanner(errorFile);
+			String errorInput = "";
+			while (errorFileScanner.hasNext()) {
+				errorInput = errorInput + errorFileScanner.nextLine();
+			}
+			
+			
+			//output the executed belief, currentEnv and errors to context file for use in the next iteration
 			FileWriter writer2 = new FileWriter(contextSource, true);
 			writer2.write("," + init.getClassName() + "," + currentEnv.toString());
+			writer2.write(errorInput);
+			writer2.write("ENDERRORS");
 			writer2.close();
+			
+
+			
+			errorFileScanner.close();
 			
 			//write currentDisplay to prevDisplay for use in next iteration
 			File prevDisplayOut = new File("/home/agi/Desktop/eclipse/AGI/bin/PrevDisplayVisuals.jpg");

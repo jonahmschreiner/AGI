@@ -225,8 +225,7 @@ public class BeliefConnector {
 		Scanner instReader = new Scanner(source);
 		instReader.useDelimiter("eNdBrEaK");
 		while (instReader.hasNext()) {
-			String currentString = instReader.next();
-			
+			String currentString = instReader.next();			
 			
 			int numOfLetters = 0;
 			int charLocation1 = 0;
@@ -247,17 +246,10 @@ public class BeliefConnector {
 			while (!Character.isLetterOrDigit(currentString.charAt(0))) {
 				currentString = currentString.substring(1);
 			}
-		//	System.out.println("currentString:" + currentString);
 		
 			//determine the type of instruction
 			if (currentString.endsWith(";")) { //normal instruction
-				//System.out.println("entered norm: " + codeBlockIn);
-				
-				//check if this is a declaration
-				
-					//scan current string to find the first word separated by a space, the second word,
-							//and equals
-				//Ex:    String example = "";
+
 				
 				//check for and remove block# leftovers
 				if (currentString.substring(0, 5).equals("block")) {
@@ -267,102 +259,7 @@ public class BeliefConnector {
 				while (!isAsciiPrintable(currentString.charAt(0)) || currentString.charAt(0) == ' ') {
 					currentString = currentString.substring(1);
 				}
-				
-				
-					//System.out.println("CURRENTNORMALINSTSTRING: " + currentString);
-					Scanner decScan = new Scanner(currentString);
-					decScan.useDelimiter(" ");
 
-					if (decScan.hasNext()) {
-						//get data type word
-						String firstWord = decScan.next();
-						//remove excess spacing
-						while (!isAsciiPrintable(firstWord.charAt(0)) || firstWord.charAt(0) == ' ') {
-							firstWord = firstWord.substring(1);
-						}
-//						while (!isAsciiPrintable(firstWord.charAt(firstWord.length() - 1)) || firstWord.charAt(firstWord.length() - 1) == ' ') {
-//							firstWord = firstWord.substring(0, firstWord.length() - 1);
-//						}
-						//System.out.println("FWMOD: " + firstWord);
-						//get variable name
-						if (decScan.hasNext()) {
-							String secondWord = decScan.next();
-							try {
-							if (!secondWord.equals(" ")) {
-								//System.out.println("SWUNMOD: " + secondWord);
-								while (!Character.isLetter(secondWord.charAt(0))) {
-									secondWord = secondWord.substring(1);
-								}
-//								while (!Character.isLetter(secondWord.charAt(secondWord.length() - 1))) {
-//									secondWord = secondWord.substring(0, secondWord.length() - 1);
-//								}
-								
-								if (decScan.hasNext()) {
-									if (decScan.next().equals("=")) {
-										//the instruction has been identified as a declaration
-									//	System.out.println("SWMOD: " + secondWord);
-										//create a default declaration
-										String defaultDec = firstWord + " " + secondWord + " = ";
-										if (firstWord.equals("int")) {
-											defaultDec = defaultDec + "0;";
-										} else if (firstWord.equals("String")) {
-											defaultDec = defaultDec + "\"\";";
-										} else if (firstWord.equals("char")) {
-											defaultDec = defaultDec + "\'\';";
-										} else if (firstWord.equals("double")) {
-											defaultDec = defaultDec + "0;";
-										} else if (firstWord.equals("long")) {
-											defaultDec = defaultDec + "0;";
-										} else if (firstWord.equals("short")) {
-											defaultDec = defaultDec + "0;";
-										} else if (firstWord.equals("byte")) {
-											defaultDec = defaultDec + "0;";
-										} else if (firstWord.equals("float")) {
-											defaultDec = defaultDec + "0;";
-										} else if (firstWord.equals("boolean")) {
-											defaultDec = defaultDec + "false;";
-										} else if (firstWord.equals("Runtime")){
-											defaultDec = defaultDec + "Runtime.getRuntime();";
-										} else {
-											defaultDec = defaultDec + "new "+ firstWord + "();";
-										}
-										//add the default dec inside a try catch
-										Instruction tryInst = new Instruction(classNameIn, instNumIn, "try {", null);
-										decodedInst.add(tryInst);
-										instNumIn++;
-										
-										Instruction defInst = new Instruction(classNameIn, instNumIn, defaultDec, null);
-										decodedInst.add(defInst);
-										instNumIn++;
-										String catchString = "} catch (Exception e) { agiStruct.Instruction errorInst = new agiStruct.Instruction(\"" 
-												+ defInst.getParentClass() + "\", " + defInst.getInstructionNumber() + ", \"" + sanitize(defInst.getInstruction()) + "\", \""
-												+ sanitize(defInst.getSubCodeBlock()) + "\"); currentErrorLocations.add(errorInst);for (int i = 0; i < currentErrorLocations.size(); i++) {File contextSource= new File(path + \"contextSource.txt\"); FileWriter errorWriter = new FileWriter(contextSource, true);errorWriter.write(currentErrorLocations.get(i).getParentClass() + \", \" + currentErrorLocations.get(i).getInstructionNumber() + \", \" + currentErrorLocations.get(i).getInstruction() + \", \" + \"ENDERRORS\");}return;\n}";
-										Instruction catchInst = new Instruction(classNameIn, instNumIn, catchString, null);
-										decodedInst.add(catchInst);
-										instNumIn++;
-										//add the default dec without a try or catch
-										Instruction defInstSolo = new Instruction(classNameIn, instNumIn, defaultDec, null);
-										decodedInst.add(defInstSolo);
-										instNumIn++;
-										//update current instr to update the default rather than declare (remove first data type)
-										currentString = currentString.substring(firstWord.length() + 1);
-									}
-								}
-								
-							}
-							}catch(Exception e) {
-						//		System.out.println("not a declaration (found by error)");
-							}
-						}
-
-					}
-				decScan.close();
-				
-				
-				//add try
-				Instruction tryInst = new Instruction(classNameIn, instNumIn, "try {", null);
-				decodedInst.add(tryInst);
-				instNumIn++;
 				
 				//add instruction
 				if (currentString.substring(0, 5).equals("block")) {
@@ -373,152 +270,7 @@ public class BeliefConnector {
 				decodedInst.add(inst);
 				instNumIn++;
 				
-				//add catch
-				String catchString = "} catch (Exception e) { agiStruct.Instruction errorInst = new agiStruct.Instruction(\"" 
-						+ inst.getParentClass() + "\", " + inst.getInstructionNumber() + ", \"" + sanitize(inst.getInstruction()) + "\", \""
-						+ sanitize(inst.getSubCodeBlock()) + "\"); currentErrorLocations.add(errorInst);for (int i = 0; i < currentErrorLocations.size(); i++) {File contextSource= new File(path + \"contextSource.txt\"); FileWriter errorWriter = new FileWriter(contextSource, true);errorWriter.write(currentErrorLocations.get(i).getParentClass() + \", \" + currentErrorLocations.get(i).getInstructionNumber() + \", \" + currentErrorLocations.get(i).getInstruction() + \", \" + \"ENDERRORS\");}return;\n}";
-				Instruction catchInst = new Instruction(classNameIn, instNumIn, catchString, null);
-				decodedInst.add(catchInst);
-				instNumIn++;
-			} else if(currentString.endsWith("tcblock" + codeBlockIn)) { //instruction with sub and no catch
-				//source = "if(test==5)cblock0eNdBrEaKtest=8;eNdBrEaKblock0int i = 0;";
-				//add instruction
-			//	System.out.println("entered tc");
-					//remove modifiers
-					int sizeToRemove = 8 + (codeBlockIn/10);
-					currentString = currentString.substring(sizeToRemove - 2, currentString.length() - sizeToRemove);
-				//	System.out.println("CURSTR: " + currentString);
-					Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
-				//	System.out.println("TCBinstParentClass: " + inst.getParentClass());
-				decodedInst.add(inst);
-				instNumIn++;
-				
-				
-				//add open bracket
-				Instruction openInst = new Instruction(classNameIn, instNumIn, "{", null);
-				decodedInst.add(openInst);
-				instNumIn++;
-				
-				
-				//add subcode
-				instReader.useDelimiter("block" + codeBlockIn);
-				String subcode = instReader.next();
-					//remove modifiers
-					subcode = subcode.substring(8, subcode.length());
-					//remove excess shit
-					while (!Character.isLetterOrDigit(subcode.charAt(0))) {
-						subcode = subcode.substring(1);
-					}
-			//		System.out.println("Subcode: " + subcode);
-				List<Instruction> subInsts = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
-				decodedInst.addAll(subInsts);
-					
-				//add close bracket
-				Instruction closeInst = new Instruction(classNameIn, instNumIn, "}", null);
-				decodedInst.add(closeInst);
-				instNumIn++;
-				
-				//switch delimiter back
-				instReader.useDelimiter("eNdBrEaK");
-			} else if(currentString.endsWith("cblock" + codeBlockIn)) { //instruction with sub and no catch
-				//add try
-			//	System.out.println("entered cblock");
-				Instruction tryInst = new Instruction(classNameIn, instNumIn, "try {", null);
-				decodedInst.add(tryInst);
-				instNumIn++;
-				
-				
-				//add instruction
-					//remove modifiers
-					int sizeToRemove = 7 + (codeBlockIn/10);
-					currentString = currentString.substring(0, currentString.length() - sizeToRemove);
-			//	System.out.println("CURSTR: " + currentString);
-				Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
-			//	System.out.println("CinstParentClass: " + inst.getParentClass());
-				decodedInst.add(inst);
-				instNumIn++;
-				
-				
-				//add open bracket
-				Instruction openInst = new Instruction(classNameIn, instNumIn, "{", null);
-				decodedInst.add(openInst);
-				instNumIn++;
-				
-
-				//add subcode
-				instReader.useDelimiter("block" + codeBlockIn);
-				String subcode = instReader.next();
-					//remove modifiers
-					subcode = subcode.substring(8, subcode.length());
-					//remove excess shit
-					while (!Character.isLetterOrDigit(subcode.charAt(0))) {
-						subcode = subcode.substring(1);
-					}
-			//		System.out.println("Subcode: " + subcode);
-				List<Instruction> subInsts = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
-				decodedInst.addAll(subInsts);
-					
-				//add close bracket
-				Instruction closeInst = new Instruction(classNameIn, instNumIn, "}", null);
-				decodedInst.add(closeInst);
-				instNumIn++;
-				
-				//switch delimiter back
-				instReader.useDelimiter("eNdBrEaK");
-			} else if (currentString.endsWith("tblock" + codeBlockIn)){ //instruction with sub and no try
-				//add instruction
-				//System.out.println("entered tblock");
-				int sizeToRemove = 7 + (codeBlockIn/10);
-				currentString = currentString.substring(sizeToRemove - 1, currentString.length() - sizeToRemove);
-				
-				//remove whitespace
-//				while (!Character.isLetterOrDigit(currentString.charAt(0)) || ) {
-//					currentString.substring(1);
-//				}
-				
-			//	System.out.println("CURSTR: " + currentString);
-				Instruction inst = new Instruction(classNameIn, instNumIn, currentString, null);
-			//	System.out.println("TBinstParentClass: " + inst.getParentClass());
-			decodedInst.add(inst);
-			instNumIn++;
-				//add open bracket
-			Instruction openInst = new Instruction(classNameIn, instNumIn, "{", null);
-			decodedInst.add(openInst);
-			instNumIn++;
-				//add subcode
-			instReader.useDelimiter("block" + codeBlockIn);
-		//	System.out.println("Code Block: " + codeBlockIn);
-			String subcode = instReader.next();
-				//remove modifiers
-				subcode = subcode.substring(8, subcode.length());
-				//remove excess shit
-				while (!Character.isLetterOrDigit(subcode.charAt(0))) {
-					subcode = subcode.substring(1);
-				}
-		//		System.out.println("Subcode2: " + subcode);
-			List<Instruction> subInsts = parseInstructions(subcode, classNameIn, instNumIn, codeBlockIn + 1);
-			decodedInst.addAll(subInsts);
-				//add close bracket
-			Instruction closeInst = new Instruction(classNameIn, instNumIn, "}", null);
-			decodedInst.add(closeInst);
-			instNumIn++;
-				//add catch
-				String catchString = "} catch (Exception e) { agiStruct.Instruction errorInst = new agiStruct.Instruction(\"" 
-						+ inst.getParentClass() + "\", " + inst.getInstructionNumber() + ", \"" + sanitize(inst.getInstruction()) + "\", \""
-						+ sanitize(inst.getSubCodeBlock()) + "\"); currentErrorLocations.add(errorInst);for (int i = 0; i < currentErrorLocations.size(); i++) {File contextSource= new File(path + \"contextSource.txt\"); FileWriter errorWriter = new FileWriter(contextSource, true);errorWriter.write(currentErrorLocations.get(i).getParentClass() + \", \" + currentErrorLocations.get(i).getInstructionNumber() + \", \" + currentErrorLocations.get(i).getInstruction() + \", \" + \"ENDERRORS\");}return;\n}";
-				
-				Instruction catchInst = new Instruction(classNameIn, instNumIn, catchString, null);
-				decodedInst.add(catchInst);
-				instNumIn++;
-				
-				//switch delimiter back
-				instReader.useDelimiter("eNdBrEaK");
-			} else if(currentString.endsWith("block" + codeBlockIn)) { //instruction with sub (if without else)
-			//	System.out.println("entered just block");
-				//add try
-				Instruction tryInst = new Instruction(classNameIn, instNumIn, "try {", null);
-				decodedInst.add(tryInst);
-				instNumIn++;
+			}else if(currentString.endsWith("block" + codeBlockIn)) { //instruction with sub (if without else)
 				//add instruction
 				int sizeToRemove = 6 + (codeBlockIn/10);
 				currentString = currentString.substring(0, currentString.length() - sizeToRemove);
@@ -550,16 +302,6 @@ public class BeliefConnector {
 				//add close bracket
 				Instruction closeInst = new Instruction(classNameIn, instNumIn, "}", null);
 				decodedInst.add(closeInst);
-				instNumIn++;
-				
-				
-				//add catch
-				String catchString = "} catch (Exception e) { agiStruct.Instruction errorInst = new agiStruct.Instruction(\"" 
-						+ inst.getParentClass() + "\", " + inst.getInstructionNumber() + ", \"" + sanitize(inst.getInstruction()) + "\", \""
-						+ sanitize(inst.getSubCodeBlock()) + "\"); currentErrorLocations.add(errorInst);for (int i = 0; i < currentErrorLocations.size(); i++) {File contextSource= new File(path + \"contextSource.txt\"); FileWriter errorWriter = new FileWriter(contextSource, true);errorWriter.write(currentErrorLocations.get(i).getParentClass() + \", \" + currentErrorLocations.get(i).getInstructionNumber() + \", \" + currentErrorLocations.get(i).getInstruction() + \", \" + \"ENDERRORS\");}return;\n}";
-				
-				Instruction catchInst = new Instruction(classNameIn, instNumIn, catchString, null);
-				decodedInst.add(catchInst);
 				instNumIn++;
 				
 				//switch delimiter back
@@ -605,46 +347,11 @@ public class BeliefConnector {
 	//main method is for testing
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException{
 		BeliefConnector test = new BeliefConnector();
-//		LinkedList<String> tagsIn = new LinkedList<String>();
-//		tagsIn.add("Rect");
-//		tagsIn.add("Alpacka");
-//		tagsIn.add("TestingExtra");
-//		test.updateNeuralToHighestConf(test.retrieveBeliefs(tagsIn), tagsIn);
-//		System.out.println("Neural: " + test.getNeuralPath());
-//		test.Fire("Behavior");
-		test.setClassName("testClass");
-		//modifiers: c = no catch | t = no try|   block# = subcode block value  | end = instruction finisher
-		//String source = "if(test==5)block0eNdBrEaKtest=8;eNdBrEaKblock0int i = 0;eNdBrEaKSystem.out.println(\"testing\");";
-			//	+ "elsetblock0eNdBrEaKtest=9;eNdBrEaKblock0test=5;eNdBrEaK";
-		//String source = "System.out.println(\"Time since last iteration: \" + seconds);eNdBrEaKint i = 0;eNdBrEaKi = 5;";
-		//UNCOMMENTTHISFOR RUNTIMETRYCATCHList<Instruction> testInsts = test.parseInstructions(source, "EXAMPLECLASSNAME", 0, 0);
-		
-		//printing out results to console
-//		System.out.println(testInsts.size());
-//		for (int i = 0; i < testInsts.size(); i++) {
-//			System.out.println(testInsts.get(i).getParentClass() + testInsts.get(i).getInstructionNumber()
-//					+ ": " + testInsts.get(i).getInstruction() + " | " + testInsts.get(i).getSubCodeBlock());
-//		}
 		List<Instruction> instructionsIn = new ArrayList<Instruction>();
-		Instruction inst1 = new Instruction("EXAMPLECLASSNAME", 0, "int i = ", null);
+		Instruction inst1 = new Instruction("EXAMPLECLASSNAME", 0, "int i = 1;", null);
 		instructionsIn.add(inst1);
 		test.setInstructions(instructionsIn);
 		test.Fire("");
-//		String testSource2 = "";
-//		for (int i = 0; i < instructionsIn.size(); i++) {
-//			testSource2 = testSource2 + instructionsIn.get(i).getInstruction() + "\n";
-//		}
-		//writing the code output to test file
-		//String testSource2 = ""; //change this to "" for USING LLF
-//		UNCOMMENTTHISFORRUNTIMETRYCATCHfor (int i = 0; i < testInsts.size(); i++) {
-//			testSource2 = testSource2 + testInsts.get(i).getInstruction() + "\n";
-//		}
-//		String path = test.getClass().getProtectionDomain().getCodeSource().getLocation().toString();
-//		path = path.substring(5);
-//		File testSource = new File(path + test.className + ".java");
-//		FileWriter writer = new FileWriter(testSource);
-//		writer.write(testSource2);
-//		writer.close();
 	}
 	
 	//Neural Pathway Fire (Execution of belief based on stimuli)
@@ -667,10 +374,10 @@ public class BeliefConnector {
 			writer.write(this.BegMylein + this.envHardcodedVariables + pathVar + this.NeuralPath 
 					+ this.SenseEndishMylein + writeErrorsCode + this.EndMylein);
 		} else if (fireType.equals("Goal")){
-			writer.write(this.BegMylein + this.envHardcodedVariables + pathVar 
-					+ this.prevEnvHardcodedVariables + this.Goal2ndBegMylein + this.NeuralPath 
-					+ "goalEvalResult.setClassName(\""+ this.className +"\");" + this.GoalEndishMylein 
-					+ writeErrorsCode + this.EndMylein);
+			writer.write(sanitize(this.BegMylein) + sanitize(this.envHardcodedVariables) + sanitize(pathVar) 
+					+ sanitize(this.prevEnvHardcodedVariables) + sanitize(this.Goal2ndBegMylein) + sanitize(this.NeuralPath) 
+					+ "goalEvalResult.setClassName(\""+ this.className +"\");" + sanitize(this.GoalEndishMylein) 
+					+ sanitize(writeErrorsCode) + sanitize(this.EndMylein));
 		} else {
 			writer.write(this.BegMylein + this.envHardcodedVariables + pathVar + this.NeuralPath + writeErrorsCode + this.EndMylein);
 		}
@@ -679,18 +386,69 @@ public class BeliefConnector {
 		Runtime run = Runtime.getRuntime();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		try {
-			System.out.println("About to compile");
+		//	System.out.println("About to compile");
 			//Compile it
 			String errorString = "";
 			File errorLogFile = new File(path + "errorLog.txt");
+			FileWriter errorClearer = new FileWriter(errorLogFile, false);
+			errorClearer.write("");
+			errorClearer.close();
 			OutputStream errOutStream = new FileOutputStream(errorLogFile);
 			compiler.run(null, null, errOutStream, beliefSource.getPath());
 			Scanner errorScan = new Scanner(errorLogFile);
 			if (errorScan.hasNext()) {
-				errorString = errorScan.next();
-				System.out.println("COMPILER ERROR: " + errorString);
+			
+				//write out goal eval result if necessary
+				if (fireType.equals("Goal")) {
+					File goalResult = new File(path + "GoalEvalResult.java");
+					FileWriter writer2 = new FileWriter(goalResult, false);
+					GoalResult errorGoalResult = new GoalResult(this.className,-100,false);
+					writer2.write(errorGoalResult.toString());
+					writer2.close();
+				}
+				
+				
+				//parse error log to get an error Instruction and connect it to LLF
+				
+				//what do I need? className, instructionNum, instruction
+				errorScan.useDelimiter("/");
+				String section = "";
+				while (errorScan.hasNext()) {
+					section = errorScan.next();
+					if (section.contains(".")) {
+						break;
+					}
+				}
+				System.out.println("sect: " + section);
+				Scanner scanSection = new Scanner(section);
+				scanSection.useDelimiter(".j");
+				String className = scanSection.next();
+				System.out.println("className: " + className);
+				//instructionNum (line num to start and then add code to convert to instructionNum
+				scanSection.useDelimiter(":");
+				scanSection.next();
+				int lineNumber = scanSection.nextInt();
+				
+				
+				//instruction
+				scanSection.useDelimiter("\n");
+				scanSection.nextLine();
+				scanSection.useDelimiter("\n^");
+				String instruction = "";
+				instruction = instruction + scanSection.next();
+				System.out.println("INST: " + instruction);
+				
+				File contextSource = new File(path + "errorContext.txt");
+				FileWriter writer2 = new FileWriter(contextSource, false);
+				writer2.write(className + ":" + lineNumber + ":" + instruction + ",");
+				writer2.close();
+				System.out.println("error found and read in: " + className + ":" 
+				+ lineNumber + ":" + instruction + ":");
+				
+				scanSection.close();
+				
 			} else {
-				System.out.println("About to run");
+			//	System.out.println("About to run");
 				//Run it
 				Class<?> cls = new DynamicClassLoader(beliefSource.getPath().substring(0, 33)).load(this.getClassName()); //beliefSource
 				@SuppressWarnings("unused")
@@ -708,9 +466,6 @@ public class BeliefConnector {
 		
 
 
-
-		
-		
 		//System.out.println("About to delete");
 		//Delete the .java and .class files
 		String command = "rm " + path + this.getClassName() + ".class";

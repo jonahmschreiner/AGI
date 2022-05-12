@@ -1,0 +1,24 @@
+Sense Beliefs: Turn raw sensory data (obtained from env/sense env) into more advanced concepts (such as acknowledging the presence of a square,
+					its size, location, color, whether it's filled in or not, rotation, etc.)
+					
+Goal Beliefs: Set up an imagined reality and compare the currently existing one to it (exporting whether they match and if they're getting closer
+					to matching)
+
+Action Beliefs: Are potential behaviors the agi can take (designated pattern of raw Util class commands)
+
+
+
+
+All Beliefs are meant to abstract away raw sensory input and raw actions and can utilize sub-beliefs of its type to abstract away highly complex
+	neural paths.
+	
+	
+	
+A LLF is a moment of consciousness which is supported by previous beliefs (which determine the awareness, goals to resume, and actions discovered),
+
+			previous environment (which helps to compare environments from one moment to the next), previous satisfaction (how well it was
+					meeting goals in the previous instance of existence),
+					
+			previous action taken (remember what it did in the previous instance),
+			
+			previous errors encountered (remember where the code fucked up so it can be fixed).
