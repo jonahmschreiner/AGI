@@ -23,7 +23,7 @@ public class Env {
 	public LocalDateTime calendar;
 	public Double currentCpuUsage;
 	public List<Instruction> errorLocations = new ArrayList<Instruction>();
-	
+	public List<Sense> abstractEnv = new ArrayList<Sense>();
 	public Env() {}
 	
 	public String getEnvVarsString() throws InterruptedException {
@@ -50,9 +50,19 @@ public class Env {
 				errorLocationsVar = errorLocationsVar + "currentErrorLocations.add(inst" + i + ");\n";
 			}
 		}
+		String sensesVar = "java.util.List<unboundStruct.Sense> abstractEnv = new java.util.ArrayList<unboundStruct.Sense>();\n";
+		//Make Properties List Var from sense.properties
+		ljasflasfdj
+		if (abstractEnv != null) {
+			for (int i = 0; i < abstractEnv.size(); i++) {
+				sensesVar = sensesVar + "unboundStruct.Sense sense" + i + " = new unboundStruct.Sense(";
+				sensesVar = sensesVar + "\"" + abstractEnv.get(i).label + "\", ";
+				//add properties list to the constructor
+			}
+		}
 		String envVars = mousePointVar + leftMousePressedVar + middleMousePressedVar + rightMousePressedVar 
 				+ keyPressedVar + numOfMouseButtonsVar + currentDisplayInitVar + calendarVar 
-				+ currentCpuUsageVar + errorLocationsVar + errorLocationNumVar + tagsRecursivelyCalledVar;
+				+ currentCpuUsageVar + errorLocationsVar + errorLocationNumVar + sensesVar +tagsRecursivelyCalledVar;
 		return envVars;
 	}
 	

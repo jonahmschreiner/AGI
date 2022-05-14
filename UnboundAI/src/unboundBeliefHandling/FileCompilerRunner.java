@@ -6,6 +6,7 @@ import javax.tools.ToolProvider;
 
 import qj.util.lang.DynamicClassLoader;
 import unboundContextHandling.ContextWriter;
+import unboundContextHandling.CheckRuntimeErrors;
 import unboundContextHandling.CheckCompilerErrors;
 import unboundStruct.*;
 
@@ -24,9 +25,17 @@ public class FileCompilerRunner {
 			compiler.run(null, null, test, beliefSource.getPath());
 			List<Instruction> errorInsts = CheckCompilerErrors.pull(contextIn);
 			if (errorInsts.isEmpty()) {
-				Class<?> cls = new DynamicClassLoader(beliefSource.getPath().substring(0, 39)).load(beliefName); //beliefSource
-				@SuppressWarnings("unused")
-				Object instance = cls.newInstance();
+				try {
+					Class<?> cls = new DynamicClassLoader(beliefSource.getPath().substring(0, 39)).load(beliefName); //beliefSource
+					@SuppressWarnings("unused")
+					Object instance = cls.newInstance();
+				} catch (Exception e) {
+					//catch runtime errors
+					List<Instruction> runtimeErrs = CheckRuntimeErrors.pull(e, contextIn);
+					contextIn.env.errorLocations.addAll(runtimeErrs);
+					ContextWriter.writeContext(contextIn, false);
+				}
+
 			} else {
 				contextIn.env.errorLocations.addAll(errorInsts);
 				ContextWriter.writeContext(contextIn, false);

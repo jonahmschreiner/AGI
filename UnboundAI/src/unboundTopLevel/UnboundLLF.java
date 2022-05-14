@@ -1,5 +1,7 @@
 package unboundTopLevel;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import unboundBeliefHandling.*;
 import unboundContextHandling.*;
@@ -21,10 +23,10 @@ public class UnboundLLF {
 		Env currentEnv = sense.recordEnv();
 		Context context = new Context(currentEnv, contextIn.satisfaction, "");
 		//Senses
-		
+		context.env.abstractEnv = ExecSenses.exec(context, contextIn);
 		//Action Decider
 		
-		
+
 		String executeThisBelief = "TestBelief";
 		//Action
 		context.prevExecBeliefName = ExecAction.exec(executeThisBelief, contextIn.env, context);
