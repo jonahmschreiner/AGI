@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicReference;
  * The utility that employ idea of functional programming
  *
  */
-@SuppressWarnings({"unchecked", "rawtypes"})
 public class Fs extends FsGenerated {
 	
     public static Runnable runnable(final P0 action) {

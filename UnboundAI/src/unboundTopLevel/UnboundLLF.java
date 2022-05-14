@@ -1,6 +1,7 @@
 package unboundTopLevel;
+import java.util.ArrayList;
+
 import unboundBeliefHandling.*;
-import unboundBeliefRetrievers.*;
 import unboundContextHandling.*;
 import unboundStruct.*;
 public class UnboundLLF {
@@ -18,19 +19,24 @@ public class UnboundLLF {
 		//Raw Env Info
 		SenseEnv sense = new SenseEnv();
 		Env currentEnv = sense.recordEnv();
+		Context context = new Context(currentEnv, contextIn.satisfaction, "");
 		//Senses
 		
+		//Action Decider
+		
+		
+		String executeThisBelief = "TestBelief";
+		//Action
+		context.prevExecBeliefName = ExecAction.exec(executeThisBelief, contextIn.env, context);
+
 		//Goals
-		contextIn.satisfaction = ExecGoals.exec(currentEnv, contextIn.env, contextIn);
-		
-		contextIn.errors = ContextParser.parse().errors;
-		//Actions (contextIn.prevExecBeliefName = ExecBestAction.exec();)
-		
-		
+		ExecGoals.exec(currentEnv, contextIn.env, context);
+			
+		//Error Goals
+		context.satisfaction += ExecErrorGoals.exec(context.env, contextIn.env, context);
+		System.out.println("Total Satisfaction: " + context.satisfaction);
 		//Prep for next cycle
-		contextIn.env = currentEnv;
-		System.out.println("Num of errors: " + contextIn.errors.size());
-		ContextWriter.writeContext(contextIn, true);
-		return contextIn;
+		ContextWriter.writeContext(context, true);
+		return context;
 	}
 }

@@ -38,10 +38,10 @@ public class Instruction {
 		if (o == this){
 			return true;
 		}
-		if (o instanceof Env){
+		if (o instanceof Instruction){
 			Instruction c = (Instruction) o;
 			boolean output = false;
-			if ((c.parentClass == this.parentClass) //variables (that describe conditions) are the same
+			if ((c.parentClass.equals(this.parentClass)) //variables (that describe conditions) are the same
 					&& (c.instruction.equals(this.instruction))
 					&& (c.instructionNumber == this.instructionNumber)){ 
 				output = true;

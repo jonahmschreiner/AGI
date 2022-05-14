@@ -6,6 +6,7 @@ import javax.tools.ToolProvider;
 
 import qj.util.lang.DynamicClassLoader;
 import unboundContextHandling.ContextWriter;
+import unboundContextHandling.CheckCompilerErrors;
 import unboundStruct.*;
 
 
@@ -19,45 +20,20 @@ public class FileCompilerRunner {
 		writer.close();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		try {
-			compiler.run(null, null, null, beliefSource.getPath());
-			Class<?> cls = new DynamicClassLoader(beliefSource.getPath().substring(0, 39)).load(beliefName); //beliefSource
-			@SuppressWarnings("unused")
-			Object instance = cls.newInstance();
-		} catch (Exception e) {
-			for (int i = 0; i < e.getStackTrace().length; i++) {
-				//check if bin contains the filename
-				File directory = new File("/home/agi/Desktop/eclipse/UnboundAI/bin");
-				String[] pathnames = directory.list();
-				boolean isBeliefClass = false;
-				String thisClassName = "nonononononononononno";
-				for (int k = 0; k < pathnames.length; k++) {
-					Scanner scanThis = new Scanner(e.getStackTrace()[i].getClassName());
-					System.out.println("FUCK: " + e.getStackTrace()[i].getClassName());
-					scanThis.useDelimiter("$.");
-					while (scanThis.hasNext()) {
-						thisClassName = scanThis.next();
-						System.out.println("NEXT: " + thisClassName);
-					}	
-					System.out.println("PName: " + pathnames[k]);
-					System.out.println("FName: " + thisClassName);
-					if (pathnames[k].equals(thisClassName)) {
-						isBeliefClass = true;
-					}
-				}
-				if (isBeliefClass) {
-					File errFile = new File("/home/agi/Desktop/eclipse/UnboundAI/bin/" + thisClassName);
-					Scanner scanErr = new Scanner(errFile);
-					for (int j = 0; j < e.getStackTrace()[i].getLineNumber(); j++) {
-						scanErr.nextLine();
-					}
-					Instruction error = new Instruction(e.getStackTrace()[i].getClassName(), e.getStackTrace()[i].getLineNumber(), scanErr.nextLine());
-					scanErr.close();
-					//pass error back up to context error List
-					contextIn.errors.add(error);
-				}
-			}	
-			System.out.println("contextERR: " + contextIn.errors.size());
-			ContextWriter.writeContext(contextIn, false);
+			FileOutputStream test = new FileOutputStream("/home/agi/Desktop/eclipse/UnboundAI/bin/errorFile.txt");
+			compiler.run(null, null, test, beliefSource.getPath());
+			List<Instruction> errorInsts = CheckCompilerErrors.pull(contextIn);
+			if (errorInsts.isEmpty()) {
+				Class<?> cls = new DynamicClassLoader(beliefSource.getPath().substring(0, 39)).load(beliefName); //beliefSource
+				@SuppressWarnings("unused")
+				Object instance = cls.newInstance();
+			} else {
+				contextIn.env.errorLocations.addAll(errorInsts);
+				ContextWriter.writeContext(contextIn, false);
+			}
+
+		} catch (Exception e) {		
+			e.printStackTrace();
 		}
 		Runtime run = Runtime.getRuntime();
 		String command = "rm " + path + beliefName + ".class";

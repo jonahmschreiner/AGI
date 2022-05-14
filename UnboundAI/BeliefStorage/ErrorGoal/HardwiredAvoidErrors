@@ -1,0 +1,19 @@
+Goal:100,,,
+if (currentErrorLocations.size() == 0){
+goalEvalResult.setComplete(true);
+} else {
+goalEvalResult.setComplete(false);
+}
+int resultOutput = 0;
+System.out.println("CurrErrs: " + currentErrorLocations.size());
+System.out.println("PrevErrs: " + prevErrorLocations.size());
+if (currentErrorLocations.size() < prevErrorLocations.size()){
+resultOutput = 200 * (prevErrorLocations.size() - currentErrorLocations.size());
+} else if (goalEvalResult.complete){
+resultOutput = 20;
+} else {
+resultOutput = -100 * currentErrorLocations.size();
+}
+System.out.println("ShouldNotThrowErrors result: " + resultOutput);
+goalEvalResult.setResult(resultOutput);
+

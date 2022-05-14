@@ -3,6 +3,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.time.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -21,7 +22,7 @@ public class Env {
 	public int numOfMouseButtons;
 	public LocalDateTime calendar;
 	public Double currentCpuUsage;
-	public List<Instruction> errorLocations;
+	public List<Instruction> errorLocations = new ArrayList<Instruction>();
 	
 	public Env() {}
 	
@@ -42,10 +43,10 @@ public class Env {
 		
 		if (errorLocations != null) {
 			for (int i = 0; i < errorLocations.size(); i++) {
-				errorLocationsVar = errorLocationsVar + "agiStruct.Instruction inst" + i + " = new agiStruct.Instruction(";
-				errorLocationsVar = errorLocationsVar + errorLocations.get(i).parentClass;
-				errorLocationsVar = errorLocationsVar + errorLocations.get(i).instructionNumber;
-				errorLocationsVar = errorLocationsVar + errorLocations.get(i).instruction + ");\n";
+				errorLocationsVar = errorLocationsVar + "unboundStruct.Instruction inst" + i + " = new unboundStruct.Instruction(";
+				errorLocationsVar = errorLocationsVar + "\"" + errorLocations.get(i).parentClass + "\", ";
+				errorLocationsVar = errorLocationsVar + errorLocations.get(i).instructionNumber + ", ";
+				errorLocationsVar = errorLocationsVar + "\"" + errorLocations.get(i).instruction + "\");\n";
 				errorLocationsVar = errorLocationsVar + "currentErrorLocations.add(inst" + i + ");\n";
 			}
 		}
@@ -69,11 +70,11 @@ public class Env {
 		String errorLocationsVar ="java.util.List<unboundStruct.Instruction> prevErrorLocations = new ArrayList<unboundStruct.Instruction>();\n";
 		if (errorLocations != null) {
 			for (int i = 0; i < errorLocations.size(); i++) {
-				errorLocationsVar = errorLocationsVar + "agiStruct.Instruction inst" + i + " = new agiStruct.Instruction(";
-				errorLocationsVar = errorLocationsVar + errorLocations.get(i).parentClass;
-				errorLocationsVar = errorLocationsVar + errorLocations.get(i).instructionNumber;
-				errorLocationsVar = errorLocationsVar + errorLocations.get(i).instruction + ");\n";
-				errorLocationsVar = errorLocationsVar + "prevErrorLocations.add(inst" + i + ");\n";
+				errorLocationsVar = errorLocationsVar + "unboundStruct.Instruction prevInst" + i + " = new unboundStruct.Instruction(";
+				errorLocationsVar = errorLocationsVar + "\"" + errorLocations.get(i).parentClass + "\", ";
+				errorLocationsVar = errorLocationsVar + errorLocations.get(i).instructionNumber + ", ";
+				errorLocationsVar = errorLocationsVar + "\"" + errorLocations.get(i).instruction + "\");\n";
+				errorLocationsVar = errorLocationsVar + "prevErrorLocations.add(prevInst" + i + ");\n";
 			}
 		}
 		String currentCpuUsageVar = "Double prevCpuUsage = " + this.currentCpuUsage + ";\n";

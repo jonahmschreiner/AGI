@@ -4,10 +4,8 @@ import qj.util.lang.FileUtil;
 import qj.util.lang.IOUtil;
 import qj.util.lang.F1;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.jar.JarFile;
@@ -28,7 +26,6 @@ public class DynamicClassLoader extends AggressiveClassLoader {
 		}
 	}
 
-	@SuppressWarnings("UnusedDeclaration")
 	public DynamicClassLoader(Collection<File> paths) {
 		for (File file : paths) {
 			F1<String, byte[]> loader = loader(file);

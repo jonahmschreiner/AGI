@@ -16,9 +16,7 @@
     <fullyQualifiedTypeName name="agiStruct.Env"/>
     <fullyQualifiedTypeName name="java.util.LinkedList"/>
     <fullyQualifiedTypeName name="javax.imageio.ImageIO"/>
-    <fullyQualifiedTypeName name="java.io.FileWriter"/>
     <fullyQualifiedTypeName name="AGIUtil.Util"/>
-    <fullyQualifiedTypeName name="java.awt.List"/>
     <fullyQualifiedTypeName name="agiStruct.GoalResult"/>
     <fullyQualifiedTypeName name="java.lang.Integer"/>
     <fullyQualifiedTypeName name="java.awt.image.BufferedImage"/>
@@ -35,14 +33,22 @@
     <fullyQualifiedTypeName name="com.sun.xml.internal.messaging.saaj.util.ByteOutputStream"/>
     <fullyQualifiedTypeName name="java.io.FileOutputStream"/>
     <fullyQualifiedTypeName name="java.io.FileNotFoundException"/>
-    <fullyQualifiedTypeName name="java.util.ArrayList"/>
     <fullyQualifiedTypeName name="java.util.List"/>
     <fullyQualifiedTypeName name="unboundRetrievers.GoalRetriever"/>
-    <fullyQualifiedTypeName name="unboundStruct.Belief"/>
-    <fullyQualifiedTypeName name="unboundBeliefHandling.BeliefParser"/>
     <fullyQualifiedTypeName name="unboundBeliefRetrievers.GoalRetriever"/>
     <fullyQualifiedTypeName name="java.awt.Point"/>
     <fullyQualifiedTypeName name="unboundContextHandling.ContextParser"/>
     <fullyQualifiedTypeName name="java.io.File"/>
     <fullyQualifiedTypeName name="unboundContextHandling.ContextWriter"/>
+    <fullyQualifiedTypeName name="unboundContextHandling.PullErrorInstructionsFromException"/>
+    <fullyQualifiedTypeName name="java.io.FileWriter"/>
+    <fullyQualifiedTypeName name="unboundBeliefRetrievers.ErrorGoalRetriever"/>
+    <fullyQualifiedTypeName name="unboundBeliefRetrievers.ActionRetriever"/>
+    <fullyQualifiedTypeName name="unboundBeliefHandling.BeliefParser"/>
+    <fullyQualifiedTypeName name="java.awt.List"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
+    <fullyQualifiedTypeName name="unboundStruct.Belief"/>
+    <fullyQualifiedTypeName name="unboundBeliefHandling.BeliefFileAssembler"/>
+    <fullyQualifiedTypeName name="unboundBeliefHandling.FileCompilerRunner"/>
+    <fullyQualifiedTypeName name="unboundBeliefHandling.SenseEnv"/>
 </qualifiedTypeNameHistroy>

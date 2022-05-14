@@ -13,9 +13,9 @@ public class ContextWriter {
 		String total = init + env;
 		
 		//errors
-		for (int i = 0; i < contextIn.errors.size(); i++) {
-			total = total + contextIn.errors.get(i).parentClass + ",,," + contextIn.errors.get(i).instructionNumber + ",,,"
-					+ contextIn.errors.get(i).instruction + "\n";
+		for (int i = 0; i < contextIn.env.errorLocations.size(); i++) {
+			total = total + contextIn.env.errorLocations.get(i).parentClass + ",,," + contextIn.env.errorLocations.get(i).instructionNumber + ",,,"
+					+ contextIn.env.errorLocations.get(i).instruction + "\n";
 		}
 		
 		//write it

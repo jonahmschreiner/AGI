@@ -1,21 +1,16 @@
 package unboundBeliefHandling;
-
 import java.io.*;
 import java.util.*;
 import unboundStruct.*;
-
 public class BeliefParser {
 	public static List<Belief> parseBeliefs(List<String> beliefPathsIn, int typeIn) throws FileNotFoundException{
-		List<Belief> parsedBeliefs = new ArrayList<Belief>();
-		
+		List<Belief> parsedBeliefs = new ArrayList<Belief>();		
 		for (int i = 0; i < beliefPathsIn.size(); i++) {
 			File source = new File(beliefPathsIn.get(i));
 			Scanner scan = new Scanner(source);
-			scan.useDelimiter(",,,");
-			
+			scan.useDelimiter(",,,");		
 			//tags
 			String tagString = scan.next();
-			
 			Scanner tagReader = new Scanner(tagString);
 			List<KeyTag> tags = new ArrayList<KeyTag>();
 			while (tagReader.hasNext()) {
@@ -33,8 +28,7 @@ public class BeliefParser {
 				KeyTag tagOut = new KeyTag(tag, confidenceRating);
 				tags.add(tagOut);
 			}
-			tagReader.close();
-			
+			tagReader.close();		
 			//parent class
 			Scanner parentClassScanner = new Scanner(beliefPathsIn.get(i));
 			parentClassScanner.useDelimiter("/");
@@ -43,7 +37,6 @@ public class BeliefParser {
 				parentClass = parentClassScanner.next();
 			}
 			parentClassScanner.close();
-			
 			//instructions
 			List<Instruction> currentBeliefInstructions = new ArrayList<Instruction>();
 			String instructionString = scan.next();
@@ -59,12 +52,10 @@ public class BeliefParser {
 					instructionNum++;
 				}
 			}	
-			instScanner.close();
-			
+			instScanner.close();		
 			Belief currentBelief = new Belief(parentClass, typeIn, currentBeliefInstructions, tags);
 			parsedBeliefs.add(currentBelief);
-		}
-		
+		}	
 		return parsedBeliefs;
 	}
 }

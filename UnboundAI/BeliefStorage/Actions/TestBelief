@@ -1,3 +1,2 @@
-Rect:50 Alpacka:70,,,
-
-int test = 2;
+Goal:100,,,
+System.out.println("hello");

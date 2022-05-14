@@ -19,6 +19,7 @@ public class GoalResultParser {
 				}
 			}			
 		}
+		scan.close();
 		return results;
 	}
 }

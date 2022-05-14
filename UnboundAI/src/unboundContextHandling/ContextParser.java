@@ -44,8 +44,9 @@ public class ContextParser {
 				errorScan.close();
 			}
 		}
+		env.errorLocations = errors;
 		errorScanner.close();	
-		Context context = new Context(env, satisfaction, prevExecActionName, errors);
+		Context context = new Context(env, satisfaction, prevExecActionName);
 		return context;
 	}
 }

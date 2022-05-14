@@ -5,7 +5,7 @@ import unboundStruct.*;
 import java.util.*;
 import java.io.*;
 public class ExecGoals {
-	public static int exec(Env currentEnv, Env prevEnv, Context contextIn) throws Exception{
+	public static void exec(Env currentEnv, Env prevEnv, Context contextIn) throws Exception{
 		File goalResult = new File("/home/agi/Desktop/eclipse/UnboundAI/bin/GoalEvalResult.java");
 		FileWriter writer2 = new FileWriter(goalResult, false);
 		writer2.write("");
@@ -18,11 +18,5 @@ public class ExecGoals {
 			String source = BeliefFileAssembler.assembleGoal(goalBeliefs.get(i), currentEnv, prevEnv);
 			FileCompilerRunner.compile(source, goalBeliefs.get(i).beliefName, contextIn);
 		}
-		List<GoalResult> goalResults = GoalResultParser.parseResults();
-		Runtime run = Runtime.getRuntime();
-		String command = "rm /home/agi/Desktop/eclipse/UnboundAI/bin/GoalEvalResult.java";
-		run.exec(command);
-		int satisfaction = GoalResultCombiner.combine(goalResults);
-		return satisfaction;
 	}
 }

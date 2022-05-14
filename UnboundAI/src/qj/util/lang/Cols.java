@@ -10,7 +10,7 @@ import java.util.*;
  * Date: Mar 2, 2006
  * Time: 9:10:49 AM
  */
-@SuppressWarnings({"rawtypes","unchecked"})
+@SuppressWarnings({"unchecked"})
 public class Cols {
 
 	/**
