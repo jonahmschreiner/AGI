@@ -41,7 +41,6 @@
     <fullyQualifiedTypeName name="java.io.FileWriter"/>
     <fullyQualifiedTypeName name="unboundBeliefRetrievers.ErrorGoalRetriever"/>
     <fullyQualifiedTypeName name="unboundBeliefRetrievers.ActionRetriever"/>
-    <fullyQualifiedTypeName name="java.awt.List"/>
     <fullyQualifiedTypeName name="java.util.ArrayList"/>
     <fullyQualifiedTypeName name="unboundStruct.Belief"/>
     <fullyQualifiedTypeName name="unboundBeliefHandling.BeliefFileAssembler"/>
@@ -50,10 +49,11 @@
     <fullyQualifiedTypeName name="unboundStruct.Context"/>
     <fullyQualifiedTypeName name="unboundContextHandling.PullRuntimeErrorFromException"/>
     <fullyQualifiedTypeName name="java.io.File"/>
-    <fullyQualifiedTypeName name="java.util.Scanner"/>
     <fullyQualifiedTypeName name="java.util.List"/>
     <fullyQualifiedTypeName name="unboundBeliefRetrievers.SenseRetriever"/>
     <fullyQualifiedTypeName name="java.util.concurrent.ExecutorService"/>
     <fullyQualifiedTypeName name="unboundBeliefHandling.SenseParser"/>
     <fullyQualifiedTypeName name="unboundBeliefHandling.BeliefParser"/>
+    <fullyQualifiedTypeName name="java.awt.List"/>
+    <fullyQualifiedTypeName name="java.util.Scanner"/>
 </qualifiedTypeNameHistroy>

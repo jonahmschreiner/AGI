@@ -1,0 +1,6 @@
+String hello,,,int 5,,,List<String> String test, String yes,,,
+|    | |   |   | | |   |          | |                     |
+  ^      ^      ^  ^         ^                 ^
+  type  value  
+              type         type              value
+                 value 
