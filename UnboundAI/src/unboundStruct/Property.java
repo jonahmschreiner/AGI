@@ -1,6 +1,10 @@
 package unboundStruct;
 import java.io.*;
 import java.util.*;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+
 import qj.util.lang.DynamicClassLoader;
 
 public class Property {
@@ -85,14 +89,16 @@ public class Property {
 				FileWriter writer = new FileWriter(sourceFile, false);
 				writer.write(source);
 				writer.close();
-				Class<?> cls2 = new DynamicClassLoader("/home/agi/Desktop/eclipse/UnboundAI/bin/").load("NewClass.java"); 
-				Object instance2 = cls2.newInstance();
 				//use source code to create instance of dynamic object
-				Class<?> cls = new DynamicClassLoader("/home/agi/Desktop/eclipse/UnboundAI/bin/").load(typeIn + ".java"); 
+				JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+				compiler.run(null, null, null, sourceFile.getPath());
+				Class<?> cls = new DynamicClassLoader("/home/agi/Desktop/eclipse/UnboundAI/bin/").load(typeIn); 
 				Object instance = cls.newInstance();
 				output = instance;	
 				//Remove dynamic object file
 				command = "rm /home/agi/Desktop/eclipse/UnboundAI/bin/" + typeIn + ".java";
+				run.exec(command);
+				command = "rm /home/agi/Desktop/eclipse/UnboundAI/bin/" + typeIn + ".class";
 				run.exec(command);
 		}
 		this.propLabel = nameIn;
