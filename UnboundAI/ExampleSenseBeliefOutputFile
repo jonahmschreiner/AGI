@@ -1,6 +1,10 @@
-String hello,,,int 5,,,List<String> String test, String yes,,,
-|    | |   |   | | |   |          | |                     |
-  ^      ^      ^  ^         ^                 ^
-  type  value  
-              type         type              value
-                 value 
+Label String ex1 hello,,,int 5,,,List<String> testList String test, String yesUUUUULabel String test,,,int 0
+      |    |     |   |   | | |   |          |          |                     |
+        ^     ^    ^      ^  ^         ^                          ^
+      type  name value  
+                        type         type                       value
+                           value 
+                           
+                           
+                           
+                           NOTE THAT ALL PROPS HAVE A NAME AS WELL AS TYPE AND VALUE (I ONLY UPDATED THE FIRST ONE)

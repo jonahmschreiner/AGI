@@ -1,15 +1,16 @@
 package unboundStruct;
-
-import java.util.List;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
+import qj.util.lang.DynamicClassLoader;
 
 public class Property {
 	Object prop;
-	public Property(String typeIn, String valuesStringIn) {
-		this.prop = determineShit(typeIn, valuesStringIn);
+	String propLabel;
+	public Property(String typeIn, String nameIn, String valuesStringIn) throws Exception {
+		this.prop = determineShit(typeIn, nameIn, valuesStringIn);
 	}
 	
-	public Object determineShit (String typeIn, String valuesStringIn) {
+	public Object determineShit (String typeIn, String nameIn, String valuesStringIn) throws Exception {
 		Object output = null;
 		if (typeIn.equals("int")) {
 			output = Integer.valueOf(valuesStringIn);
@@ -38,28 +39,63 @@ public class Property {
 		if (typeIn.equals("boolean")) {
 			output = Boolean.valueOf(valuesStringIn);
 		}	else
-		if (typeIn.substring(0, 4).equals("List<")) {		
-			List<?> list = null;
+		if (typeIn.substring(0, 4).equals("List")) {	
+			List<Object> list = new ArrayList<Object>();	
 			Scanner scan = new Scanner(valuesStringIn);
 			while (scan.hasNext()) {
 				String type = scan.next();
+				String name = scan.next();
 				String value = scan.next();
-				Object component = determineShit(type, value);
+				Object component = determineShit(type, name, value);
 				list.add(component);		
 			}
 			scan.close();
-			output = list;
-		}	
+			output = list;			
+		} else {	
+			//scan in instance variables
+				Scanner scan = new Scanner(valuesStringIn);
+				List<String> types = new ArrayList<String>();
+				List<String> names = new ArrayList<String>();
+				List<String> values = new ArrayList<String>();
+				while (scan.hasNext()) {
+					String type = scan.next();
+					if (scan.hasNext()) {
+						String name = scan.next();
+						if (scan.hasNext()) {
+							String value = scan.next();
+							types.add(type);
+							names.add(name);
+							values.add(value);
+						}
+							
+					}
+				}
+				scan.close();				
+				//use instance variables to write dynamic object source code (set the instance vars to their values "by default" in the source)
+				String source = "public class " + typeIn + "{\n";
+				for (int i = 0; i < types.size(); i++) {
+					source = source + types.get(i) + " " + names.get(i) + " = \"" + values.get(i) + "\";\n";
+				}
+				source = source + "public " + typeIn + "(){}\n";
+				source = source	+ "}";
+				Runtime run = Runtime.getRuntime();
+				String command = "touch /home/agi/Desktop/eclipse/UnboundAI/bin/" + typeIn + ".java";
+				run.exec(command);
+				File sourceFile = new File("/home/agi/Desktop/eclipse/UnboundAI/bin/" + typeIn + ".java");
+				FileWriter writer = new FileWriter(sourceFile, false);
+				writer.write(source);
+				writer.close();
+				Class<?> cls2 = new DynamicClassLoader("/home/agi/Desktop/eclipse/UnboundAI/bin/").load("NewClass.java"); 
+				Object instance2 = cls2.newInstance();
+				//use source code to create instance of dynamic object
+				Class<?> cls = new DynamicClassLoader("/home/agi/Desktop/eclipse/UnboundAI/bin/").load(typeIn + ".java"); 
+				Object instance = cls.newInstance();
+				output = instance;	
+				//Remove dynamic object file
+				command = "rm /home/agi/Desktop/eclipse/UnboundAI/bin/" + typeIn + ".java";
+				run.exec(command);
+		}
+		this.propLabel = nameIn;
 		return output;
-	}
-
-	
-	
-	public static void main(String[] args) {
-		String type = "int";
-		String valuesStringIn = "1";
-		Property prop = new Property(type, valuesStringIn);
-		int test = 1;
-		System.out.println(prop.prop.equals(test));
 	}
 }
