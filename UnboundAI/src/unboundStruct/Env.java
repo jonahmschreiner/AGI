@@ -50,13 +50,20 @@ public class Env {
 				errorLocationsVar = errorLocationsVar + "currentErrorLocations.add(inst" + i + ");\n";
 			}
 		}
-		String sensesVar = "java.util.List<unboundStruct.Sense> abstractEnv = new java.util.ArrayList<unboundStruct.Sense>();\n";
-		//Make Properties List Var from sense.properties
-		ljasflasfdj
+		String sensesVar = "java.util.List<unboundStruct.Sense> abstractEnv = new java.util.ArrayList<unboundStruct.Sense>();\n";	
 		if (abstractEnv != null) {
 			for (int i = 0; i < abstractEnv.size(); i++) {
+				String propertyListStr = "List<unboundStruct.Property> sense" + i + "Props = new ArrayList<unboundStruct.Property>();"; ;
+				sensesVar = sensesVar + propertyListStr;
+				for (int j = 0; j < abstractEnv.get(i).properties.size(); j++) {
+					String indPropStr = "unboundStruct.Property sense" + i + "Prop" + j 
+							+ " = new unboundStruct.Property(\"" + abstractEnv.get(i).properties.get(j).propType
+							+ "\", \"" + abstractEnv.get(i).properties.get(j).propLabel + "\", \"" + abstractEnv.get(i).properties.get(j).valuesString + "\");\n";
+					String indPropAddStr = "sense" + i + "Props.add(sense" + i + "Prop" + j + ");\n";
+					sensesVar = sensesVar + indPropStr + indPropAddStr;
+				}
 				sensesVar = sensesVar + "unboundStruct.Sense sense" + i + " = new unboundStruct.Sense(";
-				sensesVar = sensesVar + "\"" + abstractEnv.get(i).label + "\", ";
+				sensesVar = sensesVar + "\"" + abstractEnv.get(i).label + "\", sense" + i + "Props";
 				//add properties list to the constructor
 			}
 		}
@@ -87,10 +94,27 @@ public class Env {
 				errorLocationsVar = errorLocationsVar + "prevErrorLocations.add(prevInst" + i + ");\n";
 			}
 		}
+		String sensesVar = "java.util.List<unboundStruct.Sense> abstractEnv = new java.util.ArrayList<unboundStruct.Sense>();\n";	
+		if (abstractEnv != null) {
+			for (int i = 0; i < abstractEnv.size(); i++) {
+				String propertyListStr = "List<unboundStruct.Property> sense" + i + "Props = new ArrayList<unboundStruct.Property>();"; ;
+				sensesVar = sensesVar + propertyListStr;
+				for (int j = 0; j < abstractEnv.get(i).properties.size(); j++) {
+					String indPropStr = "unboundStruct.Property sense" + i + "Prop" + j 
+							+ " = new unboundStruct.Property(\"" + abstractEnv.get(i).properties.get(j).propType
+							+ "\", \"" + abstractEnv.get(i).properties.get(j).propLabel + "\", \"" + abstractEnv.get(i).properties.get(j).valuesString + "\");\n";
+					String indPropAddStr = "sense" + i + "Props.add(sense" + i + "Prop" + j + ");\n";
+					sensesVar = sensesVar + indPropStr + indPropAddStr;
+				}
+				sensesVar = sensesVar + "unboundStruct.Sense sense" + i + " = new unboundStruct.Sense(";
+				sensesVar = sensesVar + "\"" + abstractEnv.get(i).label + "\", sense" + i + "Props";
+				//add properties list to the constructor
+			}
+		}
 		String currentCpuUsageVar = "Double prevCpuUsage = " + this.currentCpuUsage + ";\n";
 		String prevEnvVars = mousePointVar + leftMousePressedVar + middleMousePressedVar + rightMousePressedVar 
 				+ keyPressedVar + numOfMouseButtonsVar + currentDisplayInitVar + calendarVar
-				+ currentCpuUsageVar + errorLocationsVar + tagsRecursivelyCalledVar;
+				+ currentCpuUsageVar + errorLocationsVar + sensesVar + tagsRecursivelyCalledVar;
 		return prevEnvVars;
 	}
 	

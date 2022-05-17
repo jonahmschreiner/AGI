@@ -10,6 +10,8 @@ import qj.util.lang.DynamicClassLoader;
 public class Property {
 	Object prop;
 	String propLabel;
+	String propType;
+	String valuesString;
 	public Property(String typeIn, String nameIn, String valuesStringIn) throws Exception {
 		this.prop = determineShit(typeIn, nameIn, valuesStringIn);
 	}
@@ -102,6 +104,8 @@ public class Property {
 				run.exec(command);
 		}
 		this.propLabel = nameIn;
+		this.propType = typeIn;
+		this.valuesString = valuesStringIn;
 		return output;
 	}
 }

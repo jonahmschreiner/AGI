@@ -24,14 +24,20 @@ public class ExecSenses {
 		//create callables based on number of threads needed
 		int threadSize = sensePaths.size() / numOfThreads;
 		ExecutorService exec = Executors.newFixedThreadPool(numOfThreads);
+		System.out.println("NumOfThreads: " + numOfThreads);
+		System.out.println("ThreadSize: " + threadSize);
 		List<Callable<List<Sense>>> processes = new ArrayList<Callable<List<Sense>>>();
 		//for (int i = 0; i < numOfThreads; i++) {
 			final int count = 0; //was i
 			Callable<List<Sense>> callableTask = () -> {
 			    List<Sense> senses = new ArrayList<Sense>();
 			    System.out.println(1);
-			    List<String> currSensePaths = sensePaths.subList(threadSize * count, (threadSize * (count + 1)) - 1);
-			    System.out.println(2);
+			    List<String> currSensePaths = new ArrayList<String>();
+			    if (sensePaths.size() > 1) {
+			    	currSensePaths = sensePaths.subList(threadSize * count, (threadSize * (count + 1)) - 1);
+			    } else {
+			    	currSensePaths = sensePaths;
+			    }
 			    List<Belief> currBeliefs = BeliefParser.parseBeliefs(currSensePaths, 1);
 			    System.out.println(3);
 			    Runtime run = Runtime.getRuntime();
@@ -40,7 +46,6 @@ public class ExecSenses {
 			    System.out.println(4);
 			    System.out.println("curr: " + currBeliefs.size());
 			    for (int j = 0; j < currBeliefs.size(); j++) {
-			    	System.out.println(5);
 			    	String source = BeliefFileAssembler.assembleSense(currBeliefs.get(count), context.env, prevContext.env);
 			    	System.out.println(5);
 			    	FileCompilerRunner.compile(source, currBeliefs.get(count).beliefName, context);
