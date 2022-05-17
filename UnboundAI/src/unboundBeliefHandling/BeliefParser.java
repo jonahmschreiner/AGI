@@ -5,7 +5,6 @@ import unboundStruct.*;
 public class BeliefParser {
 	public static List<Belief> parseBeliefs(List<String> beliefPathsIn, int typeIn) throws FileNotFoundException{
 		List<Belief> parsedBeliefs = new ArrayList<Belief>();		
-		System.out.println(beliefPathsIn.size());
 		for (int i = 0; i < beliefPathsIn.size(); i++) {
 			File source = new File(beliefPathsIn.get(i));
 			Scanner scan = new Scanner(source);

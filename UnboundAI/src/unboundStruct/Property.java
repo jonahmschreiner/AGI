@@ -8,10 +8,10 @@ import javax.tools.ToolProvider;
 import qj.util.lang.DynamicClassLoader;
 
 public class Property {
-	Object prop;
-	String propLabel;
-	String propType;
-	String valuesString;
+	public Object prop;
+	public String propLabel;
+	public String propType;
+	public String valuesString;
 	public Property(String typeIn, String nameIn, String valuesStringIn) throws Exception {
 		this.prop = determineShit(typeIn, nameIn, valuesStringIn);
 	}

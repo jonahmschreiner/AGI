@@ -1,6 +1,5 @@
 Sense:100,,,
 int test = 1;
-File file = new File("/home/agi/Desktop/eclipse/UnboundAI/bin/senses0");
-FileWriter writer = new FileWriter(file, true);
-writer.write("NewSense String,test1,hello,,,List<String>,testList,String test2 test String test3 yesUUUUUSenseNew NewClass,test8,String test9 no String test10 nono");
-writer.close();
+Property prop1 = new Property("String", "testProp1", "helloooo");
+properties.add(prop1);
+

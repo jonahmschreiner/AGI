@@ -13,22 +13,17 @@ public class SenseParser {
 			String senseString = senseScan.next();
 			Scanner indSenseScan = new Scanner(senseString);
 			String senseLabel = indSenseScan.next();
-			System.out.println("SenseLabel: " + senseLabel);
-			indSenseScan.useDelimiter(",,,"); //senseScan turns into propertyScanner after retrieving label
+			indSenseScan.useDelimiter("PPPPP"); //senseScan turns into propertyScanner after retrieving label
 			while (indSenseScan.hasNext()) {
 				String indPropStr = indSenseScan.next();
 				while (indPropStr.substring(0, 1).equals(" ")) {
 					indPropStr = indPropStr.substring(1);
 				}
-				System.out.println("indPropStr: " + indPropStr);
 				Scanner indPropScanner = new Scanner(indPropStr);
 				indPropScanner.useDelimiter(",");
 				String propType = indPropScanner.next();
-				System.out.println("PropType: " + propType);
 				String propName = indPropScanner.next();
-				System.out.println("PropLabel: " + propName);
 				String propValueString = indPropScanner.next();
-				System.out.println("PropValueString: " + propValueString);
 				Property prop = new Property(propType, propName, propValueString);
 				props.add(prop);
 				indPropScanner.close();

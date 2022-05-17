@@ -31,12 +31,14 @@ public class FileCompilerRunner {
 					Object instance = cls.newInstance();
 				} catch (Exception e) {
 					//catch runtime errors
+					System.out.println("runtime error");
 					List<Instruction> runtimeErrs = CheckRuntimeErrors.pull(e, contextIn);
 					contextIn.env.errorLocations.addAll(runtimeErrs);
 					ContextWriter.writeContext(contextIn, false);
 				}
 
 			} else {
+				System.out.println("compiler error");
 				contextIn.env.errorLocations.addAll(errorInsts);
 				ContextWriter.writeContext(contextIn, false);
 			}

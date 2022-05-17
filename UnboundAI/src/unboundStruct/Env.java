@@ -94,20 +94,20 @@ public class Env {
 				errorLocationsVar = errorLocationsVar + "prevErrorLocations.add(prevInst" + i + ");\n";
 			}
 		}
-		String sensesVar = "java.util.List<unboundStruct.Sense> abstractEnv = new java.util.ArrayList<unboundStruct.Sense>();\n";	
+		String sensesVar = "java.util.List<unboundStruct.Sense> prevAbstractEnv = new java.util.ArrayList<unboundStruct.Sense>();\n";	
 		if (abstractEnv != null) {
 			for (int i = 0; i < abstractEnv.size(); i++) {
-				String propertyListStr = "List<unboundStruct.Property> sense" + i + "Props = new ArrayList<unboundStruct.Property>();"; ;
+				String propertyListStr = "List<unboundStruct.Property> prevSense" + i + "Props = new ArrayList<unboundStruct.Property>();"; ;
 				sensesVar = sensesVar + propertyListStr;
 				for (int j = 0; j < abstractEnv.get(i).properties.size(); j++) {
-					String indPropStr = "unboundStruct.Property sense" + i + "Prop" + j 
+					String indPropStr = "unboundStruct.Property prevSense" + i + "Prop" + j 
 							+ " = new unboundStruct.Property(\"" + abstractEnv.get(i).properties.get(j).propType
 							+ "\", \"" + abstractEnv.get(i).properties.get(j).propLabel + "\", \"" + abstractEnv.get(i).properties.get(j).valuesString + "\");\n";
-					String indPropAddStr = "sense" + i + "Props.add(sense" + i + "Prop" + j + ");\n";
+					String indPropAddStr = "prevSense" + i + "Props.add(prevSense" + i + "Prop" + j + ");\n";
 					sensesVar = sensesVar + indPropStr + indPropAddStr;
 				}
-				sensesVar = sensesVar + "unboundStruct.Sense sense" + i + " = new unboundStruct.Sense(";
-				sensesVar = sensesVar + "\"" + abstractEnv.get(i).label + "\", sense" + i + "Props";
+				sensesVar = sensesVar + "unboundStruct.Sense prevSense" + i + " = new unboundStruct.Sense(";
+				sensesVar = sensesVar + "\"" + abstractEnv.get(i).label + "\", prevSense" + i + "Props";
 				//add properties list to the constructor
 			}
 		}
