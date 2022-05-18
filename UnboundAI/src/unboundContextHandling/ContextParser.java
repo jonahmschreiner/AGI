@@ -33,6 +33,9 @@ public class ContextParser {
 		Scanner errorScanner = new Scanner(errorsString);
 		while (errorScanner.hasNextLine()) {
 			String errorString = errorScanner.nextLine();
+			if (errorString.equals("ENDERRORS")) {
+				break;
+			}
 			if (!errorString.isEmpty()) {
 				Scanner errorScan = new Scanner(errorString);
 				errorScan.useDelimiter(",,,");
@@ -45,8 +48,35 @@ public class ContextParser {
 			}
 		}
 		env.errorLocations = errors;
+		//Hypothesis Info
+		List<Hypothesis> hypos = new ArrayList<Hypothesis>();
+		while (errorScanner.hasNextLine()) {
+			String hypoGenStr = errorScanner.nextLine();
+			Scanner hypoScan = new Scanner(hypoGenStr);
+			hypoScan.useDelimiter(",");
+			String actionFilePath = hypoScan.next();
+			String actionName = hypoScan.next();
+			String ratingsStr = hypoScan.next();
+			Scanner ratingScan = new Scanner(ratingsStr);
+			List<Rating> ratings = new ArrayList<Rating>();
+			while (ratingScan.hasNext()) {
+				String goalFilePath = ratingScan.next();
+				if (ratingScan.hasNext()) {
+					String goalName = ratingScan.next();
+					if (ratingScan.hasNext()) {
+						int ratingValue = Integer.valueOf(ratingScan.next());
+						Rating rating = new Rating(goalFilePath, goalName, ratingValue);
+						ratings.add(rating);
+					}
+				}
+			}
+			ratingScan.close();
+			hypoScan.close();
+			Hypothesis hypo = new Hypothesis(actionFilePath, actionName, ratings);
+			hypos.add(hypo);
+		}
 		errorScanner.close();	
-		Context context = new Context(env, satisfaction, prevExecActionName);
+		Context context = new Context(env, satisfaction, prevExecActionName, hypos);
 		return context;
 	}
 }

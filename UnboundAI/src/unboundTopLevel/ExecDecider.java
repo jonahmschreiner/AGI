@@ -3,7 +3,7 @@ import unboundStruct.*;
 public class ExecDecider {
 	public static String exec(Context context) {
 		String actionDecided = "";
-		int maxTotal = 0;
+		int maxTotal = -1000000000;
 		for (int i = 0; i < context.hypothesi.size(); i++) {
 			int currentTotal = 0;
 			Hypothesis currentHypo = context.hypothesi.get(i);

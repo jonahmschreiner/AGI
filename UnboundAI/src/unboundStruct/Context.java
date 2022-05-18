@@ -8,7 +8,10 @@ public class Context {
 	public String prevExecBeliefName;
 	public List<Hypothesis> hypothesi;
 	
-	public Context() {}
+	public Context() {
+		this.env = new Env();
+		this.hypothesi = new ArrayList<Hypothesis>();
+	}
 	public Context(Env envIn, int satisfactionIn, String prevExecBeliefNameIn, List<Hypothesis> hypothesiIn) {
 		this.env = envIn;
 		this.satisfaction = satisfactionIn;

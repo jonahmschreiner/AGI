@@ -7,7 +7,7 @@ public class Hypothesis {
 	public List<Rating> ratings;
 	public Hypothesis() {
 		this.actionName = "action not set";
-		this.ratings = new ArrayList<Rating>();
+		initRatings();
 	}
 	public Hypothesis(String actionFilePath, String actionNameIn, List<Rating> ratingsIn) {
 		this.actionFile = new File(actionFilePath);
@@ -17,6 +17,7 @@ public class Hypothesis {
 	public Hypothesis(String actionFilePath, String actionNameIn) {
 		this.actionFile = new File(actionFilePath);
 		this.actionName = actionNameIn;
+		initRatings();
 	}
 	public void initRatings() {
 		//get all existing goal files and make a rating of 0 for each one
