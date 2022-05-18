@@ -39,6 +39,7 @@ public class FileCompilerRunner {
 
 			} else {
 				System.out.println("compiler error");
+				
 				contextIn.env.errorLocations.addAll(errorInsts);
 				ContextWriter.writeContext(contextIn, false);
 			}

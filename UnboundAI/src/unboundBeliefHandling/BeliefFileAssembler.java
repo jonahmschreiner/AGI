@@ -31,7 +31,7 @@ public class BeliefFileAssembler {
 		neuralPath = neuralPath + "}\n}";	
 		return neuralPath;
 	}
-	public static String assembleSense(Belief beliefIn, Env currentEnv, Env prevEnv, int parallelID) throws Exception {
+	public static String assembleSense(Belief beliefIn, Env currentEnv, Env prevEnv) throws Exception {
 		if (beliefIn.beliefType != 1) {
 			return "Wrong Belief Type Passed Into AssembleSense: " + beliefIn.beliefType;
 		}
@@ -60,7 +60,7 @@ public class BeliefFileAssembler {
 		neuralPath = neuralPath + "File tagsCalled = new File(path + \"/tagsCalled.java\");\n"
 				+ "FileWriter writer2 = new FileWriter(tagsCalled, true);\nwriter2.write(tagsRecursivelyCalled);\n"
 				+ "writer2.close();\n";	
-		neuralPath = neuralPath + "unboundBeliefHandling.SenseWriter.write(sense, " + parallelID + ");\n";
+		neuralPath = neuralPath + "unboundBeliefHandling.SenseWriter.write(sense);\n";
 		//add in ending myelin that is used in all types of beliefs
 		neuralPath = neuralPath + "}\n}";	
 		return neuralPath;
@@ -101,6 +101,6 @@ public class BeliefFileAssembler {
 		SenseEnv sense = new SenseEnv();
 		Env currentEnv = sense.recordEnv();
 		Env prevEnv = currentEnv;
-		System.out.println(BeliefFileAssembler.assembleSense(belief, currentEnv, prevEnv, 0));
+		System.out.println(BeliefFileAssembler.assembleSense(belief, currentEnv, prevEnv));
 	}
 }

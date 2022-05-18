@@ -11,26 +11,28 @@ public class SenseParser {
 		while (senseScan.hasNext()) {
 			List<Property> props = new ArrayList<Property>();
 			String senseString = senseScan.next();
-			Scanner indSenseScan = new Scanner(senseString);
-			String senseLabel = indSenseScan.next();
-			indSenseScan.useDelimiter("PPPPP"); //senseScan turns into propertyScanner after retrieving label
-			while (indSenseScan.hasNext()) {
-				String indPropStr = indSenseScan.next();
-				while (indPropStr.substring(0, 1).equals(" ")) {
-					indPropStr = indPropStr.substring(1);
+			if (!senseString.isEmpty() && senseString.length() > 1) {
+				Scanner indSenseScan = new Scanner(senseString);
+				String senseLabel = indSenseScan.next();
+				indSenseScan.useDelimiter("PPPPP"); //senseScan turns into propertyScanner after retrieving label
+				while (indSenseScan.hasNext()) {
+					String indPropStr = indSenseScan.next();
+					while (indPropStr.substring(0, 1).equals(" ")) {
+						indPropStr = indPropStr.substring(1);
+					}
+					Scanner indPropScanner = new Scanner(indPropStr);
+					indPropScanner.useDelimiter(",");
+					String propType = indPropScanner.next();
+					String propName = indPropScanner.next();
+					String propValueString = indPropScanner.next();
+					Property prop = new Property(propType, propName, propValueString);
+					props.add(prop);
+					indPropScanner.close();
 				}
-				Scanner indPropScanner = new Scanner(indPropStr);
-				indPropScanner.useDelimiter(",");
-				String propType = indPropScanner.next();
-				String propName = indPropScanner.next();
-				String propValueString = indPropScanner.next();
-				Property prop = new Property(propType, propName, propValueString);
-				props.add(prop);
-				indPropScanner.close();
+				indSenseScan.close();
+				Sense currSense = new Sense(senseLabel, props);
+				sensesFound.add(currSense);	
 			}
-			indSenseScan.close();
-			Sense currSense = new Sense(senseLabel, props);
-			sensesFound.add(currSense);		
 		}
 		senseScan.close();
 		return sensesFound;

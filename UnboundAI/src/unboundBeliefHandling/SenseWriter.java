@@ -3,7 +3,7 @@ import java.io.*;
 import java.util.*;
 import unboundStruct.*;
 public class SenseWriter {
-	public static void write(Sense senseIn, int parallelIn) throws Exception {
+	public static void write(Sense senseIn) throws Exception {
 		String outSource = senseIn.label + " ";
 		for (int i = 0; i < senseIn.properties.size(); i++) {
 			outSource = outSource + senseIn.properties.get(i).propType + ",";
@@ -14,17 +14,14 @@ public class SenseWriter {
 			}
 		}
 		outSource = outSource + "UUUUU\n";
-		System.out.println("outSource: " + outSource);
-		System.out.println(parallelIn);
 		try {
-			File file = new File("/home/agi/Desktop/eclipse/UnboundAI/bin/sense" + parallelIn);
+			File file = new File("/home/agi/Desktop/eclipse/UnboundAI/bin/sense.txt");
 			FileWriter writer = new FileWriter(file);
 			writer.write(outSource);
 			writer.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -36,6 +33,6 @@ public class SenseWriter {
 		Property prop2 = new Property("List<String>", "test2", "String test2 test String test3 yes");
 		properties.add(prop2);
 		sense.properties = properties;
-		SenseWriter.write(sense, 0);
+		SenseWriter.write(sense);
 	}
 }
