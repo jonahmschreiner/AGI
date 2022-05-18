@@ -18,22 +18,22 @@ public class UnboundLLF {
 		//Raw Env Info
 		SenseEnv sense = new SenseEnv();
 		Env currentEnv = sense.recordEnv();
-		Context context = new Context(currentEnv, contextIn.satisfaction, "");
+		Context context = new Context(currentEnv, contextIn.satisfaction, "", contextIn.hypothesi);
 		//Senses
 		context.env.abstractEnv = ExecSenses.exec(context, contextIn);
 		//Action Decider
-		
-
-		String executeThisBelief = "TestBelief";
+		String executeThisBelief = ExecDecider.exec(context);
 		//Action
 		context.prevExecBeliefName = ExecAction.exec(executeThisBelief, contextIn.env, context);
-
 		//Goals
-		ExecGoals.exec(currentEnv, contextIn.env, context);
-			
+		ExecGoals.exec(currentEnv, contextIn.env, context);	
 		//Error Goals
 		context.satisfaction += ExecErrorGoals.exec(context.env, contextIn.env, context);
 		System.out.println("Total Satisfaction: " + context.satisfaction);
+		//Rewrite Block
+		
+		
+		
 		//Prep for next cycle
 		ContextWriter.writeContext(context, true);
 		return context;

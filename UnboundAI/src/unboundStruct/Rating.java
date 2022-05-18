@@ -25,7 +25,7 @@ public class Rating {
 		if (o instanceof Rating){
 			Rating c = (Rating) o;
 			boolean output = false;
-			if ((c.goalName.equals(this.goalName)) && (c.rating == this.rating)){
+			if (c.goalName.equals(this.goalName)){
 				output = true;
 			} else {
 				output = false;

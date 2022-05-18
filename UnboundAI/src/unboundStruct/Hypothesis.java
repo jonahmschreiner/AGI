@@ -43,5 +43,14 @@ public class Hypothesis {
 	}
 	public void updateRatings(List<Rating> ratingsIn) {
 		//use the ratings in to update the appropriate ratings
+		for (int i = 0; i< ratingsIn.size(); i++) {
+			Rating currentRating = ratingsIn.get(i);
+			if (this.ratings.contains(currentRating)) {
+				this.ratings.get(this.ratings.indexOf(currentRating)).rating = this.ratings.get(this.ratings.indexOf(currentRating)).rating 
+						+ currentRating.rating;
+			} else {
+				this.ratings.add(currentRating);
+			}
+		}
 	}
 }
