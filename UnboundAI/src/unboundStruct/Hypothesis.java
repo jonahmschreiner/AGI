@@ -7,7 +7,6 @@ public class Hypothesis {
 	public List<Rating> ratings;
 	public Hypothesis() {
 		this.actionName = "action not set";
-		initRatings();
 	}
 	public Hypothesis(String actionFilePath, String actionNameIn, List<Rating> ratingsIn) {
 		this.actionFile = new File(actionFilePath);
@@ -53,5 +52,23 @@ public class Hypothesis {
 				this.ratings.add(currentRating);
 			}
 		}
+	}	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this){
+			return true;
+		}
+		if (o instanceof Hypothesis){
+			Hypothesis c = (Hypothesis) o;
+			boolean output = false;
+			if (c.actionName.equals(this.actionName)){
+				output = true;
+			} else {
+				output = false;
+			}
+			return output;
+		} else {
+			return false;
+		}	
 	}
 }

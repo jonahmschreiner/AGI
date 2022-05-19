@@ -8,7 +8,7 @@ import unboundBeliefRetrievers.ErrorGoalRetriever;
 import unboundStruct.*;
 
 public class ExecErrorGoals {
-	public static int exec(Env currentEnv, Env prevEnv, Context contextIn) throws Exception{
+	public static List<GoalResult> exec(Env currentEnv, Env prevEnv, Context contextIn) throws Exception{
 		List<String> tagsIn = new ArrayList<String>();
 		tagsIn.add("Goal");
 		List<String> goalPaths = ErrorGoalRetriever.retrieve(tagsIn);
@@ -21,7 +21,6 @@ public class ExecErrorGoals {
 		Runtime run = Runtime.getRuntime();
 		String command = "rm /home/agi/Desktop/eclipse/UnboundAI/bin/GoalEvalResult.java";
 		run.exec(command);
-		int satisfaction = GoalResultCombiner.combine(goalResults);
-		return satisfaction;
+		return goalResults;
 	}
 }

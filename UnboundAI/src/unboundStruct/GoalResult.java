@@ -25,6 +25,6 @@ public class GoalResult {
 	
 	@Override
 	public String toString() {
-		return className + ":" + result + ":" + complete;
+		return className + ":" + result + ":" + complete + ":";
 	}
 }

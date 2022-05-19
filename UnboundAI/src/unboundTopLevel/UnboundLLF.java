@@ -1,5 +1,7 @@
 package unboundTopLevel;
 
+import java.util.List;
+
 import unboundBeliefHandling.*;
 import unboundContextHandling.*;
 import unboundStruct.*;
@@ -9,6 +11,9 @@ public class UnboundLLF {
 	public static void main(String[] args) throws Exception{
 		UnboundLLF LLF = new UnboundLLF();
 		LLF.context = ContextParser.parse();
+		if (LLF.context.hypothesi.isEmpty()) {
+			LLF.context.hypothesi = InitializeNewHypothesi.init();
+		}
 		while (true) {
 			LLF.context = LLF.LF(LLF.context);
 		}
@@ -28,7 +33,12 @@ public class UnboundLLF {
 		//Goals
 		ExecGoals.exec(currentEnv, contextIn.env, context);	
 		//Error Goals
-		context.satisfaction += ExecErrorGoals.exec(context.env, contextIn.env, context);
+		List<GoalResult> results = ExecErrorGoals.exec(context.env, contextIn.env, context);
+		//Handle Goal Results (take individual ratings of each goal and add them to the total as well as append them to hypothesis
+		context.satisfaction += GoalResultCombiner.combine(results);
+		Hypothesis executionAssociatedHypo = new Hypothesis();
+		executionAssociatedHypo.actionName = executeThisBelief;
+		context.hypothesi.get(context.hypothesi.indexOf(executionAssociatedHypo)).updateRatings(HandleGoalResults.handle(results));
 		System.out.println("Total Satisfaction: " + context.satisfaction);
 		//Rewrite Block
 		

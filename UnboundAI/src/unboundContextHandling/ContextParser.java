@@ -52,28 +52,30 @@ public class ContextParser {
 		List<Hypothesis> hypos = new ArrayList<Hypothesis>();
 		while (errorScanner.hasNextLine()) {
 			String hypoGenStr = errorScanner.nextLine();
-			Scanner hypoScan = new Scanner(hypoGenStr);
-			hypoScan.useDelimiter(",");
-			String actionFilePath = hypoScan.next();
-			String actionName = hypoScan.next();
-			String ratingsStr = hypoScan.next();
-			Scanner ratingScan = new Scanner(ratingsStr);
-			List<Rating> ratings = new ArrayList<Rating>();
-			while (ratingScan.hasNext()) {
-				String goalFilePath = ratingScan.next();
-				if (ratingScan.hasNext()) {
-					String goalName = ratingScan.next();
+			if (!hypoGenStr.isEmpty()) {
+				Scanner hypoScan = new Scanner(hypoGenStr);
+				hypoScan.useDelimiter(",");
+				String actionFilePath = hypoScan.next();
+				String actionName = hypoScan.next();
+				String ratingsStr = hypoScan.next();
+				Scanner ratingScan = new Scanner(ratingsStr);
+				List<Rating> ratings = new ArrayList<Rating>();
+				while (ratingScan.hasNext()) {
+					String goalFilePath = ratingScan.next();
 					if (ratingScan.hasNext()) {
-						int ratingValue = Integer.valueOf(ratingScan.next());
-						Rating rating = new Rating(goalFilePath, goalName, ratingValue);
-						ratings.add(rating);
+						String goalName = ratingScan.next();
+						if (ratingScan.hasNext()) {
+							int ratingValue = Integer.valueOf(ratingScan.next());
+							Rating rating = new Rating(goalFilePath, goalName, ratingValue);
+							ratings.add(rating);
+						}
 					}
 				}
+				ratingScan.close();
+				hypoScan.close();
+				Hypothesis hypo = new Hypothesis(actionFilePath, actionName, ratings);
+				hypos.add(hypo);
 			}
-			ratingScan.close();
-			hypoScan.close();
-			Hypothesis hypo = new Hypothesis(actionFilePath, actionName, ratings);
-			hypos.add(hypo);
 		}
 		errorScanner.close();	
 		Context context = new Context(env, satisfaction, prevExecActionName, hypos);
