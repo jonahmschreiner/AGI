@@ -25,7 +25,7 @@ public class Sense {
 		if (o instanceof Sense){
 			Sense c = (Sense) o;
 			boolean output = false;
-			if (c.label.equals(this.label) && c.properties.equals(this.properties)){
+			if (c.label.equals(this.label)){
 				output = true;
 			} else {
 				output = false;
