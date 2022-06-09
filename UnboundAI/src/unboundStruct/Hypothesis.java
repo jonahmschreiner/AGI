@@ -15,6 +15,10 @@ public class Hypothesis {
 		this.ratings = ratingsIn;
 		this.senseRatings = senseRatingsIn;
 	}
+	//following constructor is for testing, please delete after testing is completed
+	public Hypothesis(List<SenseRating> senseRatingsIn) {
+		this.senseRatings = senseRatingsIn;
+	}
 	public Hypothesis(String actionFilePath, String actionNameIn, Context context) {
 		this.actionFile = new File(actionFilePath);
 		this.actionName = actionNameIn;
@@ -91,35 +95,45 @@ public class Hypothesis {
 		for (int i = 0; i< ratingsIn.size(); i++) {
 			SenseRating currentRating = ratingsIn.get(i);
 			if (this.senseRatings.contains(currentRating)) {
-				//switch if to loop to identify all SenseRating objects that are "equal" to the name of the senseRating (as they can have different
 				//properties
-				List<SenseRating> copyOfSenseRatings = this.senseRatings;
 				List<SenseRating> instsOfRelRatings = new ArrayList<SenseRating>();
-				while (copyOfSenseRatings.contains(currentRating)) {
-					SenseRating inst = copyOfSenseRatings.get(copyOfSenseRatings.indexOf(currentRating));
-					instsOfRelRatings.add(inst);
-					copyOfSenseRatings = this.senseRatings.subList(copyOfSenseRatings.indexOf(currentRating), this.senseRatings.size());
-				}			
-				for (int k = 0; k < instsOfRelRatings.size(); k++) {
-					SenseRating matchRating = instsOfRelRatings.get(k);
-					int successfulMatches = 0;
-					for (int j = 0; j < matchRating.propRatings.size(); j++) {
-						if (matchRating.propRatings.contains(currentRating.propRatings.get(j))) { //if the property exists in both rating lists
-							if (matchRating.propRatings.get(matchRating.propRatings.indexOf(currentRating.propRatings.get(j))).propValue.equals(currentRating.propRatings.get(j).propValue)) { //if the property values match in both rating lists
-								//prop exists and value is the same in both senseRatings
-								successfulMatches = successfulMatches + 1;
-							}
-						} else {
-							//add new senseRating to this.senseRatings
-							this.senseRatings.add(currentRating);
-						}
-					}
-					if (successfulMatches == currentRating.propRatings.size()) { //if all properties matched, update rating of senseRating
-						this.senseRatings.get(this.senseRatings.indexOf(currentRating)).rating = this.senseRatings.get(this.senseRatings.indexOf(currentRating)).rating 
-								+ currentRating.rating;
-						break;
+				for (int l = 0; l < this.senseRatings.size(); l++) {
+					SenseRating inst = this.senseRatings.get(l);
+					if (inst.senseName.equals(currentRating.senseName)) {
+						instsOfRelRatings.add(inst);
 					}
 				}
+				try {
+					boolean added = false;
+					for (int k = 0; k < instsOfRelRatings.size(); k++) {
+						SenseRating matchRating = instsOfRelRatings.get(k);
+						int successfulMatches = 0;
+						for (int j = 0; j < currentRating.propRatings.size(); j++) {
+							if (matchRating.propRatings.contains(currentRating.propRatings.get(j))) { //if the property exists in both rating lists
+								if (matchRating.propRatings.get(matchRating.propRatings.indexOf(currentRating.propRatings.get(j))).propValue.equals(currentRating.propRatings.get(j).propValue)) { //if the property values match in both rating lists
+									//prop exists and value is the same in both senseRatings
+									successfulMatches = successfulMatches + 1;
+								} else {
+									this.senseRatings.add(currentRating);
+								}
+							} else {
+								//add new senseRating to this.senseRatings
+								this.senseRatings.add(currentRating);
+							}
+						}
+						if (successfulMatches == currentRating.propRatings.size() && successfulMatches == matchRating.propRatings.size()) { //if all properties matched, update rating of senseRating
+							this.senseRatings.get(this.senseRatings.indexOf(currentRating)).rating = this.senseRatings.get(this.senseRatings.indexOf(currentRating)).rating 
+									+ currentRating.rating;
+							added = true;
+							break;
+						}
+					}
+					if (!added) {
+						this.senseRatings.add(currentRating);
+					}
+				} catch (Exception e) {
+					this.senseRatings.add(currentRating);
+				}				
 			} else {
 				this.senseRatings.add(currentRating);
 			}
@@ -142,5 +156,67 @@ public class Hypothesis {
 		} else {
 			return false;
 		}	
+	}
+	//main is for testing, can prob delete
+	public static void main (String[] args) {
+		//set up existing SenseRatings in the hypo
+		List<SenseRating> sRatings = new ArrayList<SenseRating>();
+		Sense sense1 = new Sense();
+		List<PropRating> s1PropRatings = new ArrayList<PropRating>();
+		PropRating s1PropRating1 = new PropRating("Size", "1", 2, sense1);
+		s1PropRatings.add(s1PropRating1);
+		PropRating s1PropRating2 = new PropRating("Test", "4", 2, sense1);
+		s1PropRatings.add(s1PropRating2);
+		Sense sense2 = new Sense();
+		List<PropRating> s2PropRatings = new ArrayList<PropRating>();
+		PropRating s2PropRating1 = new PropRating("Size", "1", 2, sense2);
+		PropRating s2PropRating2 = new PropRating("Color", "3", 1, sense2);
+		s2PropRatings.add(s2PropRating1);
+		s2PropRatings.add(s2PropRating2);
+		Sense sense3 = new Sense();
+		List<PropRating> s3PropRatings = new ArrayList<PropRating>();
+		PropRating s3PropRating1 = new PropRating("Size", "1", 2, sense3);
+		s3PropRatings.add(s3PropRating1);
+		SenseRating senseR1 = new SenseRating("/home/agi/Desktop/eclipse/UnboundAI/BeliefStorage/Senses/TestBelief", "TestBelief", 0, s1PropRatings);
+		SenseRating senseR2 = new SenseRating("/home/agi/Desktop/eclipse/UnboundAI/BeliefStorage/Senses/TestBelief2", "TestBelief2", 0, s2PropRatings);
+		SenseRating senseR3 = new SenseRating("/home/agi/Desktop/eclipse/UnboundAI/BeliefStorage/Senses/TestBelief3", "TestBelief3", 0, s3PropRatings);
+		sRatings.add(senseR1);
+		sRatings.add(senseR2);
+		sRatings.add(senseR3);
+		Hypothesis hypo = new Hypothesis(sRatings);
+		System.out.println("Before: ");
+		for (int i = 0; i < hypo.senseRatings.size(); i++) {
+			System.out.println(hypo.senseRatings.get(i).senseName + " " + hypo.senseRatings.get(i).propRatings.size() + ": " 
+					+ hypo.senseRatings.get(i).rating);
+		}
+		//set up sense ratings used to update existing sense ratings
+		List<SenseRating> inputSRatings = new ArrayList<SenseRating>();
+		Sense iSense1 = new Sense();
+		List<PropRating> iS1PropRatings = new ArrayList<PropRating>();
+		PropRating iS1PropRating1 = new PropRating("Size", "1", 2, iSense1);
+		iS1PropRatings.add(iS1PropRating1);
+		Sense iSense2 = new Sense();
+		List<PropRating> iS2PropRatings = new ArrayList<PropRating>();
+		PropRating iS2PropRating1 = new PropRating("Size", "1", 2, iSense2);
+		PropRating iS2PropRating2 = new PropRating("Color", "3", 1, iSense2);
+		iS2PropRatings.add(iS2PropRating1);
+		iS2PropRatings.add(iS2PropRating2);
+		Sense iSense3 = new Sense();
+		List<PropRating> iS3PropRatings = new ArrayList<PropRating>();
+		PropRating iS3PropRating1 = new PropRating("Size", "1", 2, iSense3);
+		iS3PropRatings.add(iS3PropRating1);
+		SenseRating iSenseR1 = new SenseRating("/home/agi/Desktop/eclipse/UnboundAI/BeliefStorage/Senses/TestBelief", "TestBelief", 1, iS1PropRatings);
+		SenseRating iSenseR2 = new SenseRating("/home/agi/Desktop/eclipse/UnboundAI/BeliefStorage/Senses/TestBelief2", "TestBelief2", 1, iS2PropRatings);
+		SenseRating iSenseR3 = new SenseRating("/home/agi/Desktop/eclipse/UnboundAI/BeliefStorage/Senses/TestBelief3", "TestBelief3", 1, iS3PropRatings);
+		inputSRatings.add(iSenseR1);
+		inputSRatings.add(iSenseR2);
+		inputSRatings.add(iSenseR3);
+		
+		hypo.updateSenseRatings(inputSRatings);
+		System.out.println("After: ");
+		for (int i = 0; i < hypo.senseRatings.size(); i++) {
+			System.out.println(hypo.senseRatings.get(i).senseName + " " + hypo.senseRatings.get(i).propRatings.size() + ": " 
+					+ hypo.senseRatings.get(i).rating);
+		}
 	}
 }

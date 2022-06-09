@@ -11,7 +11,7 @@ public class ContextWriter {
 				+ contextIn.env.middleMouseButtonPressed + "," + contextIn.env.rightMouseButtonPressed + ","
 				+ contextIn.env.calendar.toString() + "," + contextIn.env.currentCpuUsage + ",,,,,\n";		
 		String total = init + env;
-		
+	
 		//errors
 		for (int i = 0; i < contextIn.env.errorLocations.size(); i++) {
 			total = total + contextIn.env.errorLocations.get(i).parentClass + ",,," + contextIn.env.errorLocations.get(i).instructionNumber + ",,,"

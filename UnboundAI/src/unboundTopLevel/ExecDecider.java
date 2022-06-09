@@ -9,6 +9,12 @@ public class ExecDecider {
 			Hypothesis currentHypo = context.hypothesi.get(i);
 			for (int j = 0; j < currentHypo.ratings.size(); j++) {
 				currentTotal = currentTotal + currentHypo.ratings.get(j).rating;
+				
+				//add totals of all abstract senses that are present that the action has a senseRating for
+				if () {
+					
+				}
+				currentTotal = currentTotal + currentHypo.senseRatings
 			}
 			if (currentTotal > maxTotal) {
 				maxTotal = currentTotal;
