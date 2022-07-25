@@ -52,6 +52,7 @@ public class Env {
 		    return img;
 		}
 		
+		@Override
 		public boolean equals(Object o) {
 			if (o == this){
 				return true;

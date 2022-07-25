@@ -2192,6 +2192,11 @@ public class Util {
 		runCommand();
 		setCurrentKeyPressData("Control+Alt+Backslash");
 	}
+	public void pressControlAltDelete() {
+		command = "xdotool key Control_L+Alt_L+Delete";
+		runCommand();
+		setCurrentKeyPressData("Control+Alt+Delete");
+	}
 	//press control + alt + end key
 	public void pressControlAltEnd() {
 		command = "xdotool key Control_L+Alt_L+End";

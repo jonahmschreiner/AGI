@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="java.io.FileInputStream"/>
-    <fullyQualifiedTypeName name="java.util.Calendar"/>
-    <fullyQualifiedTypeName name="java.awt.event.MouseEvent"/>
-    <fullyQualifiedTypeName name="java.awt.event.MouseListener"/>
-    <fullyQualifiedTypeName name="java.lang.Thread"/>
-    <fullyQualifiedTypeName name="AGIUtil.randomAction"/>
-    <fullyQualifiedTypeName name="java.lang.Runtime"/>
     <fullyQualifiedTypeName name="javax.tools.JavaCompiler"/>
     <fullyQualifiedTypeName name="javax.tools.ToolProvider"/>
     <fullyQualifiedTypeName name="java.net.URLClassLoader"/>
@@ -34,7 +27,6 @@
     <fullyQualifiedTypeName name="java.io.FileNotFoundException"/>
     <fullyQualifiedTypeName name="unboundRetrievers.GoalRetriever"/>
     <fullyQualifiedTypeName name="unboundBeliefRetrievers.GoalRetriever"/>
-    <fullyQualifiedTypeName name="java.awt.Point"/>
     <fullyQualifiedTypeName name="unboundContextHandling.ContextParser"/>
     <fullyQualifiedTypeName name="unboundContextHandling.ContextWriter"/>
     <fullyQualifiedTypeName name="unboundContextHandling.PullErrorInstructionsFromException"/>
@@ -58,6 +50,14 @@
     <fullyQualifiedTypeName name="java.awt.List"/>
     <fullyQualifiedTypeName name="unboundStruct.Context"/>
     <fullyQualifiedTypeName name="unboundStruct.GoalResult"/>
-    <fullyQualifiedTypeName name="java.util.List"/>
     <fullyQualifiedTypeName name="java.util.ArrayList"/>
+    <fullyQualifiedTypeName name="java.util.Map"/>
+    <fullyQualifiedTypeName name="Structure.AbstractEnv"/>
+    <fullyQualifiedTypeName name="Structure.CoreAction"/>
+    <fullyQualifiedTypeName name="ServiceMethods.Util"/>
+    <fullyQualifiedTypeName name="Structure.Activity"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="java.awt.Point"/>
+    <fullyQualifiedTypeName name="java.awt.Color"/>
+    <fullyQualifiedTypeName name="Structure.PixelChange"/>
 </qualifiedTypeNameHistroy>
