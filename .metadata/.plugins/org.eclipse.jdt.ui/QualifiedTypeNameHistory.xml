@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="javax.tools.JavaCompiler"/>
-    <fullyQualifiedTypeName name="javax.tools.ToolProvider"/>
     <fullyQualifiedTypeName name="java.net.URLClassLoader"/>
     <fullyQualifiedTypeName name="java.net.URL"/>
     <fullyQualifiedTypeName name="coreMethods.SenseEnv"/>
@@ -50,14 +48,16 @@
     <fullyQualifiedTypeName name="java.awt.List"/>
     <fullyQualifiedTypeName name="unboundStruct.Context"/>
     <fullyQualifiedTypeName name="unboundStruct.GoalResult"/>
-    <fullyQualifiedTypeName name="java.util.ArrayList"/>
     <fullyQualifiedTypeName name="java.util.Map"/>
     <fullyQualifiedTypeName name="Structure.AbstractEnv"/>
     <fullyQualifiedTypeName name="Structure.CoreAction"/>
     <fullyQualifiedTypeName name="ServiceMethods.Util"/>
     <fullyQualifiedTypeName name="Structure.Activity"/>
-    <fullyQualifiedTypeName name="java.util.List"/>
-    <fullyQualifiedTypeName name="java.awt.Point"/>
     <fullyQualifiedTypeName name="java.awt.Color"/>
+    <fullyQualifiedTypeName name="Structure.Pixel"/>
+    <fullyQualifiedTypeName name="java.awt.Point"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="Structure.PixelOverallChange"/>
     <fullyQualifiedTypeName name="Structure.PixelChange"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
 </qualifiedTypeNameHistroy>
