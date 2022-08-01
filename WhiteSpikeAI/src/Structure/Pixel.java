@@ -17,4 +17,23 @@ public class Pixel {
 	public Pixel(Color colorIn) {
 		this.color = colorIn;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this){
+			return true;
+		}
+		if (o instanceof Pixel){
+			Pixel c = (Pixel) o;
+			boolean output = false;
+			if (c.position.x == this.position.x && c.position.y == this.position.y){ //variables (that describe conditions) are the same
+				output = true;
+			} else {
+				output = false;
+			}
+			return output;
+		} else {
+			return false;
+		}
+	}
 }

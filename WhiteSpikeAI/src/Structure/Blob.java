@@ -1,10 +1,11 @@
 package Structure;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Blob {
-	public List<Pixel> pixels;
-	public List<Pixel> edgePixels;
+	public List<Pixel> pixels = new ArrayList<Pixel>();
+	public List<Pixel> edgePixels = new ArrayList<Pixel>();
 	
 	public Blob() {}
 	

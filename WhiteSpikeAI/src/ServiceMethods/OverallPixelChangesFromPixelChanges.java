@@ -28,8 +28,14 @@ public class OverallPixelChangesFromPixelChanges {
 		//if the pixel change is rightupdiagonal and the one before it was rightupdiagonal and the one after it is as well, no overallchange is added to the list
 		
 		HashMap<String, String> map = getHashMap();
+		HashMap<String, Boolean> map2 = new HashMap<String, Boolean>();
+		map2.put("1", true);
+		map2.put("2", true);
+		map2.put("5", true);
+		map2.put("6", true);
 		String prevValue = "";
 		String keyValue;
+		String keyValue2;
 		String changeValue;
 		List<PixelOverallChange> overallPixelChanges = new ArrayList<PixelOverallChange>();
 		for (int i = 1; i < pixelChangesIn.size(); i++) {
@@ -37,6 +43,11 @@ public class OverallPixelChangesFromPixelChanges {
 			changeValue = map.get(keyValue);
 			if (changeValue == prevValue) {
 				prevValue = changeValue;
+				keyValue2 = "" + pixelChangesIn.get(i);
+				if (map2.get(keyValue2)) {
+					PixelOverallChange overallChange = new PixelOverallChange(changeValue);
+					overallPixelChanges.add(overallChange);
+				}
 			} else {
 				prevValue = changeValue;
 				PixelOverallChange overallChange = new PixelOverallChange(changeValue);
@@ -103,5 +114,9 @@ public class OverallPixelChangesFromPixelChanges {
 		map.put("66", "RightDownDiagonal");
 		
 		return map;
+	}
+	
+	public static void main(String[] args) {
+		
 	}
 }

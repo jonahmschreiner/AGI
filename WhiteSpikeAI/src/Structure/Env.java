@@ -6,9 +6,9 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import ServiceMethods.*;
 public class Env {
-		AbstractEnv abstractEnv;
-		RawEnv rawEnv;
-		Util util = new Util();
+		public AbstractEnv abstractEnv;
+		public RawEnv rawEnv;
+		public Util util = new Util();
 		
 		public Env() {
 			senseEnv();
