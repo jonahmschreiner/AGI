@@ -9,7 +9,7 @@ public class PixelColorRange {
 	public int maxG;
 	public int minB;
 	public int maxB;
-	final int rangeDistance = 40;
+	final int rangeDistance = 60;
 	
 	public PixelColorRange(Color colorIn) {
 		this.minR = colorIn.getRed() - rangeDistance;

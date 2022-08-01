@@ -34,7 +34,9 @@ public class BufferedImageToBlobs {
 						currentTouchingPixel.color = new Color(imageIn.getRGB(currentTouchingPixel.position.x, currentTouchingPixel.position.y));
 						if(PixelWithinRange(currentTouchingPixel, range)) {
 							if (mainList.contains(currentTouchingPixel)) {
-								blobPixelToCheckQueue.add(currentTouchingPixel);
+								if (!blobPixelToCheckQueue.contains(currentTouchingPixel)) {
+									blobPixelToCheckQueue.add(currentTouchingPixel);
+								}
 								mainList.remove(currentTouchingPixel);
 							}	
 						}
@@ -101,7 +103,7 @@ public class BufferedImageToBlobs {
 	//for testing
 	public static void main(String[] args) {
 		Env env = new Env();
-		List<Blob> resultBlobs = BufferedImageToBlobs.getBlobsFromImage(env.rawEnv.currentDisplay.getSubimage(300, 300, 20, 20));
+		List<Blob> resultBlobs = BufferedImageToBlobs.getBlobsFromImage(env.rawEnv.currentDisplay.getSubimage(0, 0, 200, 200));
 		System.out.println("test");
 	}
 }

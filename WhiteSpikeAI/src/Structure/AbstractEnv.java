@@ -4,7 +4,10 @@ import java.util.List;
 
 public class AbstractEnv {
 	List<Sense> senses;
-	
+	public AbstractEnv() {}
+	public AbstractEnv(List<Sense> sensesIn) {
+		this.senses = sensesIn;
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (o == this){
