@@ -79,23 +79,74 @@ public class BlobEdgeFromBlob {
 	private static List<Pixel> mergeEdges(List<Pixel> leftEdge, List<Pixel> rightEdge, List<Pixel> topEdge, List<Pixel> bottomEdge){
 		Collections.reverse(leftEdge);
 		Collections.reverse(bottomEdge);
-		List<Pixel> mergedList = leftEdge;
-		Pixel startingPixel = leftEdge.get(0);
-		if (mergedList.get(mergedList.size() - 1).equals(topEdge.get(0))) {
-			topEdge.remove(0);
-		}
-		mergedList.addAll(topEdge);
-		if (mergedList.get(mergedList.size() - 1).equals(rightEdge.get(0))) {
-			rightEdge.remove(0);
-		}
-		mergedList.addAll(rightEdge);
-		if (mergedList.get(mergedList.size() - 1).equals(bottomEdge.get(0))) {
-			bottomEdge.remove(0);
+		List<Pixel> mergedList = new ArrayList<Pixel>();
+		Pixel startingPixel = new Pixel();
+		Boolean leftEdgeExists = true;
+		if (leftEdge.size() > 0) {
+			mergedList = leftEdge;
+			startingPixel = leftEdge.get(0);
+		} else {
+			leftEdgeExists = false;
 		}
 		
-		if (bottomEdge.get(bottomEdge.size() - 1).equals(startingPixel)) {
-			bottomEdge.remove(bottomEdge.size() - 1);
+		if (leftEdgeExists) {
+			if (topEdge.size() > 0) {
+				if (mergedList.size() > 1) {
+					if (mergedList.get(mergedList.size() - 1).equals(topEdge.get(0))) {
+						topEdge.remove(0);
+					}
+				} else if (mergedList.size() > 0) {
+					if (mergedList.get(0).equals(topEdge.get(0))) {
+						topEdge.remove(0);
+					}
+				}
+				mergedList.addAll(topEdge);
+			}
+		} else {
+			mergedList.addAll(topEdge);
 		}
+
+		
+		if (rightEdge.size() > 0) {
+			if (mergedList.size() > 1) {
+				if (mergedList.get(mergedList.size() - 1).equals(rightEdge.get(0))) {
+					rightEdge.remove(0);
+				}
+			} else if (mergedList.size() > 0) {
+				if (mergedList.get(0).equals(rightEdge.get(0))) {
+					rightEdge.remove(0);
+				}
+			}
+			mergedList.addAll(rightEdge);
+		}
+
+		
+		if (bottomEdge.size() > 1) {
+			if (mergedList.size() > 1) {
+				if (mergedList.get(mergedList.size() - 1).equals(bottomEdge.get(0))) {
+					bottomEdge.remove(0);
+				}
+			} else if (mergedList.size() > 0) {
+				if (mergedList.get(0).equals(bottomEdge.get(0))) {
+					bottomEdge.remove(0);
+				}
+			}
+		}
+	
+		if (bottomEdge.size() > 1) {
+			if (bottomEdge.get(bottomEdge.size() - 1).equals(startingPixel)) {
+				bottomEdge.remove(bottomEdge.size() - 1);
+			}
+		} else if (bottomEdge.size() > 0){
+			if (bottomEdge.get(0).equals(startingPixel)) {
+				bottomEdge.remove(bottomEdge.size() - 1);
+			}
+		} else {
+			if (mergedList.get(mergedList.size() - 1).equals(startingPixel)) {
+				mergedList.remove(mergedList.size() - 1);
+			}
+		}
+
 		mergedList.addAll(bottomEdge);
 		return mergedList;
 	}

@@ -29,8 +29,11 @@ public class OverallPixelChangesFromPixelChanges {
 		
 		HashMap<String, String> map = getHashMap();
 		HashMap<String, Boolean> map2 = new HashMap<String, Boolean>();
+		map2.put("0", false);
 		map2.put("1", true);
 		map2.put("2", true);
+		map2.put("3", false);
+		map2.put("4", false);
 		map2.put("5", true);
 		map2.put("6", true);
 		String prevValue = "";
@@ -39,11 +42,11 @@ public class OverallPixelChangesFromPixelChanges {
 		String changeValue;
 		List<PixelOverallChange> overallPixelChanges = new ArrayList<PixelOverallChange>();
 		for (int i = 1; i < pixelChangesIn.size(); i++) {
-			keyValue = "" + pixelChangesIn.get(i - 1) + pixelChangesIn.get(i);
+			keyValue = "" + pixelChangesIn.get(i - 1).changeCode + pixelChangesIn.get(i).changeCode;
 			changeValue = map.get(keyValue);
 			if (changeValue == prevValue) {
 				prevValue = changeValue;
-				keyValue2 = "" + pixelChangesIn.get(i);
+				keyValue2 = "" + pixelChangesIn.get(i).changeCode;
 				if (map2.get(keyValue2)) {
 					PixelOverallChange overallChange = new PixelOverallChange(changeValue);
 					overallPixelChanges.add(overallChange);
@@ -53,6 +56,21 @@ public class OverallPixelChangesFromPixelChanges {
 				PixelOverallChange overallChange = new PixelOverallChange(changeValue);
 				overallPixelChanges.add(overallChange);
 			}
+		}
+		
+		keyValue = "" + pixelChangesIn.get(pixelChangesIn.size() - 1).changeCode + pixelChangesIn.get(0).changeCode;
+		changeValue = map.get(keyValue);
+		if (changeValue == prevValue) {
+			prevValue = changeValue;
+			keyValue2 = "" + pixelChangesIn.get(0).changeCode;
+			if (map2.get(keyValue2)) {
+				PixelOverallChange overallChange = new PixelOverallChange(changeValue);
+				overallPixelChanges.add(overallChange);
+			}
+		} else {
+			prevValue = changeValue;
+			PixelOverallChange overallChange = new PixelOverallChange(changeValue);
+			overallPixelChanges.add(overallChange);
 		}
 		
 		return overallPixelChanges;
@@ -116,7 +134,35 @@ public class OverallPixelChangesFromPixelChanges {
 		return map;
 	}
 	
+	
+	//for testing
 	public static void main(String[] args) {
+		PixelChange change1 = new PixelChange("LeftUpDiagonal");
+		PixelChange change2 = new PixelChange("LeftUpDiagonal");
+		PixelChange change3 = new PixelChange("RightTurn");
+		PixelChange change4 = new PixelChange("RightUpDiagonal");
+		PixelChange change5 = new PixelChange("RightUpDiagonal");
+		PixelChange change6 = new PixelChange("RightUpDiagonal");
+		PixelChange change7 = new PixelChange("None");
+		PixelChange change8 = new PixelChange("RightDownDiagonal");
+		PixelChange change9 = new PixelChange("RightDownDiagonal");
+		PixelChange change10 = new PixelChange("None");
+		PixelChange change11 = new PixelChange("None");
 		
+		List<PixelChange> pChanges = new ArrayList<PixelChange>();
+		pChanges.add(change1);
+		pChanges.add(change2);
+		pChanges.add(change3);
+		pChanges.add(change4);
+		pChanges.add(change5);
+		pChanges.add(change6);
+		pChanges.add(change7);
+		pChanges.add(change8);
+		pChanges.add(change9);
+		pChanges.add(change10);
+		pChanges.add(change11);
+		
+		List<PixelOverallChange> oChanges = OverallPixelChangesFromPixelChanges.exec(pChanges);
+		System.out.println("hey");
 	}
 }
