@@ -137,30 +137,16 @@ public class OverallPixelChangesFromPixelChanges {
 	
 	//for testing
 	public static void main(String[] args) {
-		PixelChange change1 = new PixelChange("LeftUpDiagonal");
-		PixelChange change2 = new PixelChange("LeftUpDiagonal");
-		PixelChange change3 = new PixelChange("RightTurn");
-		PixelChange change4 = new PixelChange("RightUpDiagonal");
-		PixelChange change5 = new PixelChange("RightUpDiagonal");
-		PixelChange change6 = new PixelChange("RightUpDiagonal");
-		PixelChange change7 = new PixelChange("None");
-		PixelChange change8 = new PixelChange("RightDownDiagonal");
-		PixelChange change9 = new PixelChange("RightDownDiagonal");
-		PixelChange change10 = new PixelChange("None");
-		PixelChange change11 = new PixelChange("None");
+		PixelChange change1 = new PixelChange("RightDownDiagonal");
+		PixelChange change2 = new PixelChange("None");
+		PixelChange change3 = new PixelChange("RightDownDiagonal");
+		PixelChange change4 = new PixelChange("RightTurn");
 		
 		List<PixelChange> pChanges = new ArrayList<PixelChange>();
 		pChanges.add(change1);
 		pChanges.add(change2);
 		pChanges.add(change3);
 		pChanges.add(change4);
-		pChanges.add(change5);
-		pChanges.add(change6);
-		pChanges.add(change7);
-		pChanges.add(change8);
-		pChanges.add(change9);
-		pChanges.add(change10);
-		pChanges.add(change11);
 		
 		List<PixelOverallChange> oChanges = OverallPixelChangesFromPixelChanges.exec(pChanges);
 		System.out.println("hey");

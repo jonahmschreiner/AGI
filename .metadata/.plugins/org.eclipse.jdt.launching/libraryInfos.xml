@@ -2,7 +2,7 @@
 <libraryInfos>
     <libraryInfo home="/home/agi" version="16.0.1"/>
     <libraryInfo home="/usr/lib/jvm/java-11-openjdk-amd64" version="11.0.15"/>
-    <libraryInfo home="/lib/jvm/java-8-openjdk-amd64" version="1.8.0_312">
+    <libraryInfo home="/lib/jvm/java-8-openjdk-amd64" version="1.8.0_342">
         <bootpath>
             <entry path="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/resources.jar"/>
             <entry path="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar"/>

@@ -84,41 +84,42 @@ public class IdentifyPixelChange {
 			PixelPosChange change2 = posChangesIn.get(i + 1);
 			PixelChange pixelChange = new PixelChange();
 			if (change1.xChange == change2.xChange && change1.yChange == change2.yChange) {
-				pixelChange.changeType = "None";
+				pixelChange.setChange("None");
 			} else {
 				String key = "" + change1.xChange + change2.xChange + change1.yChange + change2.yChange;
-				pixelChange.changeType = pixelChanges.get(key);
+				pixelChange.setChange(pixelChanges.get(key));
 			}
 			pixelChangesOutput.add(pixelChange);
 		}
+		PixelPosChange change1 = posChangesIn.get(posChangesIn.size() - 1);
+		PixelPosChange change2 = posChangesIn.get(0);
+		PixelChange pixelChange = new PixelChange();
+		if (change1.xChange == change2.xChange && change1.yChange == change2.yChange) {
+			pixelChange.setChange("None");
+		} else {
+			String key = "" + change1.xChange + change2.xChange + change1.yChange + change2.yChange;
+			pixelChange.setChange(pixelChanges.get(key));
+		}
+		pixelChangesOutput.add(pixelChange);
 		return pixelChangesOutput;
 	}
 	
 	
 	//for testing (all good atm)
 	public static void main(String[] args) {
-		Pixel pixel1 = new Pixel(new Point(0,0));
-		Pixel pixel2 = new Pixel(new Point(1,1));
-		Pixel pixel3 = new Pixel(new Point(0,1));
-		Pixel pixel4 = new Pixel(new Point(0,2));
-		Pixel pixel5 = new Pixel(new Point(1,2));
-		Pixel pixel6 = new Pixel(new Point(2,1));
-		Pixel pixel7 = new Pixel(new Point(1,0));
+		Pixel pixel1 = new Pixel(new Point(1,0));
+		Pixel pixel2 = new Pixel(new Point(0,1));
+		Pixel pixel3 = new Pixel(new Point(1,1));
+		Pixel pixel4 = new Pixel(new Point(2,1));
 		PixelPosChange posChange1 = new PixelPosChange(pixel1, pixel2);
 		PixelPosChange posChange2 = new PixelPosChange(pixel2, pixel3);
 		PixelPosChange posChange3 = new PixelPosChange(pixel3, pixel4);
-		PixelPosChange posChange4 = new PixelPosChange(pixel4, pixel5);
-		PixelPosChange posChange5 = new PixelPosChange(pixel5, pixel6);
-		PixelPosChange posChange6 = new PixelPosChange(pixel6, pixel7);
-		PixelPosChange posChange7 = new PixelPosChange(pixel7, pixel1);
+		PixelPosChange posChange4 = new PixelPosChange(pixel4, pixel1);
 		List<PixelPosChange> pixelPosChanges = new ArrayList<PixelPosChange>();
 		pixelPosChanges.add(posChange1);
 		pixelPosChanges.add(posChange2);
 		pixelPosChanges.add(posChange3);
 		pixelPosChanges.add(posChange4);
-		pixelPosChanges.add(posChange5);
-		pixelPosChanges.add(posChange6);
-		pixelPosChanges.add(posChange7);
 		List<PixelChange> pixelChanges = IdentifyPixelChange.exec(pixelPosChanges);
 		for (int i = 0; i < pixelChanges.size(); i++) {
 			System.out.println(pixelChanges.get(i).changeType);

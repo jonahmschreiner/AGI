@@ -7,11 +7,13 @@ import java.util.List;
 
 import Structure.Blob;
 import Structure.Orientation;
+import Structure.Pixel;
 import Structure.PixelPosChange;
 import Structure.Sense;
 import Structure.SenseDefinition;
 
 public class BlobToSense {
+	//pass blob in with only pixels variable filled out (can have more but they'll be overrided)
 	public static Sense getSense(Blob blobIn) {
 		//blob to edge
 		Blob blob = BlobEdgeFromBlob.getEdge(blobIn);
@@ -31,13 +33,37 @@ public class BlobToSense {
 		
 		//orientation creation (from minAndMax class values)
 		Orientation orientation = new Orientation();
-		orientation.height = blob.minAndMaxes.maxY - blob.minAndMaxes.minY;
-		orientation.width = blob.minAndMaxes.maxX - blob.minAndMaxes.minX;
+		orientation.height = (blob.minAndMaxes.maxY - blob.minAndMaxes.minY) + 1;
+		orientation.width = (blob.minAndMaxes.maxX - blob.minAndMaxes.minX) + 1;
 		orientation.rotation = blob.minAndMaxes.slope;
 		orientation.color = new Color(blob.minAndMaxes.averageRValue, blob.minAndMaxes.averageGValue, blob.minAndMaxes.averageBValue);
 		orientation.position = new Point(blob.minAndMaxes.averageXValue, blob.minAndMaxes.averageYValue);
 		sense.orientation = orientation;
 		return sense;
 
+	}
+	
+	public static void main(String[] args) {
+		Blob blob = new Blob();
+		Pixel pixel1 = new Pixel(new Point(100, 100), new Color(100, 50, 150));
+		Pixel pixel2 = new Pixel(new Point(101, 100), new Color(110, 30, 140));
+		Pixel pixel3 = new Pixel(new Point(102, 100), new Color(105, 55, 155));
+		Pixel pixel4 = new Pixel(new Point(102, 99), new Color(102, 52, 132));
+		Pixel pixel5 = new Pixel(new Point(102, 98), new Color(103, 58, 152));
+		Pixel pixel6 = new Pixel(new Point(101, 98), new Color(112, 62, 132));
+		Pixel pixel7 = new Pixel(new Point(100, 98), new Color(120, 55, 145));
+		Pixel pixel8 = new Pixel(new Point(100, 99), new Color(101, 51, 147));
+		List<Pixel> pixels = new ArrayList<Pixel>();
+		pixels.add(pixel1);
+		pixels.add(pixel2);
+		pixels.add(pixel3);
+		pixels.add(pixel4);
+		pixels.add(pixel5);
+		pixels.add(pixel6);
+		pixels.add(pixel7);
+		pixels.add(pixel8);
+		blob.pixels = pixels;
+		Sense sense1 = BlobToSense.getSense(blob);
+		System.out.println("");
 	}
 }

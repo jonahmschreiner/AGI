@@ -15,11 +15,9 @@ public class BufferedImageToBlobs {
 	public static List<Blob> getBlobsFromImage(BufferedImage imageIn){
 		List<Blob> blobsToReturn = new ArrayList<Blob>();
 		List<Pixel> mainList = getPixelListFromImage(imageIn);
-		System.out.println("pixel list generated");
 		while(mainList.size() > 0) {
 			List<Pixel> blobPixelToCheckQueue = new ArrayList<Pixel>();
 			Pixel initialPixel = mainList.get(0);
-			System.out.println(initialPixel.color.toString());
 			blobPixelToCheckQueue.add(initialPixel);
 			Blob currentBlob = new Blob();
 			PixelColorRange range = new PixelColorRange(initialPixel.color);
@@ -51,7 +49,6 @@ public class BufferedImageToBlobs {
 			
 			if (currentBlob.pixels.size() > 1) {
 				blobsToReturn.add(currentBlob);
-				System.out.println("blob added, remaining main list size: " + mainList.size());
 			}
 		}
 		return blobsToReturn;

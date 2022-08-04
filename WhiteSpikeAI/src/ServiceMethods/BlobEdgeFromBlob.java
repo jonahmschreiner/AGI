@@ -168,6 +168,9 @@ public class BlobEdgeFromBlob {
 		} else if (bottomEdge.size() > 0){
 			if (bottomEdge.get(0).equals(startingPixel)) {
 				bottomEdge.remove(bottomEdge.size() - 1);
+				if (mergedList.get(mergedList.size() - 1).equals(startingPixel)) {
+					mergedList.remove(mergedList.size() - 1);
+				}
 			}
 		} else {
 			if (mergedList.get(mergedList.size() - 1).equals(startingPixel)) {
