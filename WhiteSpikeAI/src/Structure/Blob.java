@@ -6,7 +6,7 @@ import java.util.List;
 public class Blob {
 	public List<Pixel> pixels = new ArrayList<Pixel>();
 	public List<Pixel> edgePixels = new ArrayList<Pixel>();
-	
+	public MinAndMaxes minAndMaxes = new MinAndMaxes();
 	public Blob() {}
 	
 	@Override

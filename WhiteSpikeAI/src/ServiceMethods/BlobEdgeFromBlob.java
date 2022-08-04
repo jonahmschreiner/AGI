@@ -11,8 +11,9 @@ import Structure.Pixel;
 
 public class BlobEdgeFromBlob {
 
-	public static List<Pixel> getEdge(Blob blobIn){
+	public static Blob getEdge(Blob blobIn){
 		MinAndMaxes m = getMinAndMaxes(blobIn.pixels);
+		blobIn.minAndMaxes = m;
 		List<Pixel> leftEdge = new ArrayList<Pixel>();
 		List<Pixel> rightEdge = new ArrayList<Pixel>();
 		List<Pixel> topEdge = new ArrayList<Pixel>();
@@ -53,13 +54,35 @@ public class BlobEdgeFromBlob {
 			}
 		}
 		
-		return mergeEdges(leftEdge, rightEdge, topEdge, bottomEdge);
+		Pixel leftEdgeZero = leftEdge.get(0);
+		Pixel leftEdgeEnd = leftEdge.get(leftEdge.size() - 1);
+		
+		if (leftEdge.size() > 1 && leftEdgeEnd.position.x != leftEdgeZero.position.x) {
+			blobIn.minAndMaxes.slope = (leftEdgeEnd.position.y - leftEdgeZero.position.y)/(leftEdgeEnd.position.x - leftEdgeZero.position.x);
+		} else {
+			if (leftEdgeEnd.position.x == leftEdgeZero.position.x && leftEdge.size() > 1) {
+				blobIn.minAndMaxes.slope = 10000;
+			} else {
+				blobIn.minAndMaxes.slope = 0;
+			}
+			
+		}
+
+		
+		blobIn.edgePixels = mergeEdges(leftEdge, rightEdge, topEdge, bottomEdge);
+		return blobIn;
 	}
 	
 	private static MinAndMaxes getMinAndMaxes(List<Pixel> pixelsIn) {
 		MinAndMaxes m = new MinAndMaxes();
-		for (int i = 0; i < pixelsIn.size(); i++) {
+		int numOfPixels = pixelsIn.size();
+		for (int i = 0; i < numOfPixels; i++) {
 			Pixel currentPixel = pixelsIn.get(i);
+			m.averageXValue = m.averageXValue + currentPixel.position.x;
+			m.averageYValue = m.averageYValue + currentPixel.position.y;
+			m.averageRValue = m.averageRValue + currentPixel.color.getRed();
+			m.averageGValue = m.averageGValue + currentPixel.color.getGreen();
+			m.averageBValue = m.averageBValue + currentPixel.color.getBlue();
 			if (currentPixel.position.x > m.maxX) {
 				m.maxX = currentPixel.position.x;
 			}
@@ -72,7 +95,12 @@ public class BlobEdgeFromBlob {
 			if (currentPixel.position.y < m.minY) {
 				m.minY = currentPixel.position.y;
 			}
-		}
+		}	
+		m.averageXValue = m.averageXValue/numOfPixels;
+		m.averageYValue = m.averageYValue/numOfPixels;
+		m.averageRValue = m.averageRValue/numOfPixels;
+		m.averageGValue = m.averageGValue/numOfPixels;
+		m.averageBValue = m.averageBValue/numOfPixels;
 		return m;
 	}	
 	
@@ -175,7 +203,7 @@ public class BlobEdgeFromBlob {
 		pixelsToAddToBlob.add(pixel9);
 		Blob blob = new Blob();
 		blob.pixels = pixelsToAddToBlob;
-		List<Pixel> edge = BlobEdgeFromBlob.getEdge(blob);
-		System.out.println(edge.size());
+		Blob edge = BlobEdgeFromBlob.getEdge(blob);
+		System.out.println("");
 	}
 }
