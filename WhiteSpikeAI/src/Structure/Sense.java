@@ -1,9 +1,10 @@
 package Structure;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Sense {
-	public Map<Sense, Orientation> components;
+	public List<Sense> components = new ArrayList<Sense>();
 	public Orientation orientation;
 	public SenseDefinition definition;
 }

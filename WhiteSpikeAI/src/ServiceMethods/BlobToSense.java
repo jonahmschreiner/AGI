@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Structure.Blob;
+import Structure.BoundingBox;
 import Structure.Orientation;
 import Structure.Pixel;
 import Structure.PixelPosChange;
@@ -33,6 +34,7 @@ public class BlobToSense {
 		
 		//orientation creation (from minAndMax class values)
 		Orientation orientation = new Orientation();
+		orientation.boundingBox = new BoundingBox(blob.minAndMaxes.minX, blob.minAndMaxes.minY, blob.minAndMaxes.maxX, blob.minAndMaxes.maxY);
 		orientation.height = (blob.minAndMaxes.maxY - blob.minAndMaxes.minY) + 1;
 		orientation.width = (blob.minAndMaxes.maxX - blob.minAndMaxes.minX) + 1;
 		orientation.rotation = blob.minAndMaxes.slope;
@@ -40,7 +42,6 @@ public class BlobToSense {
 		orientation.position = new Point(blob.minAndMaxes.averageXValue, blob.minAndMaxes.averageYValue);
 		sense.orientation = orientation;
 		return sense;
-
 	}
 	
 	public static void main(String[] args) {

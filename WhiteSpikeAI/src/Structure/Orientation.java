@@ -9,4 +9,5 @@ public class Orientation {
 	public Color color; //average color of blob's range
 	public Point position; //where the average position of the sense is on the screen
 	public int width; //length of x
+	public BoundingBox boundingBox; //corners of abstract box that covers the amount of screen space this sense takes up
 }
