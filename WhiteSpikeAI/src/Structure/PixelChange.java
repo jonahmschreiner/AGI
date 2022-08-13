@@ -16,6 +16,7 @@ public class PixelChange {
 		case "RightUpDiagonal": {this.changeCode = 4; this.changeType = changeTypeIn; break;}
 		case "LeftDownDiagonal": {this.changeCode = 5; this.changeType = changeTypeIn; break;}
 		case "LeftUpDiagonal": {this.changeCode = 3; this.changeType = changeTypeIn; break;}
+		case "TurnAround": {this.changeCode = 7; this.changeType = changeTypeIn; break;}
 		}
 		 
 	}

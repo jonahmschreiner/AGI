@@ -36,6 +36,7 @@ public class OverallPixelChangesFromPixelChanges {
 		map2.put("4", false);
 		map2.put("5", true);
 		map2.put("6", true);
+		map2.put("7", true);
 		String prevValue = "";
 		String keyValue;
 		String keyValue2;
@@ -77,7 +78,7 @@ public class OverallPixelChangesFromPixelChanges {
 	}
 	
 	private static HashMap<String, String> getHashMap(){
-		//none = 0, leftturn = 1, rightturn = 2, leftupdiagonal = 3, rightupdiagonal = 4, leftdowndiagonal = 5, rightdowndiagonal = 6
+		//none = 0, leftturn = 1, rightturn = 2, leftupdiagonal = 3, rightupdiagonal = 4, leftdowndiagonal = 5, rightdowndiagonal = 6. turnaround = 7
 		//key is prevChangecurrentChange    Examples: 00 12 34
 		//StartLeftUpDiagonal     MaintainLeftUpDiagonal      StartRightUpDiagonal     MaintainRightUpDiagonal   
 		HashMap<String, String> map = new HashMap<String, String>();
@@ -88,6 +89,7 @@ public class OverallPixelChangesFromPixelChanges {
 		map.put("04", "StartRightUpDiagonal");
 		map.put("05", "LeftDownDiagonal");
 		map.put("06", "RightDownDiagonal");
+		map.put("07", "TurnAround");
 		map.put("10", "Straight");
 		map.put("11", "LeftTurn");
 		map.put("12", "RightTurn");
@@ -95,6 +97,7 @@ public class OverallPixelChangesFromPixelChanges {
 		map.put("14", "StartRightUpDiagonal");
 		map.put("15", "LeftDownDiagonal");
 		map.put("16", "RightDownDiagonal");
+		map.put("17", "TurnAround");
 		map.put("20", "Straight");
 		map.put("21", "LeftTurn");
 		map.put("22", "RightTurn");
@@ -102,6 +105,7 @@ public class OverallPixelChangesFromPixelChanges {
 		map.put("24", "StartRightUpDiagonal");
 		map.put("25", "LeftDownDiagonal");
 		map.put("26", "RightDownDiagonal");
+		map.put("27", "TurnAround");
 		map.put("30", "Straight");
 		map.put("31", "LeftTurn");
 		map.put("32", "RightTurn");
@@ -109,6 +113,7 @@ public class OverallPixelChangesFromPixelChanges {
 		map.put("34", "StartRightUpDiagonal");
 		map.put("35", "LeftDownDiagonal");
 		map.put("36", "RightDownDiagonal");
+		map.put("37", "TurnAround");
 		map.put("40", "Straight");
 		map.put("41", "LeftTurn");
 		map.put("42", "RightTurn");
@@ -116,6 +121,7 @@ public class OverallPixelChangesFromPixelChanges {
 		map.put("44", "MaintainRightUpDiagonal");
 		map.put("45", "LeftDownDiagonal");
 		map.put("46", "RightDownDiagonal");
+		map.put("47", "TurnAround");
 		map.put("50", "Straight");
 		map.put("51", "LeftTurn");
 		map.put("52", "RightTurn");
@@ -123,6 +129,7 @@ public class OverallPixelChangesFromPixelChanges {
 		map.put("54", "StartRightUpDiagonal");
 		map.put("55", "LeftDownDiagonal");
 		map.put("56", "RightDownDiagonal");
+		map.put("57", "TurnAround");
 		map.put("60", "Straight");
 		map.put("61", "LeftTurn");
 		map.put("62", "RightTurn");
@@ -130,6 +137,15 @@ public class OverallPixelChangesFromPixelChanges {
 		map.put("64", "StartRightUpDiagonal");
 		map.put("65", "LeftDownDiagonal");
 		map.put("66", "RightDownDiagonal");
+		map.put("67", "TurnAround");
+		map.put("70", "Straight");
+		map.put("71", "LeftTurn");
+		map.put("72", "RightTurn");
+		map.put("73", "StartLeftUpDiagonal");
+		map.put("74", "StartRightUpDiagonal");
+		map.put("75", "LeftDownDiagonal");
+		map.put("76", "RightDownDiagonal");
+		map.put("77", "TurnAround");
 		
 		return map;
 	}

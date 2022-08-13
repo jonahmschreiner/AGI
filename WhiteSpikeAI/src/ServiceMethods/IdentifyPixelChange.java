@@ -77,6 +77,17 @@ public class IdentifyPixelChange {
 		pixelChanges.put("-1011", "LeftUpDiagonal");
 		pixelChanges.put("-1-1-10", "LeftUpDiagonal");
 		
+		//change2In y: 0 (<>), 1(increase), -1(decrease)\
+		//key string: change1InXchange2InXchange1InYchange2InY Examples: 0000, -101-1
+		pixelChanges.put("001-1", "TurnAround");
+		pixelChanges.put("00-11", "TurnAround");
+		pixelChanges.put("1-100", "TurnAround");
+		pixelChanges.put("-1100", "TurnAround");
+		pixelChanges.put("1-11-1", "TurnAround");
+		pixelChanges.put("-111-1", "TurnAround");
+		pixelChanges.put("1-1-11", "TurnAround");
+		pixelChanges.put("-11-11", "TurnAround");
+		
 		//convert pixelposchanges into a list of pixelchanges for use in sense identification
 		List<PixelChange> pixelChangesOutput = new ArrayList<PixelChange>();
 		for (int i = 0; i < posChangesIn.size() - 1; i++) {

@@ -44,12 +44,26 @@ public class OrientationFromHigherSenseComponents {
 			}
 		}
 		int componentListSize = componentsIn.size();
-		output.height = maxY - minY;
-		output.width = maxX - minX;
+		if (maxY != minY) {
+			output.height = maxY - minY;
+		} else {
+			output.height = 1;
+		}
+		if (maxX != minX) {
+			output.width = maxX - minX;
+		} else {
+			output.width = 1;
+		}
+		output.size = output.height * output.width;
 		output.color = new Color(totalR/componentListSize, totalG/componentListSize, totalB/componentListSize);
 		output.boundingBox = new BoundingBox(minX, minY, maxX, maxY);
 		output.position = new Point(totalX/componentListSize, totalY/componentListSize);
-		output.rotation = (componentsIn.get(0).orientation.position.y - componentsIn.get(1).orientation.position.y)/(componentsIn.get(0).orientation.position.x - componentsIn.get(1).orientation.position.x);
+		if (componentsIn.get(0).orientation.position.x == componentsIn.get(1).orientation.position.x) {
+			output.rotation = 10000;
+		} else {
+			output.rotation = (componentsIn.get(0).orientation.position.y - componentsIn.get(1).orientation.position.y)/(componentsIn.get(0).orientation.position.x - componentsIn.get(1).orientation.position.x);
+		}
+		
 	
 		return output;
 	}

@@ -68,8 +68,8 @@ public class BufferedImageToBlobs {
 	
 	private static boolean PixelWithinRange(Pixel pixelIn, PixelColorRange rangeIn) {
 		boolean output = false;
-		if (pixelIn.color.getRed() > rangeIn.minR && pixelIn.color.getGreen() > rangeIn.minG && pixelIn.color.getBlue() > rangeIn.minB
-				&& pixelIn.color.getRed() < rangeIn.maxR &&  pixelIn.color.getGreen() < rangeIn.maxG &&  pixelIn.color.getBlue() < rangeIn.maxB) {
+		PixelColorRange pixelColor = new PixelColorRange(pixelIn.color);
+		if (pixelColor.color.equals(rangeIn.color)) {
 			output = true;
 		}
 		return output;

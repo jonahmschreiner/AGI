@@ -9,5 +9,31 @@ public class Orientation {
 	public Color color; //average color of blob's range
 	public Point position; //where the average position of the sense is on the screen
 	public int width; //length of x
+	public int size; //height * width
 	public BoundingBox boundingBox; //corners of abstract box that covers the amount of screen space this sense takes up
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this){
+			return true;
+		}
+		if (o instanceof Orientation){
+			Orientation c = (Orientation) o;
+			boolean output = false;
+			if (c.height == this.height 
+					&& c.rotation == this.rotation 
+					&& c.color.equals(this.color)
+					&& c.position.equals(this.position)
+					&& c.width == this.width
+					&& c.size == this.size
+					&& c.boundingBox.equals(this.boundingBox)){ //variables (that describe conditions) are the same
+				output = true;
+			} else {
+				output = false;
+			}
+			return output;
+		} else {
+			return false;
+		}
+	}
 }

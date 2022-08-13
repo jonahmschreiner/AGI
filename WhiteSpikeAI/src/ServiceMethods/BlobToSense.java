@@ -37,6 +37,7 @@ public class BlobToSense {
 		orientation.boundingBox = new BoundingBox(blob.minAndMaxes.minX, blob.minAndMaxes.minY, blob.minAndMaxes.maxX, blob.minAndMaxes.maxY);
 		orientation.height = (blob.minAndMaxes.maxY - blob.minAndMaxes.minY) + 1;
 		orientation.width = (blob.minAndMaxes.maxX - blob.minAndMaxes.minX) + 1;
+		orientation.size = orientation.height * orientation.width;
 		orientation.rotation = blob.minAndMaxes.slope;
 		orientation.color = new Color(blob.minAndMaxes.averageRValue, blob.minAndMaxes.averageGValue, blob.minAndMaxes.averageBValue);
 		orientation.position = new Point(blob.minAndMaxes.averageXValue, blob.minAndMaxes.averageYValue);

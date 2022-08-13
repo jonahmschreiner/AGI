@@ -18,9 +18,31 @@ public class BoundingBox {
 		this.MinXMaxY = new Pixel(new Point(minXIn, maxYIn));
 		this.MaxXMinY = new Pixel(new Point(maxXIn, minYIn));
 		this.MaxXMaxY = new Pixel(new Point(maxXIn, maxYIn));
-		this.minX = minXIn - 1;
-		this.minY = minYIn - 1;
-		this.maxX = maxXIn + 1;
-		this.maxY = maxYIn + 1;
+		this.minX = minXIn; //- 1;
+		this.minY = minYIn; //- 1;
+		this.maxX = maxXIn; //+ 1;
+		this.maxY = maxYIn; //+ 1;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this){
+			return true;
+		}
+		if (o instanceof BoundingBox){
+			BoundingBox c = (BoundingBox) o;
+			boolean output = false;
+			if (c.minX == this.minX 
+					&& c.maxX == this.maxX
+					&& c.minY == this.minY
+					&& c.maxY == this.maxY){ //variables (that describe conditions) are the same
+				output = true;
+			} else {
+				output = false;
+			}
+			return output;
+		} else {
+			return false;
+		}
 	}
 }

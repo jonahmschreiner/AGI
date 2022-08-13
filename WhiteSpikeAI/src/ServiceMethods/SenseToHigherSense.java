@@ -16,7 +16,7 @@ public class SenseToHigherSense {
 		Sense HigherSenseToReturn = new Sense();
 		BoundingBox currentSenseBoundingBox = currentSenseIn.orientation.boundingBox;
 		for (Sense otherSense : otherSensesInEnv) {
-			if (containsSense(currentSenseBoundingBox, otherSense.orientation.boundingBox)) {
+			if (containsSense(currentSenseBoundingBox, otherSense.orientation.boundingBox) && !otherSense.equals(currentSenseIn)) {
 				HigherSenseToReturn.components.add(otherSense);
 			}
 		}
