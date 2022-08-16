@@ -61,7 +61,7 @@ public class OverallPixelChangesFromPixelChanges {
 		
 		keyValue = "" + pixelChangesIn.get(pixelChangesIn.size() - 1).changeCode + pixelChangesIn.get(0).changeCode;
 		changeValue = map.get(keyValue);
-		if (changeValue == prevValue) {
+		if (changeValue == prevValue || changeValue == overallPixelChanges.get(0).changeType) {
 			prevValue = changeValue;
 			keyValue2 = "" + pixelChangesIn.get(0).changeCode;
 			if (map2.get(keyValue2)) {
