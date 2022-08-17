@@ -23,6 +23,9 @@ public class RawEnvToAbstractEnv {
 		List<Sense> higherSenses = BaseSensesToHigherSenses.extractHigherSenses(senses);
 		senses.addAll(higherSenses);
 		
+		//Imaginary Senses
+		List<Sense> imaginarySenses = ImaginaryHigherSensesFromSenses.extract(senses);
+		senses.addAll(imaginarySenses);
 		
 		//for testing (output picture with the senses outlined
 		VisualOutputOfSensesFromSensesAndImage.execute(senses, imageToExtractFrom);

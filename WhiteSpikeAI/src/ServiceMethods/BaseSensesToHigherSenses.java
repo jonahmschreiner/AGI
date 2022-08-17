@@ -36,7 +36,8 @@ public class BaseSensesToHigherSenses {
 			higherSensesToReturn = removeDuplicates(higherSensesToReturn);
 			numOfSensesAdded = higherSensesToReturn.size() - returningHigherSensesSize;
 			sensesToIterate = currentHigherSensesLevel;
-		} while (numOfSensesAdded > 0);	
+		} while (numOfSensesAdded > 0);
+		
 		return higherSensesToReturn;
 	}
 	
