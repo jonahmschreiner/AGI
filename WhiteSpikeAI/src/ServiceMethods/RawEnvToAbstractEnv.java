@@ -9,7 +9,7 @@ public class RawEnvToAbstractEnv {
 	public static AbstractEnv extract(RawEnv rawEnvIn) {
 		
 		//Visual Abstract Senses
-		BufferedImage imageToExtractFrom = rawEnvIn.currentDisplay.getSubimage(100, 100, 100, 100);
+		BufferedImage imageToExtractFrom = rawEnvIn.currentDisplay.getSubimage(600, 400, 100, 100);
 		//Lowest-Complexity Visual Abstract Senses				//remove subimage when actually running
 		List<Blob> rawBlobs = BufferedImageToBlobs.getBlobsFromImage(imageToExtractFrom); 
 		List<Sense> senses = new ArrayList<Sense>();
@@ -23,12 +23,15 @@ public class RawEnvToAbstractEnv {
 		List<Sense> higherSenses = BaseSensesToHigherSenses.extractHigherSenses(senses);
 		senses.addAll(higherSenses);
 		
+		//for testing (output picture with the senses outlined
+		VisualOutputOfSensesFromSensesAndImage.execute(senses, imageToExtractFrom);
+		
 		//Imaginary Senses
 		List<Sense> imaginarySenses = ImaginaryHigherSensesFromSenses.extract(senses);
 		senses.addAll(imaginarySenses);
 		
 		//for testing (output picture with the senses outlined
-		VisualOutputOfSensesFromSensesAndImage.execute(senses, imageToExtractFrom);
+		//VisualOutputOfSensesFromSensesAndImage.execute(senses, imageToExtractFrom);
 				
 		
 		return new AbstractEnv(senses);

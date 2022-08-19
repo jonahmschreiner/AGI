@@ -35,7 +35,7 @@ public class SenseToHigherSense {
 		return HigherSenseToReturn;
 	}
 	
-	private static boolean containsSense(BoundingBox parentSenseBoundingBox, BoundingBox potentialChildSenseBoundingBox) {
+	public static boolean containsSense(BoundingBox parentSenseBoundingBox, BoundingBox potentialChildSenseBoundingBox) {
 		boolean output = false;	
 		Pixel minXMinY = potentialChildSenseBoundingBox.MinXMinY;
 		Pixel minXMaxY = potentialChildSenseBoundingBox.MinXMaxY;

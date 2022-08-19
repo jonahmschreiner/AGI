@@ -20,18 +20,16 @@ public class ImaginaryHigherSensesFromSenses {
 			int currMinX = currentSense.orientation.boundingBox.minX;
 			int currMaxX = currentSense.orientation.boundingBox.maxX;
 			List<Sense> currRow = new ArrayList<Sense>();
-			currRow.add(currentSense);
 			List<Sense> currColumn = new ArrayList<Sense>();
-			currColumn.add(currentSense);
 			for (int j = 0; j < sensesIn.size(); j++) {
 				Sense currentCheckingSense = sensesIn.get(j);
 				int checkX = currentCheckingSense.orientation.position.x;
 				int checkY = currentCheckingSense.orientation.position.y;
 
-				if (checkY > currMinY && checkY < currMaxY) {
+				if (checkY > currMinY && checkY < currMaxY && !SenseToHigherSense.containsSense(currentSense.orientation.boundingBox, currentCheckingSense.orientation.boundingBox) && currentSense.orientation.boundingBox != currentCheckingSense.orientation.boundingBox) {
 					currRow.add(currentCheckingSense);
 				}
-				if (checkX > currMinX && checkX < currMaxX) {
+				if (checkX > currMinX && checkX < currMaxX && !SenseToHigherSense.containsSense(currentSense.orientation.boundingBox, currentCheckingSense.orientation.boundingBox) && currentSense.orientation.boundingBox != currentCheckingSense.orientation.boundingBox) {
 					currColumn.add(currentCheckingSense);
 				}
 			}
@@ -41,13 +39,21 @@ public class ImaginaryHigherSensesFromSenses {
 				Collections.sort(currRow, (s1, s2) -> { return s1.orientation.position.x - s2.orientation.position.x; });
 				Sense row = new Sense();
 				row.components.addAll(currRow);
-				rowSenses.add(row);
+				
+				//prevent duplicates
+				if (listDoesNotContainASenseWhoseComponentsMatch(rowSenses, row)) {
+					rowSenses.add(row);
+				}			
 			}
 			if (currColumn.size() > 1) {
 				Collections.sort(currColumn, (s1, s2) -> { return s1.orientation.position.y - s2.orientation.position.y; });
 				Sense column = new Sense();
 				column.components.addAll(currColumn);
-				columnSenses.add(column);
+				
+				//prevent duplicates
+				if (listDoesNotContainASenseWhoseComponentsMatch(columnSenses, column)) {
+					columnSenses.add(column);
+				}	
 			}
 		}
 		
@@ -77,8 +83,23 @@ public class ImaginaryHigherSensesFromSenses {
 					}
 				}
 			}
-			arraySenses.add(currentArray);
+			if (currentArray.components.size() > 0) {
+				arraySenses.add(currentArray);
+			}
+			
 		}
 		return imaginarySensesOut;
 	} 
+	
+	private static boolean listDoesNotContainASenseWhoseComponentsMatch(List<Sense> sensesList, Sense senseIn) {
+		boolean output = true;
+		for (int i = 0; i < sensesList.size(); i++) {
+			Sense currentSense = sensesList.get(i);
+			if (currentSense.components.equals(senseIn.components)) {
+				output = false;
+				break;
+			}
+		}
+		return output;
+	}
 }
