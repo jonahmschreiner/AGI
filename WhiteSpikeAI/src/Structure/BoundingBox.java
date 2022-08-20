@@ -32,10 +32,10 @@ public class BoundingBox {
 		if (o instanceof BoundingBox){
 			BoundingBox c = (BoundingBox) o;
 			boolean output = false;
-			if (c.minX == this.minX 
-					&& c.maxX == this.maxX
-					&& c.minY == this.minY
-					&& c.maxY == this.maxY){ //variables (that describe conditions) are the same
+			if (c.minX < this.minX + 2 && c.minX > this.minX - 2
+					&& c.maxX < this.maxX + 2 && c.maxX > this.maxX - 2
+					&& c.minY < this.minY + 2 && c.minY > this.minY - 2
+					&& c.maxY < this.maxY + 2 && c.maxY > this.maxY - 2){ //variables (that describe conditions) are the same
 				output = true;
 			} else {
 				output = false;

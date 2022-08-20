@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import Structure.Sense;
+import Structure.SenseDefinition;
 
 public class ImaginaryHigherSensesFromSenses {
 	public static List<Sense> extract(List<Sense> sensesIn){
@@ -20,16 +21,18 @@ public class ImaginaryHigherSensesFromSenses {
 			int currMinX = currentSense.orientation.boundingBox.minX;
 			int currMaxX = currentSense.orientation.boundingBox.maxX;
 			List<Sense> currRow = new ArrayList<Sense>();
+			currRow.add(currentSense);
 			List<Sense> currColumn = new ArrayList<Sense>();
+			currColumn.add(currentSense);
 			for (int j = 0; j < sensesIn.size(); j++) {
 				Sense currentCheckingSense = sensesIn.get(j);
 				int checkX = currentCheckingSense.orientation.position.x;
 				int checkY = currentCheckingSense.orientation.position.y;
 
-				if (checkY > currMinY && checkY < currMaxY && !SenseToHigherSense.containsSense(currentSense.orientation.boundingBox, currentCheckingSense.orientation.boundingBox) && currentSense.orientation.boundingBox != currentCheckingSense.orientation.boundingBox) {
+				if (checkY > currMinY && checkY < currMaxY && !SenseToHigherSense.containsSense(currentSense.orientation.boundingBox, currentCheckingSense.orientation.boundingBox) && !SenseToHigherSense.containsSense(currentCheckingSense.orientation.boundingBox, currentSense.orientation.boundingBox) && !currentSense.orientation.boundingBox.equals(currentCheckingSense.orientation.boundingBox)) {
 					currRow.add(currentCheckingSense);
 				}
-				if (checkX > currMinX && checkX < currMaxX && !SenseToHigherSense.containsSense(currentSense.orientation.boundingBox, currentCheckingSense.orientation.boundingBox) && currentSense.orientation.boundingBox != currentCheckingSense.orientation.boundingBox) {
+				if (checkX > currMinX && checkX < currMaxX && !SenseToHigherSense.containsSense(currentSense.orientation.boundingBox, currentCheckingSense.orientation.boundingBox) && !SenseToHigherSense.containsSense(currentCheckingSense.orientation.boundingBox, currentSense.orientation.boundingBox) && !currentSense.orientation.boundingBox.equals(currentCheckingSense.orientation.boundingBox)) {
 					currColumn.add(currentCheckingSense);
 				}
 			}
@@ -39,6 +42,9 @@ public class ImaginaryHigherSensesFromSenses {
 				Collections.sort(currRow, (s1, s2) -> { return s1.orientation.position.x - s2.orientation.position.x; });
 				Sense row = new Sense();
 				row.components.addAll(currRow);
+				row.definition = new SenseDefinition();
+				row.definition.componentList = row.components;
+				row.orientation = OrientationFromHigherSenseComponents.extract(row.components);
 				
 				//prevent duplicates
 				if (listDoesNotContainASenseWhoseComponentsMatch(rowSenses, row)) {
@@ -49,7 +55,9 @@ public class ImaginaryHigherSensesFromSenses {
 				Collections.sort(currColumn, (s1, s2) -> { return s1.orientation.position.y - s2.orientation.position.y; });
 				Sense column = new Sense();
 				column.components.addAll(currColumn);
-				
+				column.definition = new SenseDefinition();
+				column.definition.componentList = column.components;
+				column.orientation = OrientationFromHigherSenseComponents.extract(column.components);
 				//prevent duplicates
 				if (listDoesNotContainASenseWhoseComponentsMatch(columnSenses, column)) {
 					columnSenses.add(column);
@@ -83,11 +91,19 @@ public class ImaginaryHigherSensesFromSenses {
 					}
 				}
 			}
-			if (currentArray.components.size() > 0) {
+			if (currentArray.components.size() > 1) {
+				currentArray.definition = new SenseDefinition();
+				currentArray.definition.componentList = currentArray.components;
+				currentArray.orientation = OrientationFromHigherSenseComponents.extract(currentArray.components);
 				arraySenses.add(currentArray);
 			}
+			rowsToLoopThrough.remove(0);
 			
 		}
+		
+		imaginarySensesOut.addAll(rowSenses);
+		imaginarySensesOut.addAll(columnSenses);
+		imaginarySensesOut.addAll(arraySenses);
 		return imaginarySensesOut;
 	} 
 	
