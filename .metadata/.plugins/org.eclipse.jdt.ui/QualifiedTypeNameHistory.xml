@@ -46,7 +46,6 @@
     <fullyQualifiedTypeName name="Structure.Pixel"/>
     <fullyQualifiedTypeName name="Structure.Orientation"/>
     <fullyQualifiedTypeName name="Structure.BoundingBox"/>
-    <fullyQualifiedTypeName name="Structure.SenseDefinition"/>
     <fullyQualifiedTypeName name="java.util.LinkedHashSet"/>
     <fullyQualifiedTypeName name="java.util.Set"/>
     <fullyQualifiedTypeName name="java.awt.Point"/>
@@ -56,8 +55,9 @@
     <fullyQualifiedTypeName name="java.awt.image.BufferedImage"/>
     <fullyQualifiedTypeName name="java.util.List"/>
     <fullyQualifiedTypeName name="Structure.Sense"/>
-    <fullyQualifiedTypeName name="java.util.ArrayList"/>
     <fullyQualifiedTypeName name="java.util.Vector"/>
     <fullyQualifiedTypeName name="java.util.Collections"/>
     <fullyQualifiedTypeName name="java.util.Comparator"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
+    <fullyQualifiedTypeName name="Structure.SenseDefinition"/>
 </qualifiedTypeNameHistroy>

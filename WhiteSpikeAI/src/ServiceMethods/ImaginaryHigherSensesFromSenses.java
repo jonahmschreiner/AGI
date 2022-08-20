@@ -71,9 +71,11 @@ public class ImaginaryHigherSensesFromSenses {
 		rowsToLoopThrough.addAll(rowSenses);
 		List<Sense> columnsToLoopThrough = new ArrayList<Sense>();
 		columnsToLoopThrough.addAll(columnSenses);
-		while (rowsToLoopThrough.size() > 0) {
+		
+		int rowsToLoopThroughCounter = 0;
+		while (rowsToLoopThroughCounter < rowsToLoopThrough.size()) {
 			Sense currentArray = new Sense();
-			Sense currentRow = rowsToLoopThrough.get(0);
+			Sense currentRow = rowsToLoopThrough.get(rowsToLoopThroughCounter);
 			Sense currentSense = currentRow.components.get(0);
 			for (int i = 0; i < columnsToLoopThrough.size(); i++) {
 				Sense currentColumn = columnsToLoopThrough.get(i);
@@ -95,9 +97,14 @@ public class ImaginaryHigherSensesFromSenses {
 				currentArray.definition = new SenseDefinition();
 				currentArray.definition.componentList = currentArray.components;
 				currentArray.orientation = OrientationFromHigherSenseComponents.extract(currentArray.components);
-				arraySenses.add(currentArray);
+				Collections.sort(currentArray.components, (s1, s2) -> { return s1.orientation.position.y - s2.orientation.position.y; });
+				//prevent duplicates
+				if (listDoesNotContainASenseWhoseComponentsMatch(arraySenses, currentArray)) {
+					arraySenses.add(currentArray);
+				}	
+				
 			}
-			rowsToLoopThrough.remove(0);
+			rowsToLoopThroughCounter++;
 			
 		}
 		
