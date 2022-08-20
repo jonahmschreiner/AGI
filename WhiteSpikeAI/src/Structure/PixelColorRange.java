@@ -15,15 +15,15 @@ public class PixelColorRange {
 	public PixelColorRange(Color colorIn) {
 		float hsb[] = new float[3];
 		Color.RGBtoHSB(colorIn.getRed(), colorIn.getGreen(), colorIn.getBlue(), hsb);
-		if (hsb[1] < 0.1 && hsb[2] > 0.9) {
-			this.color = "White";
-		} else if (hsb[2] < 0.1) {
-			this.color = "Black";
+		if (hsb[1] < 0.05 && hsb[2] > 0.5) {
+			this.color = "White"; //done fixing
+		} else if (hsb[1] < 0.05) {
+			this.color = "Black"; //done fixing
 		} else {
 			float deg = hsb[0] * 360;
-			if (deg >= 0 && deg < 30) {
+			if (((deg < 10 || deg > 342) && hsb[1] > 78) || (deg >= 0 && deg < 10 && hsb[1] > 88)) {
 				this.color = "Red";
-			} else if (deg >= 30 && deg < 45) {
+			} else if (deg >= 10 && deg < 30) {
 				this.color = "Orange";
 			} else if (deg >= 45 && deg < 70) {
 				this.color = "Yellow";
