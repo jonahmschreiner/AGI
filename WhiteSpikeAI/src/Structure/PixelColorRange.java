@@ -10,7 +10,7 @@ public class PixelColorRange {
 		Color.RGBtoHSB(colorIn.getRed(), colorIn.getGreen(), colorIn.getBlue(), hsb);
 		if (hsb[1] < 0.05 && hsb[2] > 0.75) {
 			this.color = "White";
-		} else if (hsb[1] < 0.05 && hsb[2] > 0.5) {
+		} else if (hsb[1] < 0.05 && hsb[2] > 0.3) {
 			this.color = "Grey";
 		} else if (hsb[1] < 0.05) {
 			this.color = "Black";
@@ -18,6 +18,8 @@ public class PixelColorRange {
 			float deg = hsb[0] * 360;
 			if (deg < 16) {
 				this.color = "Red";
+			} else if (deg < 42 && deg >= 16 && hsb[2] < 0.6) {
+				this.color = "Brown";
 			} else if (deg < 42 && deg >= 16) {
 				this.color = "Orange";
 			} else if (deg < 75 && deg >= 42 ) {
