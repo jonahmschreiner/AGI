@@ -11,7 +11,11 @@ public class Env {
 		public Util util = new Util();
 		
 		public Env() {
+			long envStart = System.currentTimeMillis();
 			senseEnv();
+			long envEnd = System.currentTimeMillis();
+			System.out.println("Total Env Creation Time: " + (envEnd-envStart));
+			System.out.println("Number of Sense in Env: " + this.abstractEnv.senses.size());
 		}
 		
 		public Env(RawEnv rawEnvIn) {
@@ -25,8 +29,15 @@ public class Env {
 		}
 		
 		public void senseEnv() {
+			long rawEnvStart = System.currentTimeMillis();
 			this.rawEnv = senseRawEnv();
+			long rawEnvEnd = System.currentTimeMillis();
+			System.out.println("Total Raw Env Creation Time: " + (rawEnvEnd-rawEnvStart));
+			
+			long abstractEnvStart = System.currentTimeMillis();
 			this.abstractEnv = senseAbstractEnv();
+			long abstractEnvEnd = System.currentTimeMillis();
+			System.out.println("Total Abstract Env Creation Time: " + (abstractEnvEnd-abstractEnvStart));
 		}
 		
 		private RawEnv senseRawEnv() {
