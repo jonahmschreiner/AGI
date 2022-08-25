@@ -3,41 +3,36 @@ package Structure;
 import java.awt.Color;
 
 public class PixelColorRange {
-//	public int minR;
-//	public int maxR;
-//	public int minG;
-//	public int maxG;
-//	public int minB;
-//	public int maxB;
 	public String color;
-	//final int rangeDistance = 20;
 	
 	public PixelColorRange(Color colorIn) {
 		float hsb[] = new float[3];
 		Color.RGBtoHSB(colorIn.getRed(), colorIn.getGreen(), colorIn.getBlue(), hsb);
-		if (hsb[1] < 0.05 && hsb[2] > 0.5) {
-			this.color = "White"; //done fixing
+		if (hsb[1] < 0.05 && hsb[2] > 0.75) {
+			this.color = "White";
+		} else if (hsb[1] < 0.05 && hsb[2] > 0.5) {
+			this.color = "Grey";
 		} else if (hsb[1] < 0.05) {
-			this.color = "Black"; //done fixing
+			this.color = "Black";
 		} else {
 			float deg = hsb[0] * 360;
-			if (((deg < 10 || deg > 342) && hsb[1] > 78) || (deg >= 0 && deg < 10 && hsb[1] > 88)) {
+			if (deg < 16) {
 				this.color = "Red";
-			} else if (deg >= 10 && deg < 30) {
+			} else if (deg < 42 && deg >= 16) {
 				this.color = "Orange";
-			} else if (deg >= 45 && deg < 70) {
+			} else if (deg < 75 && deg >= 42 ) {
 				this.color = "Yellow";
-			} else if (deg >= 70 && deg < 170) {
+			} else if (deg >= 75 && deg < 145) {
 				this.color = "Green";
-			} else if (deg >= 170 && deg < 185) {
+			} else if (deg >= 145 && deg < 196) {
 				this.color = "Teal";
-			} else if (deg >= 185 && deg < 260) {
+			} else if (deg >= 196 && deg < 260) {
 				this.color = "Blue";
-			} else if (deg >= 260 && deg < 275) {
+			} else if (deg >= 260 && deg < 290) {
 				this.color = "Purple";
-			} else if (deg >= 275 && deg < 320) {
+			} else if (deg >= 290 && deg < 340) {
 				this.color = "Pink";
-			} else if (deg >= 320) {
+			} else if (deg >= 340) {
 				this.color = "Red";
 			}
 		}

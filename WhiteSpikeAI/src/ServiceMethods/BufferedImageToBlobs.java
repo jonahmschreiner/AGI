@@ -21,7 +21,12 @@ public class BufferedImageToBlobs {
 			blobPixelToCheckQueue.add(initialPixel);
 			Blob currentBlob = new Blob();
 			PixelColorRange range = new PixelColorRange(initialPixel.color);
-			
+			float hsb[] = new float[3];
+			Color.RGBtoHSB(initialPixel.color.getRed(), initialPixel.color.getGreen(), initialPixel.color.getBlue(), hsb);
+			System.out.println(initialPixel.color);
+			System.out.println("H: " + hsb[0] + " S: " + hsb[1] + " B: " + hsb[2]);
+			System.out.println(range.color);
+			System.out.println();
 			while(blobPixelToCheckQueue.size() > 0) {
 				Pixel currentPixel = blobPixelToCheckQueue.get(0);
 				currentBlob.pixels.add(currentPixel);

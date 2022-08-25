@@ -3,7 +3,7 @@ package Structure;
 import java.util.List;
 
 public class AbstractEnv {
-	List<Sense> senses;
+	public List<Sense> senses;
 	public AbstractEnv() {}
 	public AbstractEnv(List<Sense> sensesIn) {
 		this.senses = sensesIn;
