@@ -24,18 +24,18 @@ public class RawEnvToAbstractEnv {
 		}
 		
 		//for testing (output picture with the senses outlined
-		VisualOutputOfSensesFromSensesAndImage.execute(senses, imageToExtractFrom);
+		//VisualOutputOfSensesFromSensesAndImage.execute(senses, imageToExtractFrom);
 		
 		//Higher-Complexity Visual Abstract Senses
-		//List<Sense> higherSenses = BaseSensesToHigherSenses.extractHigherSenses(senses);
-		//senses.addAll(higherSenses);
+		List<Sense> higherSenses = BaseSensesToHigherSenses.extractHigherSenses(senses);
+		senses.addAll(higherSenses);
 		
 		//for testing (output picture with the senses outlined
 		//VisualOutputOfSensesFromSensesAndImage.execute(senses, imageToExtractFrom);
 		
 		//Imaginary Senses
-		//List<Sense> imaginarySenses = ImaginaryHigherSensesFromSenses.extract(senses);
-		//senses.addAll(imaginarySenses);
+		List<Sense> imaginarySenses = ImaginaryHigherSensesFromSenses.extract(senses);
+		senses.addAll(imaginarySenses);
 		
 		//for testing (output picture with the senses outlined
 		//VisualOutputOfSensesFromSensesAndImage.execute(imaginarySenses, imageToExtractFrom);
