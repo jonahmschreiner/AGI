@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
-	<item key="org.eclipse.jdt.ui.lastextjar" value="/home/agi/Desktop/eclipse/AGI"/>
+	<item key="org.eclipse.jdt.ui.lastextjar" value="/home/agi/Desktop/eclipse/WhiteSpikeAI/src/lwjgl/lwjgl-opengl"/>
 	<item key="UserLibraryLoadSaveDialog.size" value="560,544"/>
 	<item key="filters_last_used" value="filter_imports;"/>
 	<item key="org.eclipse.jdt.ui.last.selected.jre.kind2" value="1"/>
@@ -31,7 +31,7 @@
 		<item key="pageIndex" value="2"/>
 	</section>
 	<section name="ClasspathContainerSelectionPage">
-		<item key="index" value="0"/>
+		<item key="index" value="3"/>
 	</section>
 	<section name="RefactoringWizard.preview">
 		<item key="width" value="600"/>
