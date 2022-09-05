@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-8-openjdk-amd64"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/home/agi/Desktop/eclipse/WhiteSpikeAI/javacl-jna-1.0.0-RC3-shaded"/>
+	<classpathentry kind="lib" path="C:/Users/WhiteSpike/eclipse-workspace/AGI/WhiteSpikeAI/javacl-jna-1.0.0-RC3-shaded"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/WhiteSpike/eclipse-workspace/AGI/WhiteSpikeAI/BridJ"/>
+	<classpathentry kind="lib" path="C:/Users/WhiteSpike/eclipse-workspace/AGI/WhiteSpikeAI/JavaCL"/>
+	<classpathentry kind="lib" path="C:/Users/WhiteSpike/eclipse-workspace/AGI/WhiteSpikeAI/JNAerator"/>
+	<classpathentry kind="lib" path="C:/Users/WhiteSpike/eclipse-workspace/AGI/WhiteSpikeAI/nativelibs4java"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

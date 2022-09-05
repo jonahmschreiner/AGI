@@ -5,14 +5,56 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 
 import com.nativelibs4java.opencl.*;
-import com.nativelibs4java.opencl.CLKernel.LocalSize;
 import com.nativelibs4java.opencl.CLMem.Usage;
 import com.nativelibs4java.util.IOUtils;
 import com.nativelibs4java.util.NIOUtils;
 
 public class JavaCLDemo {
+	
+	public static void runFullExample() throws IOException {
+		final int NUM_FLOATS = 64;
+		final int NUM_ITEMS = NUM_FLOATS/4;
+		CLContext context = JavaCL.createBestContext();
+		CLQueue queue = context.createDefaultQueue();
+		FloatBuffer dataBuffer = NIOUtils.directFloats(NUM_FLOATS, context.getByteOrder());
+		for (int i = 0; i < NUM_FLOATS; i++) {
+			dataBuffer.put(i, i * 5.0f);
+		}
+		CLBuffer<Float> buff = context.createFloatBuffer(Usage.InputOutput, dataBuffer, true);
+		String programText = IOUtils.readText(new File("C:/Users/WhiteSpike/eclipse-workspace/AGI/WhiteSpikeAI/src/Structure/JavaCLCSourceCode")); //method source file
+		CLProgram program = context.createProgram(programText);
+		CLKernel kernel = program.createKernel("root", buff); /*createKernel builds CLProgram, creates CLKernel and makes CLFloatBuffer the kernel's first argument,
+																 would use setArg to add more*/
+		CLEvent kernelEvent = kernel.enqueueNDRange(queue, new int[] {NUM_ITEMS}, new int[]{NUM_ITEMS});
+		buff.read(queue, dataBuffer, true, kernelEvent);
+		
+		for (int i = 0; i < NUM_FLOATS; i++) {
+			System.out.println(i + ": " + dataBuffer.get(i));
+		}
+		
+
+	}
+	
 	public static void main(String[] args) throws IOException {
 		runFullExample();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 //		//get devices
 //		CLPlatform[] platforms = JavaCL.listPlatforms();
 //		for(CLPlatform p : platforms) {
@@ -78,28 +120,6 @@ public class JavaCLDemo {
 //		//actual usage of the method (12 by 4 and 3 by 2)
 //		kernel.enqueueNDRange(queue, new int[]{12, 4}, new int[]{3, 2});
 		
-	}
-	
-	public static void runFullExample() throws IOException {
-		final int NUM_FLOATS = 64;
-		final int NUM_ITEMS = NUM_FLOATS/4;
-		CLContext context = JavaCL.createBestContext();
-		CLQueue queue = context.createDefaultQueue();
-		FloatBuffer dataBuffer = NIOUtils.directFloats(NUM_FLOATS, context.getByteOrder());
-		for (int i = 0; i < NUM_FLOATS; i++) {
-			dataBuffer.put(i, i * 5.0f);
-		}
-		CLBuffer<Float> buff = context.createFloatBuffer(Usage.InputOutput, dataBuffer, true);
-		String programText = IOUtils.readText(new File("root.cl")); //method source file
-		CLProgram program = context.createProgram(programText);
-		CLKernel kernel = program.createKernel("root", buff); //createKernel builds CLProgram, creates CLKernel and makes CLFloatBuffer the kernel's first argument, would use setArg to add more
-		CLEvent kernelEvent = kernel.enqueueNDRange(queue, new int[] {NUM_ITEMS}, new int[]{NUM_ITEMS});
-		buff.read(queue, dataBuffer, true, kernelEvent);
-		
-		for (int i = 0; i < NUM_FLOATS; i++) {
-			System.out.println(i + ": " + dataBuffer.get(i));
-		}
-		
-		//author also strongly recommends looking at the NIOUtils class, does a lot of stuff for you
-	}
+//	}
+	//author also strongly recommends looking at the NIOUtils class, does a lot of stuff for you
 }

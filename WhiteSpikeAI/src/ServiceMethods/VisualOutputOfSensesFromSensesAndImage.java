@@ -59,7 +59,7 @@ public class VisualOutputOfSensesFromSensesAndImage {
 			}
 		}
 		
-		File outputFile = new File("/home/agi/Desktop/output.jpg");
+		File outputFile = new File("/Users/WhiteSpike/Desktop/output.jpg");
 		try {
 		ImageIO.write(imageIn, "jpg", outputFile);
 		} catch (Exception e) {
