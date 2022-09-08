@@ -29,15 +29,15 @@ public class Env {
 		}
 		
 		public void senseEnv() {
-			long rawEnvStart = System.currentTimeMillis();
+			//long rawEnvStart = System.currentTimeMillis();
 			this.rawEnv = senseRawEnv();
-			long rawEnvEnd = System.currentTimeMillis();
-			System.out.println("Total Raw Env Creation Time: " + (rawEnvEnd-rawEnvStart));
+			//long rawEnvEnd = System.currentTimeMillis();
+			//System.out.println("Total Raw Env Creation Time: " + (rawEnvEnd-rawEnvStart));
 			
-			long abstractEnvStart = System.currentTimeMillis();
+			//long abstractEnvStart = System.currentTimeMillis();
 			this.abstractEnv = senseAbstractEnv();
-			long abstractEnvEnd = System.currentTimeMillis();
-			System.out.println("Total Abstract Env Creation Time: " + (abstractEnvEnd-abstractEnvStart));
+			//long abstractEnvEnd = System.currentTimeMillis();
+			//System.out.println("Total Abstract Env Creation Time: " + (abstractEnvEnd-abstractEnvStart));
 		}
 		
 		private RawEnv senseRawEnv() {

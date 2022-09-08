@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 import Structure.Sense;
 
 public class VisualOutputOfSensesFromSensesAndImage {
-	public static void execute(List<Sense> sensesIn, BufferedImage imageIn) {
+	public static void execute(List<Sense> sensesIn, BufferedImage imageIn, String imageNameIn) {
 		for (int i = 0; i < sensesIn.size(); i++) {
 			Sense currentSense = sensesIn.get(i);
 			Point startingPoint = currentSense.orientation.boundingBox.MinXMinY.position;
@@ -59,7 +59,13 @@ public class VisualOutputOfSensesFromSensesAndImage {
 			}
 		}
 		
-		File outputFile = new File("/home/agi/Desktop/output.jpg");
+		File outputFile;
+		if (imageNameIn == null) {
+			outputFile = new File("/home/agi/Desktop/output.jpg");
+		} else {
+			outputFile = new File("/home/agi/Desktop/" + imageNameIn + ".jpg");
+		}
+		
 		try {
 		ImageIO.write(imageIn, "jpg", outputFile);
 		} catch (Exception e) {

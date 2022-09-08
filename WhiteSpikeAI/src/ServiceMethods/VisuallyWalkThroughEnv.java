@@ -12,7 +12,7 @@ public class VisuallyWalkThroughEnv {
 		for (int i = 0; i < envIn.abstractEnv.senses.size(); i++) {
 			Sense currentSense = envIn.abstractEnv.senses.get(i);
 			senseList.add(currentSense);
-			VisualOutputOfSensesFromSensesAndImage.execute(senseList, envIn.rawEnv.currentDisplay.getSubimage(600, 400, 100, 100));
+			VisualOutputOfSensesFromSensesAndImage.execute(senseList, envIn.rawEnv.currentDisplay.getSubimage(600, 400, 100, 100), null);
 			senseList.remove(0);
 		}
 	}
