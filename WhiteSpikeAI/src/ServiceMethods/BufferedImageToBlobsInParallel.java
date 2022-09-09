@@ -36,7 +36,7 @@ public class BufferedImageToBlobsInParallel {
 			this.image = this.initialImage.getSubimage(0, this.minY, this.initialImage.getWidth() - 1, (this.maxY - minY) + 1);
 //			System.out.println(this.iValue + ", " + this.minY + ", " + this.maxY);
 		}
-		public List<Blob> call(){
+		public BlobThreadResult call(){
 			// turn subimage into blobs
 			List<Blob> blobsOut = new ArrayList<Blob>();
 			List<Pixel> mainList = getPixelListFromImage(this.image);
@@ -91,7 +91,11 @@ public class BufferedImageToBlobsInParallel {
 //			if (this.iValue == 1) {
 //				System.out.println();
 //			}
-			return blobsOut;
+			
+			List<Pixel> topRow = getTopRowOfPixels(this.image);
+			List<Pixel> bottomRow = getBottomRowOfPixels(this.image);
+			BlobThreadResult result = new BlobThreadResult(this.iValue, blobsOut, topRow, bottomRow);
+			return result;
 		}
 	}
 	
@@ -109,13 +113,14 @@ public class BufferedImageToBlobsInParallel {
 			tasks.add(bpf);
 		}
 		
-		List<Future<List<Blob>>> blobsOutFromParallel;
+		List<Future<BlobThreadResult>> blobsOutFromParallel;
+		List<BlobThreadResult> blobThreadResults = new ArrayList<BlobThreadResult>();
 		try {
 			blobsOutFromParallel = EXEC.invokeAll(tasks);
-			for (Future<List<Blob>> FutureListBlob : blobsOutFromParallel) {
-				List<Blob> futureListBlob = FutureListBlob.get();
+			for (Future<BlobThreadResult> FutureResult : blobsOutFromParallel) {
+				BlobThreadResult futureResult = FutureResult.get();
 				//System.out.println("future list found, size: " + futureListBlob.size());
-				blobsToReturn.addAll(futureListBlob);
+				blobThreadResults.add(futureResult);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -123,9 +128,17 @@ public class BufferedImageToBlobsInParallel {
 			EXEC.shutdown();
 		}
 		
-		//TODO combine blobs with blobs of other threads
+		//TODO combine blobs with blobs of other threads using blobThreadResults (initially sequentially, then in parallel)
+		for (int i = 0; i < blobThreadResults.size() - 1; i++) {
+			BlobThreadResult currentResult = blobThreadResults.get(i);
+			for (int j = 0; j < currentResult.bottomRowOfPixels.size(); j++) {
+				if (currentResult.blobList.) {
+
+				}
+			}
+		}
 		
-		
+		//remember to do the last thread with the bottom row of the second-to-last one
 		
 
 		return blobsToReturn;
@@ -171,5 +184,26 @@ public class BufferedImageToBlobsInParallel {
 		Pixel downRightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y + 1));
 		touchingPixels.add(downRightPixel);
 		return touchingPixels;
+	}
+	
+	private static List<Pixel> getTopRowOfPixels(BufferedImage bImageIn){
+		List<Pixel> pixelListToReturn = new ArrayList<Pixel>();
+		for (int j = 0; j < bImageIn.getWidth(); j++) {
+			Point positionOfPixel = new Point(j, 0);
+			Pixel pixelToAdd = new Pixel(positionOfPixel, new Color(bImageIn.getRGB(j, 0)));
+			pixelListToReturn.add(pixelToAdd);
+		}
+		return pixelListToReturn;
+	}
+	
+	private static List<Pixel> getBottomRowOfPixels(BufferedImage bImageIn){
+		List<Pixel> pixelListToReturn = new ArrayList<Pixel>();
+		int height = bImageIn.getHeight() - 1;
+		for (int j = 0; j < bImageIn.getWidth(); j++) {
+			Point positionOfPixel = new Point(j, height);
+			Pixel pixelToAdd = new Pixel(positionOfPixel, new Color(bImageIn.getRGB(j, height)));
+			pixelListToReturn.add(pixelToAdd);
+		}
+		return pixelListToReturn;
 	}
 }

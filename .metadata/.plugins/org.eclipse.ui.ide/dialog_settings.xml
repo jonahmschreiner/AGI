@@ -6,6 +6,8 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="/home/agi/Desktop/eclipse/AGI"/>
+			<item value="/home/agi/Desktop/eclipse/UnboundAI"/>
 			<item value="/home/agi/Desktop/OpenCLPart1"/>
 			<item value="/home/agi/Desktop/opencl-hello-world"/>
 			<item value="/home/agi/Desktop/eclipse/opencltest/opencl-hello-world"/>

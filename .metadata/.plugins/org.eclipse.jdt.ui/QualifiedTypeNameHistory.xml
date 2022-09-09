@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="unboundContextHandling.ContextParser"/>
-    <fullyQualifiedTypeName name="unboundContextHandling.ContextWriter"/>
-    <fullyQualifiedTypeName name="unboundContextHandling.PullErrorInstructionsFromException"/>
-    <fullyQualifiedTypeName name="java.io.FileWriter"/>
-    <fullyQualifiedTypeName name="unboundBeliefRetrievers.ErrorGoalRetriever"/>
-    <fullyQualifiedTypeName name="unboundBeliefRetrievers.ActionRetriever"/>
-    <fullyQualifiedTypeName name="unboundStruct.Belief"/>
-    <fullyQualifiedTypeName name="unboundBeliefHandling.BeliefFileAssembler"/>
     <fullyQualifiedTypeName name="unboundBeliefHandling.FileCompilerRunner"/>
     <fullyQualifiedTypeName name="unboundBeliefHandling.SenseEnv"/>
     <fullyQualifiedTypeName name="unboundContextHandling.PullRuntimeErrorFromException"/>
     <fullyQualifiedTypeName name="unboundBeliefRetrievers.SenseRetriever"/>
-    <fullyQualifiedTypeName name="java.util.concurrent.ExecutorService"/>
     <fullyQualifiedTypeName name="unboundBeliefHandling.SenseParser"/>
     <fullyQualifiedTypeName name="unboundBeliefHandling.BeliefParser"/>
     <fullyQualifiedTypeName name="qj.util.lang.DynamicClassLoader"/>
@@ -22,7 +13,6 @@
     <fullyQualifiedTypeName name="java.awt.List"/>
     <fullyQualifiedTypeName name="unboundStruct.Context"/>
     <fullyQualifiedTypeName name="unboundStruct.GoalResult"/>
-    <fullyQualifiedTypeName name="java.util.Map"/>
     <fullyQualifiedTypeName name="Structure.AbstractEnv"/>
     <fullyQualifiedTypeName name="Structure.CoreAction"/>
     <fullyQualifiedTypeName name="ServiceMethods.Util"/>
@@ -40,7 +30,6 @@
     <fullyQualifiedTypeName name="java.util.Set"/>
     <fullyQualifiedTypeName name="java.awt.Point"/>
     <fullyQualifiedTypeName name="java.awt.Color"/>
-    <fullyQualifiedTypeName name="java.io.File"/>
     <fullyQualifiedTypeName name="javax.imageio.ImageIO"/>
     <fullyQualifiedTypeName name="java.awt.image.BufferedImage"/>
     <fullyQualifiedTypeName name="java.util.Vector"/>
@@ -48,7 +37,6 @@
     <fullyQualifiedTypeName name="java.util.Comparator"/>
     <fullyQualifiedTypeName name="Structure.SenseDefinition"/>
     <fullyQualifiedTypeName name="Structure.Env"/>
-    <fullyQualifiedTypeName name="Structure.Sense"/>
     <fullyQualifiedTypeName name="java.util.ArrayList"/>
     <fullyQualifiedTypeName name="ServiceMethods.VisuallyWalkThroughEnv"/>
     <fullyQualifiedTypeName name="java.io.IOException"/>
@@ -60,4 +48,16 @@
     <fullyQualifiedTypeName name="org.lwjgl.opencl.CL10"/>
     <fullyQualifiedTypeName name="org.lwjgl.PointerBuffer"/>
     <fullyQualifiedTypeName name="org.lwjgl.opencl.CL"/>
+    <fullyQualifiedTypeName name="java.util.concurrent.ExecutorService"/>
+    <fullyQualifiedTypeName name="java.util.concurrent.Executors"/>
+    <fullyQualifiedTypeName name="java.util.concurrent.Callable"/>
+    <fullyQualifiedTypeName name="java.util.concurrent.Future"/>
+    <fullyQualifiedTypeName name="java.util.concurrent.CompletableFuture"/>
+    <fullyQualifiedTypeName name="java.util.concurrent.ExecutorCompletionService"/>
+    <fullyQualifiedTypeName name="java.util.concurrent.CompletionService"/>
+    <fullyQualifiedTypeName name="java.util.concurrent.TimeUnit"/>
+    <fullyQualifiedTypeName name="java.util.stream.Collectors"/>
+    <fullyQualifiedTypeName name="java.util.Map"/>
+    <fullyQualifiedTypeName name="java.io.File"/>
+    <fullyQualifiedTypeName name="Structure.Sense"/>
 </qualifiedTypeNameHistroy>
