@@ -45,4 +45,23 @@ public class PixelColorRange {
 //		this.minB = colorIn.getBlue() - rangeDistance;
 //		this.maxB = colorIn.getBlue() + rangeDistance;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this){
+			return true;
+		}
+		if (o instanceof PixelColorRange){
+			PixelColorRange c = (PixelColorRange) o;
+			boolean output = false;
+			if (c.color.equals(this.color)){ //variables (that describe conditions) are the same
+				output = true;
+			} else {
+				output = false;
+			}
+			return output;
+		} else {
+			return false;
+		}
+	}
 }
