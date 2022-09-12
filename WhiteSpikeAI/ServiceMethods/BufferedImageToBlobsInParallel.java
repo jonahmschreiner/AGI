@@ -5,7 +5,9 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,6 +21,7 @@ import Structure.BlobCombinerThreadResult;
 import Structure.BlobThreadResult;
 import Structure.Pixel;
 import Structure.PixelColorRange;
+import Structure.Sense;
 
 public class BufferedImageToBlobsInParallel {
 	public static class BlobParallelCombiner implements Callable<BlobCombinerThreadResult>{
@@ -26,24 +29,30 @@ public class BufferedImageToBlobsInParallel {
 		private final List<BlobThreadResult> blobThreadResults;
 		private final int minX;
 		private final int maxX;
-		public BlobParallelCombiner(int iValueIn, List<BlobThreadResult> blobThreadResultsIn, int minXIn, int maxXIn) {
+		private BufferedImage testImage;//remove testImage and its parameter after testing is complete
+		public BlobParallelCombiner(int iValueIn, List<BlobThreadResult> blobThreadResultsIn, int minXIn, int maxXIn, BufferedImage testImageIn) {
 			this.iValue = iValueIn;
 			this.blobThreadResults = blobThreadResultsIn;
 			this.minX = minXIn;
 			this.maxX = maxXIn;
+			this.testImage = testImageIn;
 		}
 		
 		public BlobCombinerThreadResult call() {
 			List<Blob> outputBlobs = new ArrayList<Blob>();
 			for (int i = 0; i < blobThreadResults.size() - 1; i++) {
+				System.out.println("processed threadFinderResult " + i + " for combinerThread " + this.iValue);
+				if (this.iValue == 0) {
+					System.out.println();
+				}
 				BlobThreadResult currentResult = blobThreadResults.get(i);
 				BlobThreadResult nextResult = blobThreadResults.get(i + 1);
 				List<Pixel> currentBottomRowPixelQueue = new ArrayList<Pixel>();
 				for (int j = minX; j < maxX; j++) {
 					currentBottomRowPixelQueue.add(currentResult.bottomRowOfPixels.get(j));
 				}
-				
 				for (int j = 0; j < currentBottomRowPixelQueue.size(); j++) {
+					
 					Pixel currentBotRowPixel = currentBottomRowPixelQueue.get(j);
 					Pixel currentLeftTopRowPixel = null;
 					PixelColorRange currentLeftTopRowPixelRange = null;
@@ -85,15 +94,15 @@ public class BufferedImageToBlobsInParallel {
 					for (int k = 0; k < currentResult.blobList.size(); k++) {
 						if (currentResult.blobList.get(k).pixels.contains(currentBotRowPixel)) {
 							bottomRowBlob = currentResult.blobList.get(k);
-							for (Pixel currPixel : bottomRowBlob.pixels) {
-								if (currentBottomRowPixelQueue.contains(currPixel)) {
-									currentBottomRowPixelQueue.remove(currentBottomRowPixelQueue.indexOf(currPixel));
-								}
-							}
+//							for (int l = 0; l < bottomRowBlob.pixels.size(); l++) {
+//								Pixel currPixel = bottomRowBlob.pixels.get(l);
+//								if (currentBottomRowPixelQueue.contains(currPixel)) {
+//									currentBottomRowPixelQueue.remove(currentBottomRowPixelQueue.indexOf(currPixel));
+//								}
+//							}
 							break;
 						}
 					}
-					
 					Blob topRowBlob1 = null;
 					for (int k = 0; k < nextResult.blobList.size(); k++) {
 						if (nextResult.blobList.get(k).pixels.contains(currentLeftTopRowPixel)) {
@@ -109,7 +118,6 @@ public class BufferedImageToBlobsInParallel {
 							break;
 						}
 					}
-					
 					//account for case where the bot row pixel is the only connection between two blobs from
 					//nextThread
 					Blob topRowBlob2 = null;
@@ -131,13 +139,19 @@ public class BufferedImageToBlobsInParallel {
 						}
 					}
 					
-					//combine found blobs
+					//combine found blobs (might be able to remove the second addAll to make it faster)
 					if (bottomRowBlob != null && topRowBlob1 != null) {
+						//List<Pixel> tempPixelList = new ArrayList<Pixel>();
+						//tempPixelList.addAll(bottomRowBlob.pixels);
 						bottomRowBlob.pixels.addAll(topRowBlob1.pixels);
+						//topRowBlob1.pixels.addAll(tempPixelList);
 					}
 					
 					if (bottomRowBlob != null && topRowBlob2 != null) {
+						//List<Pixel> tempPixelList = new ArrayList<Pixel>();
+						//tempPixelList.addAll(bottomRowBlob.pixels);
 						bottomRowBlob.pixels.addAll(topRowBlob2.pixels);
+						//topRowBlob2.pixels.addAll(tempPixelList);
 					}
 
 					if (bottomRowBlob != null) {
@@ -147,8 +161,15 @@ public class BufferedImageToBlobsInParallel {
 				}
 			}
 			
-			
+			List<Sense> sensesToPrint = new ArrayList<Sense>();
+			for (int i = 0; i < outputBlobs.size(); i++) {
+				Sense sense = BlobToSense.getSense(outputBlobs.get(i));
+				sensesToPrint.add(sense);
+			}
+			VisualOutputOfSensesFromSensesAndImage.execute(sensesToPrint, this.testImage, "combinerThread" + this.iValue);
+
 			BlobCombinerThreadResult result = new BlobCombinerThreadResult(iValue, outputBlobs);
+			System.out.println("result returned");
 			return result;
 		}
 	}
@@ -177,13 +198,14 @@ public class BufferedImageToBlobsInParallel {
 
 			while(mainList.size() > 0) {
 				List<Pixel> blobPixelToCheckQueue = new ArrayList<Pixel>();
-				Pixel initialPixel = mainList.get(0);
+				Pixel initialPixel = mainList.get(0);	
 				blobPixelToCheckQueue.add(initialPixel);
 				Blob currentBlob = new Blob();
 				PixelColorRange range = new PixelColorRange(initialPixel.color);
 				while(blobPixelToCheckQueue.size() > 0) {
 					Pixel currentPixel = blobPixelToCheckQueue.get(0);
-					currentBlob.pixels.add(currentPixel);
+					Pixel globalPixel = new Pixel(new Point(currentPixel.position.x, currentPixel.position.y + this.minY), currentPixel.color);
+					currentBlob.pixels.add(globalPixel);
 					List<Pixel> touchingPixels = getTouchingPixels(currentPixel);
 					for (int i = 0; i < touchingPixels.size(); i++) {
 						Pixel currentTouchingPixel = touchingPixels.get(i);
@@ -198,7 +220,7 @@ public class BufferedImageToBlobsInParallel {
 								}	
 							}
 						} catch (Exception e) {
-							//System.out.println(e);
+							System.out.println(e);
 							//that pixel doesn't exist (trying a pixel with a negative x or y value when doing an edge pixel)
 						}
 					}
@@ -212,21 +234,20 @@ public class BufferedImageToBlobsInParallel {
 //					System.out.println("mainList pixels remaining for thread" + this.iValue + ": " + mainList.size());
 				}
 			}
-//			System.out.println("blobs returned for thread" + this.iValue);
 			
 //			List<Sense> sensesToPrint = new ArrayList<Sense>();
 //			for (int i = 0; i < blobsOut.size(); i++) {
 //				Sense sense = BlobToSense.getSense(blobsOut.get(i));
 //				sensesToPrint.add(sense);
 //			}
-//			VisualOutputOfSensesFromSensesAndImage.execute(sensesToPrint, this.image, "thread" + this.iValue);
+//			VisualOutputOfSensesFromSensesAndImage.execute(sensesToPrint, this.image, "finderThread" + this.iValue);
 //			
 //			if (this.iValue == 1) {
 //				System.out.println();
 //			}
 			
-			List<Pixel> topRow = getTopRowOfPixels(this.image);
-			List<Pixel> bottomRow = getBottomRowOfPixels(this.image);
+			List<Pixel> topRow = getTopRowOfPixels(this.image, this.minY);
+			List<Pixel> bottomRow = getBottomRowOfPixels(this.image, this.maxY);
 			BlobThreadResult result = new BlobThreadResult(this.iValue, blobsOut, topRow, bottomRow);
 			return result;
 		}
@@ -234,10 +255,9 @@ public class BufferedImageToBlobsInParallel {
 	
 	public static List<Blob> getBlobsFromImage(BufferedImage imageIn){
 		List<Blob> blobsToReturn = new ArrayList<Blob>();
-		//TODO determine number of threads based on mainList size
-		int numOfThreads = 500;
-		int numOfCombiningThreads = 500;
-		
+		int numOfThreads = (imageIn.getHeight() / 10) + 1;
+		//int numOfCombiningThreads = imageIn.getWidth() / 10;
+		int numOfCombiningThreads = 2;
 		//Parallel execution
 		ExecutorService EXEC = Executors.newFixedThreadPool(numOfThreads);
 		List<Callable<BlobThreadResult>> tasks = new ArrayList<Callable<BlobThreadResult>>();
@@ -262,14 +282,20 @@ public class BufferedImageToBlobsInParallel {
 		}
 		System.out.println("all threads done, time to combine them");
 		
-		//TODO combine blocks in parallel
+		//combine thread result blobs in parallel
 		ExecutorService EXEC2 = Executors.newFixedThreadPool(numOfCombiningThreads);
 		List<Callable<BlobCombinerThreadResult>> combiningTasks = new ArrayList<Callable<BlobCombinerThreadResult>>();
 		int xRangePerThread = imageIn.getWidth()/numOfCombiningThreads;
 		for (int i = 0; i < numOfCombiningThreads; i++) {
 			int minX = i * xRangePerThread;
-			BlobParallelCombiner bpc = new BlobParallelCombiner(i, blobThreadResults, minX, minX + xRangePerThread);
-			combiningTasks.add(bpc);
+			if (i < numOfCombiningThreads - 1) {
+				BlobParallelCombiner bpc = new BlobParallelCombiner(i, blobThreadResults, minX, minX + xRangePerThread, imageIn);
+				combiningTasks.add(bpc);
+			} else {
+				BlobParallelCombiner bpc = new BlobParallelCombiner(i, blobThreadResults, minX, imageIn.getWidth() - 1, imageIn);
+				combiningTasks.add(bpc);
+			}
+
 		}
 		
 		List<Future<BlobCombinerThreadResult>> combinersOutFromParallel;
@@ -279,6 +305,7 @@ public class BufferedImageToBlobsInParallel {
 			for (Future<BlobCombinerThreadResult> FutureResult : combinersOutFromParallel) {
 				BlobCombinerThreadResult combinerFutureResult = FutureResult.get();
 				blobCombinerThreadResults.add(combinerFutureResult);
+				System.out.println("future result added");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -400,31 +427,60 @@ public class BufferedImageToBlobsInParallel {
 		//add all blobs to blobsToReturn (avoiding duplicates)
 		for (int k = 0; k < blobCombinerThreadResults.size(); k++) {
 			BlobCombinerThreadResult currResult = blobCombinerThreadResults.get(k);
-			List<Blob> blobsToAdd = removeDuplicateAndCompositionBlobs(currResult.blobList);
+			List<Blob> blobsToAdd = removeDuplicateAndCompositionBlobsAndCombineLinkedBlobs(currResult.blobList);
 			blobsToReturn.addAll(blobsToAdd);
 
 		}	
-		blobsToReturn = removeDuplicateAndCompositionBlobs(blobsToReturn);
+		blobsToReturn = removeDuplicateAndCompositionBlobsAndCombineLinkedBlobs(blobsToReturn);
 		System.out.println("done combining");
 		return blobsToReturn;
 	}
 	
-	private static List<Blob> removeDuplicateAndCompositionBlobs(List<Blob> blobsIn){
+	private static List<Blob> removeDuplicateAndCompositionBlobsAndCombineLinkedBlobs(List<Blob> blobsIn){
 		List<Blob> blobsOut = new ArrayList<Blob>();
 		for (int i = 0; i < blobsIn.size(); i++) {
 			Blob currBlob = blobsIn.get(i);
-			if (!blobsOut.contains(currBlob)) {
-				for (Blob currBlobToCheck : blobsOut) {
+			if (!blobsOut.contains(currBlob) && currBlob != null) { //this if statement removes exact duplicates
+				boolean wasNotComped = true;
+				for (int j = 0; j < blobsOut.size(); j++) { //this for loop removes composition blobs
+					Blob currBlobToCheck = blobsOut.get(j);
+					boolean potentialComp = false;
 					for (Pixel pixelToCheck : currBlobToCheck.pixels) {
-						if () {
-							
+						if (currBlob.pixels.contains(pixelToCheck)) {
+							potentialComp = true;
+							break;
 						}
 					}
+					if (potentialComp) {
+						//check if the blobs are linked (they both have unique parts) or if one is a composition
+						Set<Pixel> currBlobToCheckSet1 = new HashSet<Pixel>(currBlobToCheck.pixels);
+						Set<Pixel> currBlobSet1 = new HashSet<Pixel>(currBlob.pixels);
+						Set<Pixel> currBlobToCheckSet2 = new HashSet<Pixel>(currBlobToCheck.pixels);
+						Set<Pixel> currBlobSet2 = new HashSet<Pixel>(currBlob.pixels);
+						
+						currBlobSet1.removeAll(currBlobToCheckSet1);
+						currBlobToCheckSet2.removeAll(currBlobSet2);
+						if (currBlobSet1.size() == 0 || currBlobToCheckSet2.size() == 0) { //if one is a composition
+							if (currBlobToCheck.pixels.size() < currBlob.pixels.size()) {
+								blobsOut.remove(j);
+								blobsOut.add(currBlob);
+							}
+						} else { //handle the blobs being linked instead of a composition
+							currBlobToCheck.pixels.addAll(currBlobSet1);
+						}
+
+						wasNotComped = false;
+						break;
+					}
+				}
+				if (wasNotComped) {
+					blobsOut.add(currBlob);
 				}
 			}
 		}
 		return blobsOut;
 	}
+	
 	
 	
 	private static List<Pixel> getPixelListFromImage(BufferedImage bImageIn){
@@ -448,20 +504,34 @@ public class BufferedImageToBlobsInParallel {
 		return output;
 	}
 	
-	private static List<Pixel> getTouchingPixels(Pixel pixelIn){
+	private static List<Pixel> getTouchingPixels(Pixel pixelIn){ //need to come back and add ifs for other touching pixels (pass in BufferedImage)
 		List<Pixel> touchingPixels = new ArrayList<Pixel>();
-		Pixel upPixel = new Pixel(new Point(pixelIn.position.x, pixelIn.position.y - 1));
-		touchingPixels.add(upPixel);
+		if (pixelIn.position.y > 0) {
+			Pixel upPixel = new Pixel(new Point(pixelIn.position.x, pixelIn.position.y - 1));
+			touchingPixels.add(upPixel);
+		}
+		
 		Pixel downPixel = new Pixel(new Point(pixelIn.position.x, pixelIn.position.y + 1));
 		touchingPixels.add(downPixel);
-		Pixel leftPixel = new Pixel(new Point(pixelIn.position.x - 1, pixelIn.position.y));
-		touchingPixels.add(leftPixel);
+		
+		if (pixelIn.position.x > 0) {
+			Pixel leftPixel = new Pixel(new Point(pixelIn.position.x - 1, pixelIn.position.y));
+			touchingPixels.add(leftPixel);
+		}
+
 		Pixel rightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y));
 		touchingPixels.add(rightPixel);
-		Pixel upLeftPixel = new Pixel(new Point(pixelIn.position.x - 1, pixelIn.position.y - 1));
-		touchingPixels.add(upLeftPixel);
-		Pixel upRightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y - 1));
-		touchingPixels.add(upRightPixel);
+		
+		if (pixelIn.position.x > 0 && pixelIn.position.y > 0) {
+			Pixel upLeftPixel = new Pixel(new Point(pixelIn.position.x - 1, pixelIn.position.y - 1));
+			touchingPixels.add(upLeftPixel);
+		}
+
+		if (pixelIn.position.y > 0) {
+			Pixel upRightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y - 1));
+			touchingPixels.add(upRightPixel);
+		}
+
 		Pixel downLeftPixel = new Pixel(new Point(pixelIn.position.x - 1, pixelIn.position.y + 1));
 		touchingPixels.add(downLeftPixel);
 		Pixel downRightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y + 1));
@@ -469,24 +539,53 @@ public class BufferedImageToBlobsInParallel {
 		return touchingPixels;
 	}
 	
-	private static List<Pixel> getTopRowOfPixels(BufferedImage bImageIn){
+	private static List<Pixel> getTopRowOfPixels(BufferedImage bImageIn, int minYIn){
 		List<Pixel> pixelListToReturn = new ArrayList<Pixel>();
 		for (int j = 0; j < bImageIn.getWidth(); j++) {
-			Point positionOfPixel = new Point(j, 0);
+			Point positionOfPixel = new Point(j, minYIn);
 			Pixel pixelToAdd = new Pixel(positionOfPixel, new Color(bImageIn.getRGB(j, 0)));
 			pixelListToReturn.add(pixelToAdd);
 		}
 		return pixelListToReturn;
 	}
 	
-	private static List<Pixel> getBottomRowOfPixels(BufferedImage bImageIn){
+	private static List<Pixel> getBottomRowOfPixels(BufferedImage bImageIn, int maxYIn){
 		List<Pixel> pixelListToReturn = new ArrayList<Pixel>();
-		int height = bImageIn.getHeight() - 1;
 		for (int j = 0; j < bImageIn.getWidth(); j++) {
-			Point positionOfPixel = new Point(j, height);
+			int height = bImageIn.getHeight() - 1;
+			Point positionOfPixel = new Point(j, maxYIn);
 			Pixel pixelToAdd = new Pixel(positionOfPixel, new Color(bImageIn.getRGB(j, height)));
 			pixelListToReturn.add(pixelToAdd);
 		}
 		return pixelListToReturn;
+	}
+	
+	
+	
+	//for testing
+	public static void main (String[] args) {
+		Blob blob1 = new Blob();
+		Pixel b1p1 = new Pixel(new Point(0,0));
+		blob1.pixels.add(b1p1);
+		Pixel b1p2 = new Pixel(new Point(1,0));
+		blob1.pixels.add(b1p2);
+//		Pixel b1p3 = new Pixel(new Point(0,1));
+//		blob1.pixels.add(b1p3);
+		
+		Blob blob2 = new Blob();
+		Pixel b2p1 = new Pixel(new Point(1,0));
+		blob2.pixels.add(b2p1);
+		Pixel b2p2 = new Pixel(new Point(0,0));
+		blob2.pixels.add(b2p2);
+		Pixel b2p3 = new Pixel(new Point(0,1));
+		blob2.pixels.add(b2p3);
+		
+		
+		List<Blob> blobsToTest = new ArrayList<Blob>();
+		blobsToTest.add(blob1);
+		blobsToTest.add(blob2);
+		
+		List<Blob> blobsOut = removeDuplicateAndCompositionBlobsAndCombineLinkedBlobs(blobsToTest);
+		System.out.println(blobsOut.size());
 	}
 }
