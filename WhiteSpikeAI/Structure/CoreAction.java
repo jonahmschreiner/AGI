@@ -6,4 +6,7 @@ public class CoreAction {
 	public CoreAction(int indexIn) {
 		this.coreActionIndex = indexIn;
 	}
+	public void execute() {
+		
+	}
 }

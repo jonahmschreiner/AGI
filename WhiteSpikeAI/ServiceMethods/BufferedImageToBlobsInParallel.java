@@ -206,7 +206,7 @@ public class BufferedImageToBlobsInParallel {
 					Pixel currentPixel = blobPixelToCheckQueue.get(0);
 					Pixel globalPixel = new Pixel(new Point(currentPixel.position.x, currentPixel.position.y + this.minY), currentPixel.color);
 					currentBlob.pixels.add(globalPixel);
-					List<Pixel> touchingPixels = getTouchingPixels(currentPixel);
+					List<Pixel> touchingPixels = getTouchingPixels(currentPixel, this.image);
 					for (int i = 0; i < touchingPixels.size(); i++) {
 						Pixel currentTouchingPixel = touchingPixels.get(i);
 						try {
@@ -220,6 +220,7 @@ public class BufferedImageToBlobsInParallel {
 								}	
 							}
 						} catch (Exception e) {
+							System.out.println("HERE2");
 							System.out.println(e);
 							//that pixel doesn't exist (trying a pixel with a negative x or y value when doing an edge pixel)
 						}
@@ -255,9 +256,10 @@ public class BufferedImageToBlobsInParallel {
 	
 	public static List<Blob> getBlobsFromImage(BufferedImage imageIn){
 		List<Blob> blobsToReturn = new ArrayList<Blob>();
-		int numOfThreads = (imageIn.getHeight() / 10) + 1;
+		int numOfThreads = (imageIn.getHeight() / 10);
+
 		//int numOfCombiningThreads = imageIn.getWidth() / 10;
-		int numOfCombiningThreads = 2;
+		//int numOfCombiningThreads = 2;
 		//Parallel execution
 		ExecutorService EXEC = Executors.newFixedThreadPool(numOfThreads);
 		List<Callable<BlobThreadResult>> tasks = new ArrayList<Callable<BlobThreadResult>>();
@@ -274,44 +276,46 @@ public class BufferedImageToBlobsInParallel {
 				BlobThreadResult futureResult = FutureResult.get();
 				//System.out.println("future list found, size: " + futureListBlob.size());
 				blobThreadResults.add(futureResult);
+				blobsToReturn.addAll(futureResult.blobList);
 			}
 		} catch (Exception e) {
+			System.out.println("HERE");
 			e.printStackTrace();
 		} finally {
 			EXEC.shutdown();
 		}
-		System.out.println("all threads done, time to combine them");
+//		System.out.println("all threads done, time to combine them");
 		
 		//combine thread result blobs in parallel
-		ExecutorService EXEC2 = Executors.newFixedThreadPool(numOfCombiningThreads);
-		List<Callable<BlobCombinerThreadResult>> combiningTasks = new ArrayList<Callable<BlobCombinerThreadResult>>();
-		int xRangePerThread = imageIn.getWidth()/numOfCombiningThreads;
-		for (int i = 0; i < numOfCombiningThreads; i++) {
-			int minX = i * xRangePerThread;
-			if (i < numOfCombiningThreads - 1) {
-				BlobParallelCombiner bpc = new BlobParallelCombiner(i, blobThreadResults, minX, minX + xRangePerThread, imageIn);
-				combiningTasks.add(bpc);
-			} else {
-				BlobParallelCombiner bpc = new BlobParallelCombiner(i, blobThreadResults, minX, imageIn.getWidth() - 1, imageIn);
-				combiningTasks.add(bpc);
-			}
-
-		}
-		
-		List<Future<BlobCombinerThreadResult>> combinersOutFromParallel;
-		List<BlobCombinerThreadResult> blobCombinerThreadResults = new ArrayList<BlobCombinerThreadResult>();
-		try {
-			combinersOutFromParallel = EXEC2.invokeAll(combiningTasks);
-			for (Future<BlobCombinerThreadResult> FutureResult : combinersOutFromParallel) {
-				BlobCombinerThreadResult combinerFutureResult = FutureResult.get();
-				blobCombinerThreadResults.add(combinerFutureResult);
-				System.out.println("future result added");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			EXEC2.shutdown();
-		}
+//		ExecutorService EXEC2 = Executors.newFixedThreadPool(numOfCombiningThreads);
+//		List<Callable<BlobCombinerThreadResult>> combiningTasks = new ArrayList<Callable<BlobCombinerThreadResult>>();
+//		int xRangePerThread = imageIn.getWidth()/numOfCombiningThreads;
+//		for (int i = 0; i < numOfCombiningThreads; i++) {
+//			int minX = i * xRangePerThread;
+//			if (i < numOfCombiningThreads - 1) {
+//				BlobParallelCombiner bpc = new BlobParallelCombiner(i, blobThreadResults, minX, minX + xRangePerThread, imageIn);
+//				combiningTasks.add(bpc);
+//			} else {
+//				BlobParallelCombiner bpc = new BlobParallelCombiner(i, blobThreadResults, minX, imageIn.getWidth() - 1, imageIn);
+//				combiningTasks.add(bpc);
+//			}
+//
+//		}
+//		
+//		List<Future<BlobCombinerThreadResult>> combinersOutFromParallel;
+//		List<BlobCombinerThreadResult> blobCombinerThreadResults = new ArrayList<BlobCombinerThreadResult>();
+//		try {
+//			combinersOutFromParallel = EXEC2.invokeAll(combiningTasks);
+//			for (Future<BlobCombinerThreadResult> FutureResult : combinersOutFromParallel) {
+//				BlobCombinerThreadResult combinerFutureResult = FutureResult.get();
+//				blobCombinerThreadResults.add(combinerFutureResult);
+//				System.out.println("future result added");
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			EXEC2.shutdown();
+//		}
 		
 		
 
@@ -425,14 +429,16 @@ public class BufferedImageToBlobsInParallel {
 //		}
 			
 		//add all blobs to blobsToReturn (avoiding duplicates)
-		for (int k = 0; k < blobCombinerThreadResults.size(); k++) {
-			BlobCombinerThreadResult currResult = blobCombinerThreadResults.get(k);
-			List<Blob> blobsToAdd = removeDuplicateAndCompositionBlobsAndCombineLinkedBlobs(currResult.blobList);
-			blobsToReturn.addAll(blobsToAdd);
-
-		}	
-		blobsToReturn = removeDuplicateAndCompositionBlobsAndCombineLinkedBlobs(blobsToReturn);
-		System.out.println("done combining");
+//		for (int k = 0; k < blobCombinerThreadResults.size(); k++) {
+//			BlobCombinerThreadResult currResult = blobCombinerThreadResults.get(k);
+//			List<Blob> blobsToAdd = removeDuplicateAndCompositionBlobsAndCombineLinkedBlobs(currResult.blobList);
+//			blobsToReturn.addAll(blobsToAdd);
+//
+//		}	
+//		blobsToReturn = removeDuplicateAndCompositionBlobsAndCombineLinkedBlobs(blobsToReturn);
+//		System.out.println("done combining");
+		
+		
 		return blobsToReturn;
 	}
 	
@@ -504,38 +510,48 @@ public class BufferedImageToBlobsInParallel {
 		return output;
 	}
 	
-	private static List<Pixel> getTouchingPixels(Pixel pixelIn){ //need to come back and add ifs for other touching pixels (pass in BufferedImage)
+	private static List<Pixel> getTouchingPixels(Pixel pixelIn, BufferedImage imageIn){ //need to come back and add ifs for other touching pixels (pass in BufferedImage)
 		List<Pixel> touchingPixels = new ArrayList<Pixel>();
 		if (pixelIn.position.y > 0) {
 			Pixel upPixel = new Pixel(new Point(pixelIn.position.x, pixelIn.position.y - 1));
 			touchingPixels.add(upPixel);
 		}
 		
-		Pixel downPixel = new Pixel(new Point(pixelIn.position.x, pixelIn.position.y + 1));
-		touchingPixels.add(downPixel);
+		if (pixelIn.position.y < imageIn.getHeight() - 1) {
+			Pixel downPixel = new Pixel(new Point(pixelIn.position.x, pixelIn.position.y + 1));
+			touchingPixels.add(downPixel);
+		}
+
 		
 		if (pixelIn.position.x > 0) {
 			Pixel leftPixel = new Pixel(new Point(pixelIn.position.x - 1, pixelIn.position.y));
 			touchingPixels.add(leftPixel);
 		}
 
-		Pixel rightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y));
-		touchingPixels.add(rightPixel);
+		if (pixelIn.position.x < imageIn.getWidth() - 1) {
+			Pixel rightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y));
+			touchingPixels.add(rightPixel);
+		}
 		
 		if (pixelIn.position.x > 0 && pixelIn.position.y > 0) {
 			Pixel upLeftPixel = new Pixel(new Point(pixelIn.position.x - 1, pixelIn.position.y - 1));
 			touchingPixels.add(upLeftPixel);
 		}
 
-		if (pixelIn.position.y > 0) {
+		if (pixelIn.position.x < imageIn.getWidth() - 1 && pixelIn.position.y > 0) {
 			Pixel upRightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y - 1));
 			touchingPixels.add(upRightPixel);
 		}
 
-		Pixel downLeftPixel = new Pixel(new Point(pixelIn.position.x - 1, pixelIn.position.y + 1));
-		touchingPixels.add(downLeftPixel);
-		Pixel downRightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y + 1));
-		touchingPixels.add(downRightPixel);
+		if (pixelIn.position.y < imageIn.getHeight() - 1 && pixelIn.position.x > 0) {
+			Pixel downLeftPixel = new Pixel(new Point(pixelIn.position.x - 1, pixelIn.position.y + 1));
+			touchingPixels.add(downLeftPixel);
+		}
+
+		if (pixelIn.position.y < imageIn.getHeight() - 1 && pixelIn.position.x < imageIn.getWidth() - 1) {
+			Pixel downRightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y + 1));
+			touchingPixels.add(downRightPixel);	
+		}
 		return touchingPixels;
 	}
 	
