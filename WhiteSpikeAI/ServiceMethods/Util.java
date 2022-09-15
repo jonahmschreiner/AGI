@@ -16,7 +16,7 @@ public class Util {
 	public int leftMousePressed = 0;
 	public int middleMousePressed = 0;
 	public int rightMousePressed = 0;
-	
+
 	public Double getCurrentCpuUsage() {
 		//Cpu Usage
 		try {

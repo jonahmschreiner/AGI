@@ -1,5 +1,6 @@
 package ServiceMethods;
 import java.sql.*;
+import MainLLF.Constants;
 public class DatabaseHandler {
 	/*
 	 * CREATE TABLE tablename(columnLabel1 INT PRIMARY KEY AUTO_INCREMENT, columnLabel2 VARCHAR(255), columnLabel3 VARCHAR(255) NOT NULL UNIQUE, columnLabel4 TEXT);
@@ -14,14 +15,8 @@ public class DatabaseHandler {
 	 * 
 	 * DROP TABLE tablename;
 	 */
-	static String url = "jdbc:mysql://localhost:3306/whitespikeai?autoReconect=true&userSSL=false&serverTimezone=UTC";
-	static String user = "root";
-	static String password = "3v3ry0n3l0v3sag1!";
 	
 	public static void main(String[] args) {
-		cleanDatabase();
-		System.out.println("database cleaned");
-		setUpDatabase();
 //		try {
 //			Connection myConnection = DriverManager.getConnection(url, user, password);
 //			Statement myState = myConnection.createStatement();
@@ -36,14 +31,20 @@ public class DatabaseHandler {
 		
 	}
 	
+	public static void doSetupIfNecessary() {
+		if (DatabaseHandler.checkDatabaseIsNotSetup()) {
+			DatabaseHandler.setUpDatabase();
+			System.out.println("database refreshed");
+		}
+	}
+	
 	//sets up database tables and inserts core action activities
 	public static void setUpDatabase() {
 		try {
-			Connection myConnection = DriverManager.getConnection(url, user, password);
+			cleanDatabase();
+			Connection myConnection = DriverManager.getConnection(Constants.url, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "CREATE TABLE IF NOT EXISTS SenseDefinition (id INT PRIMARY KEY AUTO_INCREMENT, Definition TEXT);";
-			myState.addBatch(sqlCommand);
-			sqlCommand = "CREATE TABLE IF NOT EXISTS CoreActivity (id INT PRIMARY KEY AUTO_INCREMENT, Command VARCHAR(255));";
 			myState.addBatch(sqlCommand);
 			sqlCommand = "CREATE TABLE IF NOT EXISTS Env (id INT PRIMARY KEY AUTO_INCREMENT, Senses TEXT, CpuUsage DOUBLE);";
 			myState.addBatch(sqlCommand);
@@ -51,9 +52,16 @@ public class DatabaseHandler {
 			myState.addBatch(sqlCommand);
 			sqlCommand = "CREATE TABLE IF NOT EXISTS Sense (id INT PRIMARY KEY AUTO_INCREMENT, Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, activitiesExtracted BOOLEAN, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id));";
 			myState.addBatch(sqlCommand);
-			sqlCommand = "CREATE TABLE IF NOT EXISTS Activity (id INT PRIMARY KEY AUTO_INCREMENT, CoreActivity INT, ConditionEnv INT, SubActivities TEXT, SolvedStatus INT DEFAULT 0, CONSTRAINT FOREIGN KEY (ConditionEnv) REFERENCES Env(id), CONSTRAINT FOREIGN KEY (CoreActivity) REFERENCES CoreActivity(id));";
+			sqlCommand = "CREATE TABLE IF NOT EXISTS Activity (id INT PRIMARY KEY AUTO_INCREMENT, CoreActivity INT, ConditionEnv INT, SubActivities TEXT, SolvedStatus INT DEFAULT 0, CONSTRAINT FOREIGN KEY (ConditionEnv) REFERENCES Env(id));";
 			myState.addBatch(sqlCommand);
 			myState.executeBatch();
+			
+			Statement CAActivityInsertState = myConnection.createStatement();
+			for (int i = 0; i < 444; i++) {
+				sqlCommand = "INSERT INTO Activity (CoreActivity) VALUES (" + i + ");";
+				CAActivityInsertState.addBatch(sqlCommand);
+			}
+			CAActivityInsertState.executeBatch();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -61,19 +69,17 @@ public class DatabaseHandler {
 	
 	public static void cleanDatabase() {
 		try {
-			Connection myConnection = DriverManager.getConnection(url, user, password);
+			Connection myConnection = DriverManager.getConnection(Constants.url, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
-			String sqlCommand = "DROP TABLE IF EXISTS SenseDefinition;";
+			String sqlCommand = "DROP TABLE IF EXISTS Sense;";
 			myState.addBatch(sqlCommand);
-			sqlCommand = "DROP TABLE IF EXISTS CoreActivity;";
+			sqlCommand = "DROP TABLE IF EXISTS Activity;";
+			myState.addBatch(sqlCommand);
+			sqlCommand = "DROP TABLE IF EXISTS SenseDefinition;";
 			myState.addBatch(sqlCommand);
 			sqlCommand = "DROP TABLE IF EXISTS Env;";
 			myState.addBatch(sqlCommand);
 			sqlCommand = "DROP TABLE IF EXISTS Orientation;";
-			myState.addBatch(sqlCommand);
-			sqlCommand = "DROP TABLE IF EXISTS Sense;";
-			myState.addBatch(sqlCommand);
-			sqlCommand = "DROP TABLE IF EXISTS Activity;";
 			myState.addBatch(sqlCommand);
 			myState.executeBatch();
 		} catch (Exception e) {
@@ -81,4 +87,20 @@ public class DatabaseHandler {
 		}
 	}
 	
+	public static boolean checkDatabaseIsNotSetup() {
+		boolean output = true;
+		try {
+			Connection myConnection = DriverManager.getConnection(Constants.url, Constants.user, Constants.password);
+			Statement myState = myConnection.createStatement();
+			String sqlCommand = "SELECT COUNT(*) AS total FROM information_schema.tables WHERE TABLE_SCHEMA = 'whitespikeai';";
+			ResultSet rs = myState.executeQuery(sqlCommand);
+			rs.next();
+			if (rs.getInt("total") == 5) {
+				output = false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return output;
+	}
 }
