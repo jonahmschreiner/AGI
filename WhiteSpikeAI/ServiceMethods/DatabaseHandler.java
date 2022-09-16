@@ -1,6 +1,8 @@
 package ServiceMethods;
 import java.sql.*;
 import MainLLF.Constants;
+import Structure.Env;
+import Structure.Sense;
 public class DatabaseHandler {
 	/*
 	 * CREATE TABLE tablename(columnLabel1 INT PRIMARY KEY AUTO_INCREMENT, columnLabel2 VARCHAR(255), columnLabel3 VARCHAR(255) NOT NULL UNIQUE, columnLabel4 TEXT);
@@ -17,6 +19,7 @@ public class DatabaseHandler {
 	 */
 	
 	public static void main(String[] args) {
+		setUpDatabase();
 //		try {
 //			Connection myConnection = DriverManager.getConnection(url, user, password);
 //			Statement myState = myConnection.createStatement();
@@ -48,9 +51,9 @@ public class DatabaseHandler {
 			myState.addBatch(sqlCommand);
 			sqlCommand = "CREATE TABLE IF NOT EXISTS Env (id INT PRIMARY KEY AUTO_INCREMENT, Senses TEXT, CpuUsage DOUBLE);";
 			myState.addBatch(sqlCommand);
-			sqlCommand = "CREATE TABLE IF NOT EXISTS Orientation (id INT PRIMARY KEY AUTO_INCREMENT, Height INT, Width INT, Rotation INT, x INT, y INT, r INT, g INT, b INT);";
+			sqlCommand = "CREATE TABLE IF NOT EXISTS Orientation (id INT PRIMARY KEY AUTO_INCREMENT, Height INT, Width INT, Rotation DOUBLE, x INT, y INT, r INT, g INT, b INT);";
 			myState.addBatch(sqlCommand);
-			sqlCommand = "CREATE TABLE IF NOT EXISTS Sense (id INT PRIMARY KEY AUTO_INCREMENT, Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, activitiesExtracted BOOLEAN, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id));";
+			sqlCommand = "CREATE TABLE IF NOT EXISTS Sense (id INT PRIMARY KEY AUTO_INCREMENT, Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, activitiesExtracted BOOLEAN, numOfActivityExtractionAttempts INT, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id));";
 			myState.addBatch(sqlCommand);
 			sqlCommand = "CREATE TABLE IF NOT EXISTS Activity (id INT PRIMARY KEY AUTO_INCREMENT, CoreActivity INT, ConditionEnv INT, SubActivities TEXT, SolvedStatus INT DEFAULT 0, CONSTRAINT FOREIGN KEY (ConditionEnv) REFERENCES Env(id));";
 			myState.addBatch(sqlCommand);
@@ -102,5 +105,49 @@ public class DatabaseHandler {
 			e.printStackTrace();
 		}
 		return output;
+	}
+	
+	
+	public static void uploadEnvToDatabase(Env envIn) {
+		try {
+			Connection myConnection = DriverManager.getConnection(Constants.url, Constants.user, Constants.password);
+			Statement myState = myConnection.createStatement();
+			String sqlCommand = "SELECT COUNT(*) AS total FROM Env;";
+			ResultSet rs = myState.executeQuery(sqlCommand);
+			rs.next();
+			int EnvId = rs.getInt("total") + 1;
+			sqlCommand = "SELECT COUNT(*) AS total FROM Sense;";
+			rs = myState.executeQuery(sqlCommand);
+			rs.next();
+			int firstSenseId = rs.getInt("total") + 1;
+			
+			String createEnvSQLCommand = "INSERT INTO Env (CpuUsage, Senses) VALUES (" + envIn.rawEnv.currentCpuUsage + ", ";
+			String EnvSenseListSerializedString = firstSenseId + " ";
+			//Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, activitiesExtracted BOOLEAN, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id)
+			for (int i = 0; i < envIn.abstractEnv.senses.size(); i++) {
+				Sense currentSense = envIn.abstractEnv.senses.get(i);
+				
+				//SenseDefinition
+				String definitionString = "";
+				for (int j = 0; j < currentSense.definition.overallChangeDefString.size(); j++) {
+					definitionString = definitionString + currentSense.definition.overallChangeDefString.get(j).changeType + ";";
+				}
+				sqlCommand = "INSERT INTO SenseDefinition (Definition) VALUES (" + definitionString + ");";
+				myState.addBatch(sqlCommand);
+				
+				//Orientation
+				sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, r, g, b) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", " + currentSense.orientation.color.getRed() + ", " + currentSense.orientation.color.getGreen() + ", " + currentSense.orientation.color.getBlue() +");";
+				myState.addBatch(sqlCommand);
+				
+				//Sense
+				sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, activitiesExtracted, numOfActivityExtractionAttempts) VALUES (" + EnvId + ", " + (firstSenseId + i) + (firstSenseId + i) + "false, 0);";
+				myState.addBatch(sqlCommand);
+			}
+			createEnvSQLCommand = createEnvSQLCommand + EnvSenseListSerializedString + ");";
+			myState.addBatch(createEnvSQLCommand);
+			myState.executeBatch();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
