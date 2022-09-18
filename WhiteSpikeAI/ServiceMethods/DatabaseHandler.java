@@ -141,26 +141,27 @@ public class DatabaseHandler {
 				for (int j = 0; j < currentSense.definition.overallChangeDefString.size(); j++) {
 					definitionString = definitionString + currentSense.definition.overallChangeDefString.get(j).changeType + ";";
 				}
+				
 				sqlCommand = "INSERT INTO SenseDefinition (Definition) VALUES (\"" + definitionString + "\");";
-				myState.execute(sqlCommand);
-				//myState.addBatch(sqlCommand);
+				//myState.execute(sqlCommand);
+				myState.addBatch(sqlCommand);
 				
 				//Orientation
 				sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, r, g, b) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", " + currentSense.orientation.color.getRed() + ", " + currentSense.orientation.color.getGreen() + ", " + currentSense.orientation.color.getBlue() +");";
-				myState.execute(sqlCommand);
-				//myState.addBatch(sqlCommand);
+				//myState.execute(sqlCommand);
+				myState.addBatch(sqlCommand);
 				
 				//Sense
 				sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, activitiesExtracted, numOfActivityExtractionAttempts) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", " + (firstSenseId + i) + ", false, 0);";
-				myState.execute(sqlCommand);
-				//myState.addBatch(sqlCommand);
+				//myState.execute(sqlCommand);
+				myState.addBatch(sqlCommand);
 				
 				EnvSenseListSerializedString = EnvSenseListSerializedString + (firstSenseId + i) + " ";
 			}
 			createEnvSQLCommand = createEnvSQLCommand + EnvSenseListSerializedString + "\");";
-			myState.execute(createEnvSQLCommand);
-			//myState.addBatch(createEnvSQLCommand);
-			//myState.executeBatch();
+			//myState.execute(createEnvSQLCommand);
+			myState.addBatch(createEnvSQLCommand);
+			myState.executeBatch();
 			
 			//resume foreign key checks
 			String readdForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=1;";
