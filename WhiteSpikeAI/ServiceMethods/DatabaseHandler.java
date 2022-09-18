@@ -116,6 +116,8 @@ public class DatabaseHandler {
 		try {
 			Connection myConnection = DriverManager.getConnection(Constants.url, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
+			Statement indQueryStatement = myConnection.createStatement();
+			String indQueryCommand = "";
 			String sqlCommand = "SELECT COUNT(*) AS total FROM Env;";
 			ResultSet rs = myState.executeQuery(sqlCommand);
 			rs.next();
@@ -133,6 +135,8 @@ public class DatabaseHandler {
 			String createEnvSQLCommand = "INSERT INTO Env (CpuUsage, CreationDateTime, Senses) VALUES (" + envIn.rawEnv.currentCpuUsage +  ", \"" + timestamp + "\", ";
 			String EnvSenseListSerializedString = "\"" + firstSenseId + " ";
 			//Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, activitiesExtracted BOOLEAN, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id)
+			int numOfSenseDefMatches = 0;
+			int numOfOrientationMatches = 0;
 			for (int i = 0; i < envIn.abstractEnv.senses.size(); i++) {
 				Sense currentSense = envIn.abstractEnv.senses.get(i);
 				
@@ -141,18 +145,41 @@ public class DatabaseHandler {
 				for (int j = 0; j < currentSense.definition.overallChangeDefString.size(); j++) {
 					definitionString = definitionString + currentSense.definition.overallChangeDefString.get(j).changeType + ";";
 				}
-				
-				sqlCommand = "INSERT INTO SenseDefinition (Definition) VALUES (\"" + definitionString + "\");";
-				//myState.execute(sqlCommand);
-				myState.addBatch(sqlCommand);
+				indQueryCommand = "SELECT * FROM SenseDefinition WHERE Definition=\"" + definitionString + "\";";
+				ResultSet indQueryRS = indQueryStatement.executeQuery(indQueryCommand);
+				indQueryRS.next();
+				int matchingSenseDefId = -1;
+				try {
+					int idOfMatch = indQueryRS.getInt("id");
+					matchingSenseDefId = idOfMatch;
+					numOfSenseDefMatches = numOfSenseDefMatches + 1;
+				} catch (Exception e) {
+					sqlCommand = "INSERT INTO SenseDefinition (Definition) VALUES (\"" + definitionString + "\");";
+					myState.execute(sqlCommand);
+					//myState.addBatch(sqlCommand);
+					matchingSenseDefId = firstSenseId + i - numOfSenseDefMatches;
+				}
+
 				
 				//Orientation
-				sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, r, g, b) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", " + currentSense.orientation.color.getRed() + ", " + currentSense.orientation.color.getGreen() + ", " + currentSense.orientation.color.getBlue() +");";
-				//myState.execute(sqlCommand);
-				myState.addBatch(sqlCommand);
+				indQueryCommand = "SELECT * FROM Orientation WHERE Height=" + currentSense.orientation.height + " AND Width=" + currentSense.orientation.width + " AND Rotation=" + currentSense.orientation.rotation + " AND x=" + currentSense.orientation.position.x + " AND y=" + currentSense.orientation.position.y + " AND r=" + currentSense.orientation.color.getRed() + " AND g=" + currentSense.orientation.color.getGreen() + " AND b=" + currentSense.orientation.color.getBlue() + ";";
+				ResultSet indQueryOrientationRS = indQueryStatement.executeQuery(indQueryCommand);
+				indQueryOrientationRS.next();
+				int matchingOrientationId = -1;
+				try {
+					int idOfMatch = indQueryOrientationRS.getInt("id");
+					matchingOrientationId = idOfMatch;
+					numOfOrientationMatches = numOfOrientationMatches + 1;
+				} catch (Exception e) {
+					sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, r, g, b) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", " + currentSense.orientation.color.getRed() + ", " + currentSense.orientation.color.getGreen() + ", " + currentSense.orientation.color.getBlue() +");";
+					myState.execute(sqlCommand);
+					matchingOrientationId = firstSenseId + i - numOfOrientationMatches;
+				}
+				
+				
 				
 				//Sense
-				sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, activitiesExtracted, numOfActivityExtractionAttempts) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", " + (firstSenseId + i) + ", false, 0);";
+				sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, activitiesExtracted, numOfActivityExtractionAttempts) VALUES (" + EnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ", false, 0);";
 				//myState.execute(sqlCommand);
 				myState.addBatch(sqlCommand);
 				
