@@ -1,5 +1,9 @@
 package ServiceMethods;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import MainLLF.Constants;
 import Structure.Env;
 import Structure.Sense;
@@ -49,7 +53,7 @@ public class DatabaseHandler {
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "CREATE TABLE IF NOT EXISTS SenseDefinition (id INT PRIMARY KEY AUTO_INCREMENT, Definition TEXT);";
 			myState.addBatch(sqlCommand);
-			sqlCommand = "CREATE TABLE IF NOT EXISTS Env (id INT PRIMARY KEY AUTO_INCREMENT, Senses TEXT, CpuUsage DOUBLE);";
+			sqlCommand = "CREATE TABLE IF NOT EXISTS Env (id INT PRIMARY KEY AUTO_INCREMENT, Senses TEXT, CpuUsage DOUBLE, CreationDateTime DATETIME);";
 			myState.addBatch(sqlCommand);
 			sqlCommand = "CREATE TABLE IF NOT EXISTS Orientation (id INT PRIMARY KEY AUTO_INCREMENT, Height INT, Width INT, Rotation DOUBLE, x INT, y INT, r INT, g INT, b INT);";
 			myState.addBatch(sqlCommand);
@@ -120,9 +124,14 @@ public class DatabaseHandler {
 			rs = myState.executeQuery(sqlCommand);
 			rs.next();
 			int firstSenseId = rs.getInt("total") + 1;
-			
-			String createEnvSQLCommand = "INSERT INTO Env (CpuUsage, Senses) VALUES (" + envIn.rawEnv.currentCpuUsage + ", ";
-			String EnvSenseListSerializedString = firstSenseId + " ";
+			String removeForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=0;";
+			Statement removeChecksState = myConnection.createStatement();
+			removeChecksState.execute(removeForeignKeyChecksCommand);
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
+			LocalDateTime localDate = LocalDateTime.now();
+			String timestamp = dtf.format(localDate);
+			String createEnvSQLCommand = "INSERT INTO Env (CpuUsage, CreationDateTime, Senses) VALUES (" + envIn.rawEnv.currentCpuUsage +  ", \"" + timestamp + "\", ";
+			String EnvSenseListSerializedString = "\"" + firstSenseId + " ";
 			//Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, activitiesExtracted BOOLEAN, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id)
 			for (int i = 0; i < envIn.abstractEnv.senses.size(); i++) {
 				Sense currentSense = envIn.abstractEnv.senses.get(i);
@@ -132,20 +141,31 @@ public class DatabaseHandler {
 				for (int j = 0; j < currentSense.definition.overallChangeDefString.size(); j++) {
 					definitionString = definitionString + currentSense.definition.overallChangeDefString.get(j).changeType + ";";
 				}
-				sqlCommand = "INSERT INTO SenseDefinition (Definition) VALUES (" + definitionString + ");";
-				myState.addBatch(sqlCommand);
+				sqlCommand = "INSERT INTO SenseDefinition (Definition) VALUES (\"" + definitionString + "\");";
+				myState.execute(sqlCommand);
+				//myState.addBatch(sqlCommand);
 				
 				//Orientation
 				sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, r, g, b) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", " + currentSense.orientation.color.getRed() + ", " + currentSense.orientation.color.getGreen() + ", " + currentSense.orientation.color.getBlue() +");";
-				myState.addBatch(sqlCommand);
+				myState.execute(sqlCommand);
+				//myState.addBatch(sqlCommand);
 				
 				//Sense
-				sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, activitiesExtracted, numOfActivityExtractionAttempts) VALUES (" + EnvId + ", " + (firstSenseId + i) + (firstSenseId + i) + "false, 0);";
-				myState.addBatch(sqlCommand);
+				sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, activitiesExtracted, numOfActivityExtractionAttempts) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", " + (firstSenseId + i) + ", false, 0);";
+				myState.execute(sqlCommand);
+				//myState.addBatch(sqlCommand);
+				
+				EnvSenseListSerializedString = EnvSenseListSerializedString + (firstSenseId + i) + " ";
 			}
-			createEnvSQLCommand = createEnvSQLCommand + EnvSenseListSerializedString + ");";
-			myState.addBatch(createEnvSQLCommand);
-			myState.executeBatch();
+			createEnvSQLCommand = createEnvSQLCommand + EnvSenseListSerializedString + "\");";
+			myState.execute(createEnvSQLCommand);
+			//myState.addBatch(createEnvSQLCommand);
+			//myState.executeBatch();
+			
+			//resume foreign key checks
+			String readdForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=1;";
+			Statement readdChecksState = myConnection.createStatement();
+			readdChecksState.execute(readdForeignKeyChecksCommand);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
