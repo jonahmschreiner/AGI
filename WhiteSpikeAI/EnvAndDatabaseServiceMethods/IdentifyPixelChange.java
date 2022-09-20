@@ -1,4 +1,4 @@
-package ServiceMethods;
+package EnvAndDatabaseServiceMethods;
 
 import Structure.Pixel;
 import Structure.PixelChange;

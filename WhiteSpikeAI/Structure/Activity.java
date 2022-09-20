@@ -2,7 +2,7 @@ package Structure;
 
 import java.util.List;
 
-import ServiceMethods.ExecuteCoreAction;
+import EnvAndDatabaseServiceMethods.ExecuteCoreAction;
 
 public class Activity {
 	public String activityName;

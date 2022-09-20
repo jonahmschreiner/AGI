@@ -8,7 +8,7 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import ServiceMethods.*;
+import EnvAndDatabaseServiceMethods.*;
 public class Env {
 		public AbstractEnv abstractEnv;
 		public RawEnv rawEnv;
@@ -20,6 +20,10 @@ public class Env {
 			long envEnd = System.currentTimeMillis();
 			System.out.println("Total Env Creation Time: " + (envEnd-envStart));
 			System.out.println("Number of Sense in Env: " + this.abstractEnv.senses.size());
+		}
+		
+		public Env(int code) {
+			
 		}
 		
 		public Env(RawEnv rawEnvIn) {
@@ -44,7 +48,7 @@ public class Env {
 			//System.out.println("Total Abstract Env Creation Time: " + (abstractEnvEnd-abstractEnvStart));
 		}
 		
-		private RawEnv senseRawEnv() {
+		public RawEnv senseRawEnv() {
 			RawEnv currentRawEnv = new RawEnv();
 			try {
 				currentRawEnv.currentDisplay = getScreenshot();
@@ -55,11 +59,11 @@ public class Env {
 			return currentRawEnv;
 		}
 		
-		private AbstractEnv senseAbstractEnv() {
+		public AbstractEnv senseAbstractEnv() {
 			return RawEnvToAbstractEnv.extract(this.rawEnv);
 		}
 		
-		private BufferedImage getScreenshot() throws Exception {
+		public BufferedImage getScreenshot() throws Exception {
 		    Rectangle rec = new Rectangle(
 		      Toolkit.getDefaultToolkit().getScreenSize());
 		    Robot robot = new Robot();

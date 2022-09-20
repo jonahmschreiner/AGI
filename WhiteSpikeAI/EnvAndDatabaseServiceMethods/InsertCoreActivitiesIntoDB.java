@@ -1,4 +1,4 @@
-package ServiceMethods;
+package EnvAndDatabaseServiceMethods;
 
 import java.util.*;
 import Structure.*;

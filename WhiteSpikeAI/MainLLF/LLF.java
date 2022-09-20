@@ -1,7 +1,7 @@
 package MainLLF;
 
-import ServiceMethods.DatabaseHandler;
-import ServiceMethods.VisuallyWalkThroughEnv;
+import EnvAndDatabaseServiceMethods.DatabaseHandler;
+import EnvAndDatabaseServiceMethods.VisuallyWalkThroughEnv;
 import Structure.Env;
 
 public class LLF {
@@ -10,6 +10,6 @@ public class LLF {
 		DatabaseHandler.doSetupIfNecessary();
 		Env env = new Env();
 		DatabaseHandler.uploadEnvToDatabase(env);
-		//VisuallyWalkThroughEnv.start(env);
+
 	}
 }

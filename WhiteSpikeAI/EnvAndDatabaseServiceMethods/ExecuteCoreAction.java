@@ -1,4 +1,4 @@
-package ServiceMethods;
+package EnvAndDatabaseServiceMethods;
 
 public class ExecuteCoreAction {
 	public static void exec(int coreActionIndex) {

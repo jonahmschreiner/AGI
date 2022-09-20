@@ -1,4 +1,4 @@
-package ServiceMethods;
+package EnvAndDatabaseServiceMethods;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -53,7 +53,7 @@ public class BufferedImageToBlobs {
 		return blobsToReturn;
 	}
 	
-	private static List<Pixel> getPixelListFromImage(BufferedImage bImageIn){
+	public static List<Pixel> getPixelListFromImage(BufferedImage bImageIn){
 		List<Pixel> pixelListToReturn = new ArrayList<Pixel>();
 		for (int i = 0; i < bImageIn.getHeight(); i++) {
 			for (int j = 0; j < bImageIn.getWidth(); j++) {

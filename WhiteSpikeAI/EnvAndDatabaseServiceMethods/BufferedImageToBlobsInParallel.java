@@ -1,4 +1,4 @@
-package ServiceMethods;
+package EnvAndDatabaseServiceMethods;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -442,7 +442,7 @@ public class BufferedImageToBlobsInParallel {
 		return blobsToReturn;
 	}
 	
-	private static List<Blob> removeDuplicateAndCompositionBlobsAndCombineLinkedBlobs(List<Blob> blobsIn){
+	public static List<Blob> removeDuplicateAndCompositionBlobsAndCombineLinkedBlobs(List<Blob> blobsIn){
 		List<Blob> blobsOut = new ArrayList<Blob>();
 		for (int i = 0; i < blobsIn.size(); i++) {
 			Blob currBlob = blobsIn.get(i);
@@ -489,7 +489,7 @@ public class BufferedImageToBlobsInParallel {
 	
 	
 	
-	private static List<Pixel> getPixelListFromImage(BufferedImage bImageIn){
+	public static List<Pixel> getPixelListFromImage(BufferedImage bImageIn){
 		List<Pixel> pixelListToReturn = new ArrayList<Pixel>();
 		for (int i = 0; i < bImageIn.getHeight(); i++) {
 			for (int j = 0; j < bImageIn.getWidth(); j++) {
@@ -501,7 +501,7 @@ public class BufferedImageToBlobsInParallel {
 		return pixelListToReturn;
 	}
 	
-	private static boolean PixelWithinRange(Pixel pixelIn, PixelColorRange rangeIn) {
+	public static boolean PixelWithinRange(Pixel pixelIn, PixelColorRange rangeIn) {
 		boolean output = false;
 		PixelColorRange pixelColor = new PixelColorRange(pixelIn.color);
 		if (pixelColor.color.equals(rangeIn.color)) {
@@ -510,7 +510,7 @@ public class BufferedImageToBlobsInParallel {
 		return output;
 	}
 	
-	private static List<Pixel> getTouchingPixels(Pixel pixelIn, BufferedImage imageIn){ //need to come back and add ifs for other touching pixels (pass in BufferedImage)
+	public static List<Pixel> getTouchingPixels(Pixel pixelIn, BufferedImage imageIn){ //need to come back and add ifs for other touching pixels (pass in BufferedImage)
 		List<Pixel> touchingPixels = new ArrayList<Pixel>();
 		if (pixelIn.position.y > 0) {
 			Pixel upPixel = new Pixel(new Point(pixelIn.position.x, pixelIn.position.y - 1));
@@ -565,7 +565,7 @@ public class BufferedImageToBlobsInParallel {
 		return pixelListToReturn;
 	}
 	
-	private static List<Pixel> getBottomRowOfPixels(BufferedImage bImageIn, int maxYIn){
+	public static List<Pixel> getBottomRowOfPixels(BufferedImage bImageIn, int maxYIn){
 		List<Pixel> pixelListToReturn = new ArrayList<Pixel>();
 		for (int j = 0; j < bImageIn.getWidth(); j++) {
 			int height = bImageIn.getHeight() - 1;

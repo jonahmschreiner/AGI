@@ -1,4 +1,4 @@
-package ServiceMethods;
+package EnvAndDatabaseServiceMethods;
 
 import java.awt.MouseInfo;
 import java.io.BufferedReader;
