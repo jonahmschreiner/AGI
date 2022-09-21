@@ -28,10 +28,11 @@ public class UpdateEnv {
 				//}		
 			//}		
 		}
-		
-		UpdateSenses.update(newishSenses, envIn);
-		
-		
+		try {
+			UpdateSenses.update(newishSenses, envIn);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		return envIn;
 	}

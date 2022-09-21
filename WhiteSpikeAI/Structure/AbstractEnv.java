@@ -4,6 +4,7 @@ import java.util.List;
 
 public class AbstractEnv {
 	public List<Sense> senses;
+	public String dbSenseList = "";
 	public AbstractEnv() {}
 	public AbstractEnv(List<Sense> sensesIn) {
 		this.senses = sensesIn;
