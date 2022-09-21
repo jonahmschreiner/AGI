@@ -15,6 +15,15 @@ public class SenseDefinition {
 	}
 	
 	@Override
+	public String toString() {
+		String output = "";
+		for (int i = 0; i < overallChangeDefString.size(); i++) {
+			output = output + overallChangeDefString.get(i).changeType + ";";
+		}
+		return output;
+	}
+	
+	@Override
 	public boolean equals(Object o) {
 		if (o == this){
 			return true;

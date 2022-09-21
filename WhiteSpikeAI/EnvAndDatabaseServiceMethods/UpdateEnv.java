@@ -26,8 +26,10 @@ public class UpdateEnv {
 				//if (currentSense.orientation.height > 3 || currentSense.orientation.width > 3) {
 					newishSenses.add(currentSense);
 				//}		
-			//}			
+			//}		
 		}
+		
+		UpdateSenses.update(newishSenses, envIn);
 		
 		
 		
