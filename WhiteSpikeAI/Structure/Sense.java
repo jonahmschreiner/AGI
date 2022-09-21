@@ -5,10 +5,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import EnvAndDatabaseServiceMethods.UpdateSenses.ComparisonClass;
+
 public class Sense {
 	public List<Sense> components = new ArrayList<Sense>();
 	public Orientation orientation;
 	public SenseDefinition definition;
+	public ComparisonClass comparisonClass;
 	
 	@Override
 	public boolean equals(Object o) {
