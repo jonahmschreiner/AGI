@@ -17,7 +17,9 @@ import java.util.Set;
 import EnvAndDatabaseServiceMethods.ComparisonScoreBasedOnOrientation;
 import MainLLF.Constants;
 import Structure.Env;
+import Structure.Orientation;
 import Structure.Sense;
+import Structure.OrientationChanges;
 
 public class UpdateSenses {
 	public class ComparisonClass{
@@ -31,7 +33,9 @@ public class UpdateSenses {
 		//start database connection for later
 		Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 		Statement myState = myConnection.createStatement();
-		
+		String removeForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=0;";
+		Statement removeChecksState = myConnection.createStatement();
+		removeChecksState.execute(removeForeignKeyChecksCommand);
 		//split senses up into lists by senseDef
 		Map<String, List<Sense>> sensesBySenseDef = new HashMap<String, List<Sense>>();
 		for (int i = 0; i < sensesIn.size(); i++) {
@@ -110,6 +114,7 @@ public class UpdateSenses {
 			for (int j = 0; j < size; j++) {
 				Sense oldSense = iter3.next();
 				Sense newSense = newSenseToOldSenseMatches.get(oldSense);
+				newSense.orientationChanges = extractOrientationChanges(newSense.orientation, oldSense.orientation);
 				List<Sense> envSenses = oldEnvIn.abstractEnv.senses;
 				
 				//update database
@@ -158,15 +163,26 @@ public class UpdateSenses {
 				try {
 					int orientationCount = rs2.getInt("total");
 					orientationCount++;
-					sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, r, g, b) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", " + currentSense.orientation.color.getRed() + ", " + currentSense.orientation.color.getGreen() + ", " + currentSense.orientation.color.getBlue() +");";
-					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, activitiesExtracted) VALUES (" + totalNumberOfEnvs + ", " + senseDefId + ", " + orientationCount + ", false);";
-					myState.addBatch(sqlCommand);
+					
+					sqlCommand = "SELECT COUNT(*) AS total FROM OrientationChanges;";
+					ResultSet rs4 = myState.executeQuery(sqlCommand);
+					rs4.next();
+					try {
+						int orientationChangesCount = rs4.getInt("total");
+						orientationChangesCount++;
+						
+						sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, r, g, b) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", " + currentSense.orientation.color.getRed() + ", " + currentSense.orientation.color.getGreen() + ", " + currentSense.orientation.color.getBlue() +");";
+						myState.addBatch(sqlCommand);
+						sqlCommand = "INSERT INTO OrientationChanges (HeightChange, WidthChange, RotationChange, xChange, yChange, rChange, gChange, bChange) VALUES (" + currentSense.orientationChanges.heightChange + ", " + currentSense.orientationChanges.widthChange + ", " + currentSense.orientationChanges.rotationChange + ", " + currentSense.orientationChanges.xChange + ", " + currentSense.orientationChanges.yChange + ", " + currentSense.orientationChanges.rChange + ", " + currentSense.orientationChanges.gChange + ", " + currentSense.orientationChanges.bChange +");";
+						myState.addBatch(sqlCommand);
+						sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, activitiesExtracted) VALUES (" + totalNumberOfEnvs + ", " + senseDefId + ", " + orientationCount + ", " + orientationChangesCount + ", false);";
+						myState.addBatch(sqlCommand);
+					} catch (Exception e) {
+						
+					}
 				} catch (Exception e) {
 					
-				}
-				
-				
+				}			
 
 			} catch (Exception e) {
 				sqlCommand = "SELECT COUNT(*) AS total FROM SenseDefinition;";
@@ -181,12 +197,27 @@ public class UpdateSenses {
 					try {
 						int orientationCount = rs3.getInt("total");
 						orientationCount++;
-						sqlCommand = "INSERT INTO SenseDefinition (Definition) VALUES (" + currDef + ");";
-						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, r, g, b) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", " + currentSense.orientation.color.getRed() + ", " + currentSense.orientation.color.getGreen() + ", " + currentSense.orientation.color.getBlue() +");";
-						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, activitiesExtracted) VALUES (" + totalNumberOfEnvs + ", " + senseDefCount + ", " + orientationCount + ", false);";
-						myState.addBatch(sqlCommand);
+						
+						sqlCommand = "SELECT COUNT(*) AS total FROM OrientationChanges;";
+						ResultSet rs4 = myState.executeQuery(sqlCommand);
+						rs4.next();
+						try {
+							int orientationChangesCount = rs4.getInt("total");
+							orientationChangesCount++;
+							
+							sqlCommand = "INSERT INTO SenseDefinition (Definition) VALUES (" + currDef + ");";
+							myState.addBatch(sqlCommand);
+							sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, r, g, b) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", " + currentSense.orientation.color.getRed() + ", " + currentSense.orientation.color.getGreen() + ", " + currentSense.orientation.color.getBlue() +");";
+							myState.addBatch(sqlCommand);
+							sqlCommand = "INSERT INTO OrientationChanges (HeightChange, WidthChange, RotationChange, xChange, yChange, rChange, gChange, bChange) VALUES (" + currentSense.orientationChanges.heightChange + ", " + currentSense.orientationChanges.widthChange + ", " + currentSense.orientationChanges.rotationChange + ", " + currentSense.orientationChanges.xChange + ", " + currentSense.orientationChanges.yChange + ", " + currentSense.orientationChanges.rChange + ", " + currentSense.orientationChanges.gChange + ", " + currentSense.orientationChanges.bChange +");";
+							myState.addBatch(sqlCommand);
+							sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, OrientationChanges, activitiesExtracted) VALUES (" + totalNumberOfEnvs + ", " + senseDefCount + ", " + orientationCount + ", "  + orientationChangesCount + ", false);";
+							myState.addBatch(sqlCommand);
+						} catch (Exception f) {
+							
+						}
+						
+
 					} catch (Exception f) {
 						
 					}
@@ -211,6 +242,89 @@ public class UpdateSenses {
 		String timestamp = dtf.format(localDate);
 		String createEnvSQLCommand = "INSERT INTO Env (CpuUsage, CreationDateTime, Senses) VALUES (" + oldEnvIn.rawEnv.currentCpuUsage +  ", \"" + timestamp + "\", " + oldEnvIn.abstractEnv.dbSenseList;
 		myState.execute(createEnvSQLCommand);
+		
+		String readdForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=1;";
+		Statement readdChecksState = myConnection.createStatement();
+		readdChecksState.execute(readdForeignKeyChecksCommand);
 		return oldEnvIn;
+	}
+	
+	public static OrientationChanges extractOrientationChanges(Orientation newSenseOrIn, Orientation oldSenseOrIn) {
+		OrientationChanges oc = new OrientationChanges();
+		//height
+		int heightChange = newSenseOrIn.height - oldSenseOrIn.height;
+		if (heightChange > 0) {
+			oc.heightChange = 1;
+		} else if (heightChange < 0) {
+			oc.heightChange = -1;
+		} else {
+			oc.heightChange = 0;
+		}
+		
+		//width
+		int widthChange = newSenseOrIn.width - oldSenseOrIn.width;
+		if (widthChange > 0) {
+			oc.widthChange = 1;
+		} else if (widthChange < 0) {
+			oc.widthChange = -1;
+		} else {
+			oc.widthChange = 0;
+		}
+		//rotation
+		double rotationChange = newSenseOrIn.rotation - oldSenseOrIn.rotation;
+		if (rotationChange > 0) {
+			oc.rotationChange = 1;
+		} else if (rotationChange < 0) {
+			oc.rotationChange = -1;
+		} else {
+			oc.rotationChange = 0;
+		}
+		//r
+		int rChange = newSenseOrIn.color.getRed() - oldSenseOrIn.color.getRed();
+		if (rChange > 0) {
+			oc.rChange = 1;
+		} else if (rChange < 0) {
+			oc.rChange = -1;
+		} else {
+			oc.rChange = 0;
+		}
+		//g
+		int gChange = newSenseOrIn.color.getGreen() - oldSenseOrIn.color.getGreen();
+		if (gChange > 0) {
+			oc.gChange = 1;
+		} else if (gChange < 0) {
+			oc.gChange = -1;
+		} else {
+			oc.gChange = 0;
+		}
+		//b
+		int bChange = newSenseOrIn.color.getBlue() - oldSenseOrIn.color.getBlue();
+		if (bChange > 0) {
+			oc.bChange = 1;
+		} else if (bChange < 0) {
+			oc.bChange = -1;
+		} else {
+			oc.bChange = 0;
+		}
+		//x
+		int xChange = newSenseOrIn.position.x - oldSenseOrIn.position.x;
+		if (xChange > 0) {
+			oc.xChange = 1;
+		} else if (xChange < 0) {
+			oc.xChange = -1;
+		} else {
+			oc.xChange = 0;
+		}
+		//y
+		int yChange = newSenseOrIn.position.y - oldSenseOrIn.position.y;
+		if (yChange > 0) {
+			oc.yChange = 1;
+		} else if (yChange < 0) {
+			oc.yChange = -1;
+		} else {
+			oc.yChange = 0;
+		}
+		
+		return oc;
 	}
 }

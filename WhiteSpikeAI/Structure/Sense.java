@@ -10,6 +10,7 @@ import EnvAndDatabaseServiceMethods.UpdateSenses.ComparisonClass;
 public class Sense {
 	public List<Sense> components = new ArrayList<Sense>();
 	public Orientation orientation;
+	public OrientationChanges orientationChanges;
 	public SenseDefinition definition;
 	public ComparisonClass comparisonClass;
 	
