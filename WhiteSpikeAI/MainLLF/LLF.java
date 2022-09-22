@@ -25,14 +25,16 @@ public class LLF {
 		Env env = new Env();
 		DatabaseHandler.uploadEnvToDatabase(env);
 		List<Integer> activitiesToSolveQueue = new ArrayList<Integer>();
-		List<Integer> activitiesToTryQueue = new ArrayList<Integer>();
+		List<String> activitiesToTryQueue = new ArrayList<String>();
 		List<Integer> actionQueue = new ArrayList<Integer>();
 		while (true) {
 			activitiesToSolveQueue = SetUpActivitiesToSolveQueueIfNecessary.setup(activitiesToSolveQueue);
 			activitiesToTryQueue = SetUpActivitiesToTryQueueIfNecessary.setup(activitiesToTryQueue);
 			actionQueue = SetUpActionQueueIfNecessary.setup(actionQueue, activitiesToTryQueue);
-			ExecuteActivity.execByDBId(actionQueue.get(0));
-			actionQueue.remove(0);
+			while (actionQueue.size() > 0) {
+				ExecuteActivity.execByDBId(actionQueue.get(0));
+				actionQueue.remove(0);
+			}
 			env = UpdateEnv.update(env);
 			
 			//get sense obj that who is associated with the activity we are currently trying to solve
@@ -45,7 +47,7 @@ public class LLF {
 				try {
 					Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 					Statement myState = myConnection.createStatement();
-					String sqlCommand = "UPDATE Activity SET SubActivities=" + activitiesToTryQueue.get(0) + "SolvedStatus=1 WHERE id=" + currentActivityToSolveID + ";";
+					String sqlCommand = "UPDATE Activity SET SubActivities=\"" + activitiesToTryQueue.get(0) + "\" SolvedStatus=1 WHERE id=" + currentActivityToSolveID + ";";
 					myState.execute(sqlCommand);
 				} catch (Exception e) {
 					
@@ -55,10 +57,7 @@ public class LLF {
 				actionQueue.clear();
 				activitiesToSolveQueue.remove(0);
 			}
-			
-			if (actionQueue.size() == 0) {
-				activitiesToTryQueue.remove(0);
-			}
+			activitiesToTryQueue.remove(0);
 		}
 
 	}

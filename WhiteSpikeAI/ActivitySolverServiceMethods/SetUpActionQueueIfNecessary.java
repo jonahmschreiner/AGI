@@ -10,10 +10,17 @@ import java.util.List;
 import MainLLF.Constants;
 
 public class SetUpActionQueueIfNecessary {
-	public static List<Integer> setup (List<Integer> actionQueueIn, List<Integer> activitiesToTryQueueIn){
+	public static List<Integer> setup (List<Integer> actionQueueIn, List<String> activitiesToTryQueueIn){
 		if (actionQueueIn.size() == 0) {
-			int newActivityToPullInId = activitiesToTryQueueIn.get(0);
-			return extractCoreActionListFromActivity(newActivityToPullInId);
+			List<Integer> output = new ArrayList<Integer>();
+			String newActivityToPullInString = activitiesToTryQueueIn.get(0);
+			String[] natpisArray = newActivityToPullInString.split(" ");
+			for (int i = 0; i < natpisArray.length; i++) {
+				int newActivityToPullInId =  Integer.valueOf(natpisArray[i]);
+				output.addAll(extractCoreActionListFromActivity(newActivityToPullInId));
+			}
+			
+			return output;
 		}
 		return actionQueueIn;
 	}
