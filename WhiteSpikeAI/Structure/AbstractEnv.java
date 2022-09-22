@@ -5,6 +5,8 @@ import java.util.List;
 public class AbstractEnv {
 	public List<Sense> senses;
 	public String dbSenseList = "";
+	public List<Integer> recentlyChangedOldSenses; //index of senses in the abstract env senses list whose orientation changed
+	public List<Sense> recentlyAddedSenses; //senses that are brand new upon this update iteration
 	public AbstractEnv() {}
 	public AbstractEnv(List<Sense> sensesIn) {
 		this.senses = sensesIn;

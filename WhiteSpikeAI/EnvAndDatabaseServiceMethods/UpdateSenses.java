@@ -127,7 +127,9 @@ public class UpdateSenses {
 				//remove from sensesIn
 				sensesIn.remove(newSense);
 				//replace oldSense with newSense
-				envSenses.set(envSenses.indexOf(oldSense), newSense); 		
+				int index = envSenses.indexOf(oldSense);
+				envSenses.set(index, newSense);
+				oldEnvIn.abstractEnv.recentlyChangedOldSenses.add(index);
 			}
 		}
 		//handle new senses that did not replace old ones
@@ -148,7 +150,7 @@ public class UpdateSenses {
 		for (int i = 0; i < sensesIn.size(); i++) {
 			Sense currentSense = sensesIn.get(i);
 			oldEnvIn.abstractEnv.senses.add(currentSense);
-			
+			oldEnvIn.abstractEnv.recentlyAddedSenses.add(currentSense);
 
 			
 			String currDef = currentSense.definition.toString();

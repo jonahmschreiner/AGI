@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import EnvAndDatabaseServiceMethods.DatabaseHandler;
 import EnvAndDatabaseServiceMethods.ExecuteCoreAction;
 public class ExecuteActivity {
-	public static void exec(int activityId) {
+	public static void execByDBId(int activityId) {
 		ResultSet rs = DatabaseHandler.getActivityForExecution(activityId);
 		try {
 			rs.next();
@@ -17,7 +17,7 @@ public class ExecuteActivity {
 				for (int i = 0; i < arrayOfSubActivityStrings.length; i++) {
 					String currStr = arrayOfSubActivityStrings[i];
 					int currActivityId = Integer.valueOf(currStr);
-					ExecuteActivity.exec(currActivityId);
+					ExecuteActivity.execByDBId(currActivityId);
 				}
 			} catch (Exception f) {
 				

@@ -1,5 +1,7 @@
 package Structure;
 
+import EnvAndDatabaseServiceMethods.ExecuteCoreAction;
+
 public class CoreAction {
 	int coreActionIndex;
 	public CoreAction() {}
@@ -7,7 +9,7 @@ public class CoreAction {
 		this.coreActionIndex = indexIn;
 	}
 	public void execute() {
-		
+		ExecuteCoreAction.exec(this.coreActionIndex);
 	}
 	
 }
