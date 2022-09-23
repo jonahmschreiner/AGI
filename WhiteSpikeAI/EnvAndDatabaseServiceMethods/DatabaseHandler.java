@@ -309,7 +309,7 @@ public class DatabaseHandler {
 		try {
 			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
-			String sqlCommand = "SELECT CoreActivity, SubActivities FROM Activity WHERE id=" + idIn + ";";
+			String sqlCommand = "SELECT CoreActivity, SubActivities, ConditionEnv FROM Activity WHERE id=" + idIn + ";";
 			output = myState.executeQuery(sqlCommand);
 		} catch (Exception e) {
 			

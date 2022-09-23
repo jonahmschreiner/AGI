@@ -32,7 +32,7 @@ public class LLF {
 			activitiesToTryQueue = SetUpActivitiesToTryQueueIfNecessary.setup(activitiesToTryQueue);
 			actionQueue = SetUpActionQueueIfNecessary.setup(actionQueue, activitiesToTryQueue);
 			while (actionQueue.size() > 0) {
-				ExecuteActivity.execByDBId(actionQueue.get(0));
+				ExecuteActivity.execByDBId(env, actionQueue.get(0));
 				actionQueue.remove(0);
 			}
 			env = UpdateEnv.update(env);
