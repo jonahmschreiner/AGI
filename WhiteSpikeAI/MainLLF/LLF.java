@@ -45,23 +45,38 @@ public class LLF {
 			Sense s = GetSenseAssociatedWithActivity.execute(env, currentActivityToSolveID);
 			System.out.println("sense associated with activity gotten");
 			//check if activity was solved and clear ActivityToTryQueue and ActionQueue if so and update the solved's db entry
+			boolean solved = false;
 			if (CheckIfActivityWasSolved.execute(s, currentActivityToSolveID)) {
 
 				//update the solved's db entry
 				try {
 					Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 					Statement myState = myConnection.createStatement();
-					String sqlCommand = "UPDATE Activity SET SubActivities=\"" + activitiesToTryQueue.get(0) + "\" SolvedStatus=1 WHERE id=" + currentActivityToSolveID + ";";
+					String sqlCommand = "UPDATE Activity SET SubActivities=\"" + activitiesToTryQueue.get(0) + "\" SolvedStatus=1 numOfSolveAttempts=numOfSolveAttempts + 1 WHERE id=" + currentActivityToSolveID + ";";
 					myState.execute(sqlCommand);
 				} catch (Exception e) {
 					
 				}
-				
+				solved = true;
 				activitiesToTryQueue.clear();
 				actionQueue.clear();
 				activitiesToSolveQueue.remove(0);
+			}		
+			if (!solved) {
+				activitiesToTryQueue.remove(0);
+				if (activitiesToTryQueue.size() == 0) {
+					activitiesToSolveQueue.remove(0);
+					//update numOfSolveAttempts in database
+					try {
+						Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
+						Statement myState = myConnection.createStatement();
+						String sqlCommand = "UPDATE Activity SET numOfSolveAttempts=numOfSolveAttempts + 1 WHERE id=" + currentActivityToSolveID + ";";
+						myState.execute(sqlCommand);
+					} catch (Exception e) {
+						
+					}		
+				}
 			}
-			activitiesToTryQueue.remove(0);
 		}
 
 	}

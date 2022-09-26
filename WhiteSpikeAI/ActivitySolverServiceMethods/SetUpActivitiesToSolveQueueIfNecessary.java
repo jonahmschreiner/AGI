@@ -15,7 +15,7 @@ public class SetUpActivitiesToSolveQueueIfNecessary {
 			try {
 				Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 				Statement myState = myConnection.createStatement();
-				String sqlCommand = "SELECT id FROM Activity WHERE SolvedStatus=0 ORDER BY id ASC LIMIT 10;";
+				String sqlCommand = "SELECT id FROM Activity WHERE SolvedStatus=0 ORDER BY id ASC, numOfSolveAttempts ASC LIMIT 10;";
 				ResultSet rs = myState.executeQuery(sqlCommand);
 				while (true) {
 					try {

@@ -35,6 +35,10 @@ public class SetUpActionQueueIfNecessary {
 			try {
 				rs.next(); //if the activity is a core action activity
 				int caId = rs.getInt("CoreActivity");
+				if (caId == -1) {
+					throw new Exception();
+				}
+				caId++;
 				output.add(caId);
 			} catch (Exception e) { //if the activity is a higher level activity
 				String subActivityString = rs.getString("SubActivities");

@@ -9,7 +9,7 @@ import java.util.List;
 
 import MainLLF.Constants;
 
-public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it only selects a batch instead
+public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it only does this once and adds newly-solved activities as they are solved
 	public static List<String> setup (List<String> queueIn){
 		if (queueIn.size() == 0) {
 			List<Integer> allIndis = new ArrayList<Integer>();
@@ -29,7 +29,7 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 						break;
 					}
 				}
-				queueIn.addAll(combosFromIndis(allIndis, 0)); //need this to go back to 2 at some point
+				queueIn.addAll(combosFromIndis(allIndis, 0)); //need this to go back to 1 at some point (see comment at top of class)
 
 			} catch (Exception e) {
 				
@@ -46,12 +46,6 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 				for (int j = 0; j < indisIn.size(); j++) {
 					String str = currIndi + " " + indisIn.get(j);
 					output.add(str);
-					if (numOfComboLayers > 1) {
-						for (int k = 0; k < indisIn.size(); k++) {
-							String str2 = str + " " + indisIn.get(k);
-							output.add(str2);
-						}
-					}
 				}
 			}
 
