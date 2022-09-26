@@ -10,8 +10,8 @@ import javax.imageio.ImageIO;
 
 import EnvAndDatabaseServiceMethods.*;
 public class Env {
-		public AbstractEnv abstractEnv;
-		public RawEnv rawEnv;
+		public AbstractEnv abstractEnv = new AbstractEnv();
+		public RawEnv rawEnv = new RawEnv();
 		public Util util = new Util();
 		
 		public Env() {
@@ -56,6 +56,7 @@ public class Env {
 				e.printStackTrace();
 			}
 			currentRawEnv.currentCpuUsage = util.getCurrentCpuUsage();
+			this.rawEnv = currentRawEnv;
 			return currentRawEnv;
 		}
 		

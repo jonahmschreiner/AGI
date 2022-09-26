@@ -78,7 +78,7 @@ public class DatabaseHandler {
 			myState.addBatch(sqlCommand);
 			sqlCommand = "CREATE TABLE IF NOT EXISTS OrientationChange (id INT PRIMARY KEY AUTO_INCREMENT, HeightChange INT, WidthChange INT, RotationChange DOUBLE, xChange INT, yChange INT, rChange INT, gChange INT, bChange INT);";
 			myState.addBatch(sqlCommand);
-			sqlCommand = "CREATE TABLE IF NOT EXISTS Sense (id INT PRIMARY KEY AUTO_INCREMENT, Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, OrientationChange INT, activitiesExtracted BOOLEAN, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (OrientationChange) REFERENCES OrientationChange(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id));";
+			sqlCommand = "CREATE TABLE IF NOT EXISTS Sense (id INT PRIMARY KEY AUTO_INCREMENT, Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, OrientationChange INT, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (OrientationChange) REFERENCES OrientationChange(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id));";
 			myState.addBatch(sqlCommand);
 			sqlCommand = "CREATE TABLE IF NOT EXISTS Activity (id INT PRIMARY KEY AUTO_INCREMENT, CoreActivity INT, ConditionEnv INT, AssociatedSense INT, PropertyId INT, SubActivities TEXT, SolvedStatus INT DEFAULT 0, numOfSolveAttempts INT DEFAULT 0, increaseOrDecreaseProp INT, CONSTRAINT FOREIGN KEY (ConditionEnv) REFERENCES Env(id), CONSTRAINT FOREIGN KEY (AssociatedSense) REFERENCES Sense(id));";
 			myState.addBatch(sqlCommand);
@@ -247,21 +247,21 @@ public class DatabaseHandler {
 						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 7, 1);"; //b prop activity +
 						myState.addBatch(sqlCommand);
 						
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 0, 0);"; //height prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 0, -1);"; //height prop activity -
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 1, 0);"; //width prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 1, -1);"; //width prop activity -
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 2, 0);"; //rotation prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 2, -1);"; //rotation prop activity -
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 3, 0);"; //x prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 3, -1);"; //x prop activity -
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 4, 0);"; //y prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 4, -1);"; //y prop activity -
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, 0);"; //r prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, -1);"; //r prop activity -
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 6, 0);"; //g prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 6, -1);"; //g prop activity -
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 7, 0);"; //b prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 7, -1);"; //b prop activity -
 						myState.addBatch(sqlCommand);
 						myState.executeBatch();
 					}
@@ -307,7 +307,7 @@ public class DatabaseHandler {
 				
 				//Sense
 				if (senseFound == -1) {
-					sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, activitiesExtracted) VALUES (" + EnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ", false);";
+					sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation) VALUES (" + EnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ");";
 					myState.execute(sqlCommand);
 					//myState.addBatch(sqlCommand);
 					

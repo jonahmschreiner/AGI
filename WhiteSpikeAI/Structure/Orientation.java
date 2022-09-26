@@ -7,11 +7,11 @@ public class Orientation {
 	public int height; //length of y
 	public double rotation; //how much the rotation of the sense has changed compared to the originally-discovered instance
 	public Color color; //average color of blob's range
-	public Point position; //where the average position of the sense is on the screen
+	public Point position = new Point(); //where the average position of the sense is on the screen
 	public int width; //length of x
 	public int size; //height * width
-	public BoundingBox boundingBox; //corners of abstract box that covers the amount of screen space this sense takes up
-	
+	public BoundingBox boundingBox = new BoundingBox(); //corners of abstract box that covers the amount of screen space this sense takes up
+	public Orientation() {}
 	@Override
 	public boolean equals(Object o) {
 		if (o == this){

@@ -1,12 +1,13 @@
 package Structure;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AbstractEnv {
-	public List<Sense> senses;
+	public List<Sense> senses = new ArrayList<Sense>();
 	public String dbSenseList = "";
-	public List<Integer> recentlyChangedOldSenses; //index of senses in the abstract env senses list whose orientation changed
-	public List<Sense> recentlyAddedSenses; //senses that are brand new upon this update iteration
+	public List<Integer> recentlyChangedOldSenses = new ArrayList<Integer>(); //index of senses in the abstract env senses list whose orientation changed
+	public List<Sense> recentlyAddedSenses = new ArrayList<Sense>(); //senses that are brand new upon this update iteration
 	public AbstractEnv() {}
 	public AbstractEnv(List<Sense> sensesIn) {
 		this.senses = sensesIn;

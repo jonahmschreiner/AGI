@@ -9,9 +9,9 @@ import EnvAndDatabaseServiceMethods.UpdateSenses.ComparisonClass;
 
 public class Sense {
 	public List<Sense> components = new ArrayList<Sense>();
-	public Orientation orientation;
+	public Orientation orientation = new Orientation();
 	public OrientationChanges orientationChanges;
-	public SenseDefinition definition;
+	public SenseDefinition definition = new SenseDefinition();
 	public ComparisonClass comparisonClass;
 	public int dbId;
 	

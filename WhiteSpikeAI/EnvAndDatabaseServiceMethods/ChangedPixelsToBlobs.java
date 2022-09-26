@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import EnvAndDatabaseServiceMethods.BufferedImageToBlobsInParallel.BlobParallelFinder;
+import EnvAndDatabaseServiceMethods.ChangedPixelsFromOldEnv.junctionList;
 import Structure.Blob;
 import Structure.BlobThreadResult;
 import Structure.ChangedPixelsBlobThreadResult;
@@ -28,9 +29,9 @@ public class ChangedPixelsToBlobs {
 		int minY;
 		int maxY;
 		List<Pixel> changedPixels;
-		public ChangedPixelsBlobParallelFinder(int iValueIn, BufferedImage imageIn, int numOfThreadsIn, List<Pixel> changedPixelsIn) {
+		public ChangedPixelsBlobParallelFinder(int iValueIn, BufferedImage imageIn, int numOfThreadsIn, junctionList changedPixelsIn) {
 			this.iValue = iValueIn;
-			this.changedPixels = changedPixelsIn;
+			this.changedPixels = changedPixelsIn.pixels;
 			this.initialImage = imageIn;
 			this.numOfThreads = numOfThreadsIn;
 			this.minY = (this.initialImage.getHeight()/this.numOfThreads) * this.iValue;
@@ -86,7 +87,7 @@ public class ChangedPixelsToBlobs {
 		}	
 	}
 	
-	public static List<Blob> exec(List<List<Pixel>> changedPixelsByThread, BufferedImage imageIn){
+	public static List<Blob> exec(List<junctionList> changedPixelsByThread, BufferedImage imageIn){
 		List<Blob> output = new ArrayList<Blob>();
 		
 		int numOfThreads = (imageIn.getHeight() / 10);
