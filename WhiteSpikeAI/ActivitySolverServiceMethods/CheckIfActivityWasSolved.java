@@ -18,17 +18,24 @@ public class CheckIfActivityWasSolved {
 		try {
 			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
-			String sqlCommand = "SELECT PropId, increaseOrDecreaseProp FROM Activity WHERE id=" + ActivityDBIdIn + ";";
+			String sqlCommand = "SELECT PropertyId, increaseOrDecreaseProp FROM Activity WHERE id=" + ActivityDBIdIn + ";";
 			ResultSet rs = myState.executeQuery(sqlCommand);
 			rs.next();
 			try {
-				propId = rs.getInt("PropId");
+				propId = rs.getInt("PropertyId");
 				increaseOrDecreaseProp = rs.getInt("increaseOrDecreaseProp");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		
+		if (senseIn == null) {
+			if (increaseOrDecreaseProp == 0) {
+				output = true;
+			}	
+			return output;
 		}
 		
 		if (propId == 0 && increaseOrDecreaseProp == senseIn.orientationChanges.heightChange) {

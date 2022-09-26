@@ -28,18 +28,22 @@ public class LLF {
 		List<String> activitiesToTryQueue = new ArrayList<String>();
 		List<Integer> actionQueue = new ArrayList<Integer>();
 		while (true) {
+			System.out.println("new loop");
 			activitiesToSolveQueue = SetUpActivitiesToSolveQueueIfNecessary.setup(activitiesToSolveQueue);
+			System.out.println("activities to solve set up if necessary");
 			activitiesToTryQueue = SetUpActivitiesToTryQueueIfNecessary.setup(activitiesToTryQueue);
+			System.out.println("activities to try set up if necessary");
 			actionQueue = SetUpActionQueueIfNecessary.setup(actionQueue, activitiesToTryQueue);
+			System.out.println("action queue set up if necessary");
 			while (actionQueue.size() > 0) {
-				ExecuteActivity.execByDBId(env, actionQueue.get(0));
+				env = ExecuteActivity.execByDBId(env, actionQueue.get(0));
 				actionQueue.remove(0);
 			}
-			env = UpdateEnv.update(env);
-			
+			System.out.println("actions executed");
 			//get sense obj that who is associated with the activity we are currently trying to solve
 			int currentActivityToSolveID = activitiesToSolveQueue.get(0);
 			Sense s = GetSenseAssociatedWithActivity.execute(env, currentActivityToSolveID);
+			System.out.println("sense associated with activity gotten");
 			//check if activity was solved and clear ActivityToTryQueue and ActionQueue if so and update the solved's db entry
 			if (CheckIfActivityWasSolved.execute(s, currentActivityToSolveID)) {
 

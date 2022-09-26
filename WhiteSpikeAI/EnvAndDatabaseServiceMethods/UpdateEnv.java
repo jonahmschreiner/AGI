@@ -13,7 +13,7 @@ import EnvAndDatabaseServiceMethods.ChangedPixelsToBlobs;
 public class UpdateEnv {
 	public static Env update(Env envIn) {
 		Env newEnv = new Env(0);
-		newEnv.senseRawEnv();
+		newEnv.rawEnv = newEnv.senseRawEnv();
 		BufferedImage newImage = newEnv.rawEnv.currentDisplay;
 		BufferedImage oldImage = envIn.rawEnv.currentDisplay;
 		

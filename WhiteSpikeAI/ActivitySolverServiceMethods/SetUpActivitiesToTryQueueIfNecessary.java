@@ -29,7 +29,7 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 						break;
 					}
 				}
-				queueIn.addAll(combosFromIndis(allIndis, 2));
+				queueIn.addAll(combosFromIndis(allIndis, 0)); //need this to go back to 2 at some point
 
 			} catch (Exception e) {
 				

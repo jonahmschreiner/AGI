@@ -1,7 +1,6 @@
 package EnvAndDatabaseServiceMethods;
 import java.awt.Color;
 import java.sql.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -151,7 +150,6 @@ public class DatabaseHandler {
 			//Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, activitiesExtracted BOOLEAN, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id)
 			int numOfSenseDefMatches = 0;
 			int numOfOrientationMatches = 0;
-			int senseMatchId = -1;
 			int numOfSenseMatches = 0;
 			for (int i = 0; i < envIn.abstractEnv.senses.size(); i++) {
 				Sense currentSense = envIn.abstractEnv.senses.get(i);
@@ -200,9 +198,8 @@ public class DatabaseHandler {
 				try {
 					activityRS.next();
 					senseFound = activityRS.getInt("id");
-					sqlCommand = "SELECT id FROM Activity WHERE AssociatedSense= " + senseFound + " LIMIT 1;"; //TODO AND ConditionEnv senses are contained within current env senses
+					sqlCommand = "SELECT id FROM Activity WHERE AssociatedSense= " + senseFound + " LIMIT 1;";
 					ResultSet activityRS2 = myState.executeQuery(sqlCommand);
-					@SuppressWarnings("unused")
 					int activityFound = -1;
 					try {
 						boolean throwError = false;
