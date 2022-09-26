@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +74,7 @@ public class ExecuteActivity {
 							}
 							//for each sense in current Env, check to see if the current sense has the same values as any result in the condition env results and if so adds them to a condition env
 							Env newConditionEnv = new Env(0);
+							newConditionEnv.senseRawEnv();
 							for (int j = 0; j < prevEnvSenses.size(); j++) {
 								Sense currSense = prevEnvSenses.get(j);
 								for (int k = 0; k < conditionEnvSenses.size(); k++) {
@@ -96,15 +99,23 @@ public class ExecuteActivity {
 								}
 							}
 							
+							//create senses string
+							String conditionSensesString = "";
+							for (int l = 0; l < newConditionEnv.abstractEnv.senses.size(); l++) {
+								conditionSensesString = conditionSensesString + newConditionEnv.abstractEnv.senses.get(l).dbId + " ";
+							}
 							//replace ConditionEnv in db for this activity with the new ConditionEnv
-							sqlCommand = "UPDATE Env SET Senses=" +  + "WHERE id=" + activityId + ";";
+							DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
+							LocalDateTime localDate = LocalDateTime.now();
+							String timestamp = dtf.format(localDate);
+							sqlCommand = "UPDATE Activity INNER JOIN Env ON Activity.Env=Env.id SET Env.Senses=" + conditionSensesString + "Env.CpuUsage=" + newConditionEnv.rawEnv.currentCpuUsage + "Env.CreationDateTime=\"" + timestamp + "\" WHERE Activity.id=" + activityId + ";";
 						} catch (Exception f) {
 							
 						}
 
 					} else { //activity solution didn't work
 						//create new activity that does the same sense prop change but with the current Env as the condition env
-						
+						DatabaseHandler.uploadEnvToDatabase(envIn);
 					}
 					
 				}

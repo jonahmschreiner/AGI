@@ -1,11 +1,16 @@
 package EnvAndDatabaseServiceMethods;
+import java.awt.Color;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import MainLLF.Constants;
 import Structure.Env;
+import Structure.PixelOverallChange;
 import Structure.Sense;
 public class DatabaseHandler {
 	/*
@@ -146,6 +151,8 @@ public class DatabaseHandler {
 			//Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, activitiesExtracted BOOLEAN, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id)
 			int numOfSenseDefMatches = 0;
 			int numOfOrientationMatches = 0;
+			int senseMatchId = -1;
+			int numOfSenseMatches = 0;
 			for (int i = 0; i < envIn.abstractEnv.senses.size(); i++) {
 				Sense currentSense = envIn.abstractEnv.senses.get(i);
 				
@@ -193,13 +200,35 @@ public class DatabaseHandler {
 				try {
 					activityRS.next();
 					senseFound = activityRS.getInt("id");
-					sqlCommand = "SELECT id FROM Activity WHERE AssociatedSense= " + senseFound + " LIMIT 1;";
+					sqlCommand = "SELECT id FROM Activity WHERE AssociatedSense= " + senseFound + " LIMIT 1;"; //TODO AND ConditionEnv senses are contained within current env senses
 					ResultSet activityRS2 = myState.executeQuery(sqlCommand);
 					@SuppressWarnings("unused")
 					int activityFound = -1;
 					try {
-						activityRS2.next();
-						activityFound = activityRS2.getInt("id");
+						boolean throwError = false;
+						while (true) {
+							try {	
+								activityRS2.next();
+								activityFound = activityRS2.getInt("id");
+								sqlCommand = "SELECT ConditionEnv FROM Activity WHERE id=" + activityFound + ";";
+								ResultSet rs3 = myState.executeQuery(sqlCommand);
+								try {
+									rs3.next();
+									int conditionEnvId = rs3.getInt("ConditionEnv");
+									if (!checkIfConditionEnvIsContainedInEnv(conditionEnvId, envIn)) {
+										throwError = true;
+									}
+								} catch (Exception e) {
+									
+								}
+							} catch (Exception e) {
+								break;
+							}
+
+						}
+						if (throwError) {
+							throw new Exception();
+						}
 						//if this line is reached, no activities need to be created
 						
 					} catch (Exception e) {
@@ -280,11 +309,19 @@ public class DatabaseHandler {
 				
 				
 				//Sense
-				sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, activitiesExtracted) VALUES (" + EnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ", false);";
-				myState.execute(sqlCommand);
-				//myState.addBatch(sqlCommand);
-				
-				EnvSenseListSerializedString = EnvSenseListSerializedString + (firstSenseId + i) + " ";
+				if (senseFound == -1) {
+					sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, activitiesExtracted) VALUES (" + EnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ", false);";
+					myState.execute(sqlCommand);
+					//myState.addBatch(sqlCommand);
+					
+					EnvSenseListSerializedString = EnvSenseListSerializedString + (firstSenseId + i - numOfSenseMatches) + " ";
+					envIn.abstractEnv.dbSenseList = envIn.abstractEnv.dbSenseList + (firstSenseId + i - numOfSenseMatches) + " ";
+				} else {
+					EnvSenseListSerializedString = EnvSenseListSerializedString + (senseFound) + " ";
+					envIn.abstractEnv.dbSenseList = envIn.abstractEnv.dbSenseList + (senseFound) + " ";
+					numOfSenseMatches++;
+				}
+
 					
 			}
 			createEnvSQLCommand = createEnvSQLCommand + EnvSenseListSerializedString + "\");";
@@ -314,6 +351,122 @@ public class DatabaseHandler {
 		} catch (Exception e) {
 			
 		}
+		return output;
+	}
+	
+	
+	public static boolean checkIfConditionEnvIsContainedInEnvUsingIds(int conditionEnvId, int envId) { //assumes all senses in db are unique
+		try {
+			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
+			Statement myState = myConnection.createStatement();
+			String sqlCommand = "SELECT Senses FROM Env WHERE id=" + conditionEnvId + ";";
+			ResultSet rs = myState.executeQuery(sqlCommand);
+			try {
+				rs.next();
+				String conditionEnvSenseString = rs.getString("Senses");
+				sqlCommand = "SELECT Senses FROM Env WHERE id=" + envId + ";";
+				ResultSet rs2 = myState.executeQuery(sqlCommand);
+				try {
+					rs2.next();
+					String envSenseString = rs2.getString("Senses");
+					String[] conditionEnvSenseArray = conditionEnvSenseString.split(" ");
+					String[] envSenseArray = envSenseString.split(" ");
+					return Arrays.asList(envSenseArray).containsAll(Arrays.asList(conditionEnvSenseArray));
+				} catch (Exception e) {
+					
+				}
+			} catch (Exception e) {
+				
+			}
+		} catch (Exception e) {
+			
+		}
+		return false;
+	}
+	
+	public static boolean checkIfConditionEnvIsContainedInEnv(int conditionEnvId, Env env) {
+		try {
+			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
+			Statement myState = myConnection.createStatement();
+			String sqlCommand = "SELECT Senses FROM Env WHERE id=" + conditionEnvId + ";";
+			ResultSet rs = myState.executeQuery(sqlCommand);
+			try {
+				rs.next();
+				String conditionEnvSenseString = rs.getString("Senses");
+				String[] conditionEnvSenseArray = conditionEnvSenseString.split(" ");
+				return env.abstractEnv.senses.containsAll(createSenseListFromIdList(conditionEnvSenseArray));
+			} catch (Exception e) {
+				
+			}
+		} catch (Exception e) {
+			
+		}
+		return false;
+	}
+	
+	public static List<Sense> createSenseListFromIdList(String[] senseIds){
+		List<Sense> output = new ArrayList<Sense>();
+		try {
+			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
+			Statement myState = myConnection.createStatement();
+			for (int i = 0; i < senseIds.length; i++) {
+				Sense newSense = new Sense();
+				int currId = Integer.valueOf(senseIds[i]);
+				String sqlCommand = "SELECT SenseDefinition, Orientation FROM Sense WHERE id=" + currId + ";";
+				ResultSet rs = myState.executeQuery(sqlCommand);
+				
+				try {
+					rs.next();
+					int senseDefId = rs.getInt("SenseDefinition");
+					int orId = rs.getInt("Orientation");
+					
+					sqlCommand = "SELECT Definition FROM SenseDefinition WHERE id=" + senseDefId + ";";
+					ResultSet rs2 = myState.executeQuery(sqlCommand);
+					try {
+						rs2.next();
+						String defString = rs2.getString("Definition");
+						String[] defArray = defString.split(";");
+						for (int j = 0; j < defArray.length; j++) {
+							PixelOverallChange poc = new PixelOverallChange(defArray[j]);
+							newSense.definition.overallChangeDefString.add(poc);
+						}
+						
+						sqlCommand = "SELECT Height, Width, Rotation, x, y, r, g, b FROM Orientation WHERE id=" + orId + ";";
+						ResultSet rs3 = myState.executeQuery(sqlCommand);
+						try {
+							rs3.next();
+							int height = rs3.getInt("Height");
+							int width = rs3.getInt("Width");
+							int rotation = rs3.getInt("Rotation");
+							int x = rs3.getInt("x");
+							int y = rs3.getInt("y");
+							int r = rs3.getInt("r");
+							int g = rs3.getInt("g");
+							int b = rs3.getInt("b");
+							newSense.orientation.height = height;
+							newSense.orientation.width = width;
+							newSense.orientation.rotation = rotation;
+							newSense.orientation.position.x = x;
+							newSense.orientation.position.y = y;
+							newSense.orientation.color = new Color (r, g, b);
+							
+							output.add(newSense);
+						} catch (Exception e) {
+							
+						}
+					} catch (Exception e) {
+						
+					}
+				} catch (Exception e) {
+					
+				}
+			}
+
+		} catch (Exception e) {
+			
+		}
+		
+		
 		return output;
 	}
 }

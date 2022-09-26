@@ -13,6 +13,7 @@ public class Sense {
 	public OrientationChanges orientationChanges;
 	public SenseDefinition definition;
 	public ComparisonClass comparisonClass;
+	public int dbId;
 	
 	@Override
 	public boolean equals(Object o) {
