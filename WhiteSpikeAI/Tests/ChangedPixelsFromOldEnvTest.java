@@ -1,9 +1,9 @@
 package Tests;
 
-import EnvAndDatabaseServiceMethods.DatabaseHandler;
 import Structure.Env;
 import Structure.Pixel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import EnvAndDatabaseServiceMethods.ChangedPixelsFromOldEnv;
@@ -20,6 +20,10 @@ public class ChangedPixelsFromOldEnvTest {
 		env2.senseRawEnv();
 		
 		List<junctionList> output1 = ChangedPixelsFromOldEnv.find(env2.rawEnv.currentDisplay, env.rawEnv.currentDisplay);
+		List<Pixel> pixelsOutput = new ArrayList<Pixel>();
+		for (int i = 0; i < output1.size(); i++) {
+			pixelsOutput.addAll(output1.get(i).pixels);
+		}
 		System.out.println();
 	}
 }

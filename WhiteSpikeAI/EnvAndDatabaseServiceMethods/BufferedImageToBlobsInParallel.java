@@ -512,43 +512,47 @@ public class BufferedImageToBlobsInParallel {
 	
 	public static List<Pixel> getTouchingPixels(Pixel pixelIn, BufferedImage imageIn){ //need to come back and add ifs for other touching pixels (pass in BufferedImage)
 		List<Pixel> touchingPixels = new ArrayList<Pixel>();
-		if (pixelIn.position.y > 0) {
+		int minX = imageIn.getMinX();
+		int minY = imageIn.getMinY();
+		int maxX = imageIn.getWidth() - 1;
+		int maxY = imageIn.getHeight() - 1;
+		if (pixelIn.position.y > minY) {
 			Pixel upPixel = new Pixel(new Point(pixelIn.position.x, pixelIn.position.y - 1));
 			touchingPixels.add(upPixel);
 		}
 		
-		if (pixelIn.position.y < imageIn.getHeight() - 1) {
+		if (pixelIn.position.y < maxY) {
 			Pixel downPixel = new Pixel(new Point(pixelIn.position.x, pixelIn.position.y + 1));
 			touchingPixels.add(downPixel);
 		}
 
 		
-		if (pixelIn.position.x > 0) {
+		if (pixelIn.position.x > minX) {
 			Pixel leftPixel = new Pixel(new Point(pixelIn.position.x - 1, pixelIn.position.y));
 			touchingPixels.add(leftPixel);
 		}
 
-		if (pixelIn.position.x < imageIn.getWidth() - 1) {
+		if (pixelIn.position.x < maxX) {
 			Pixel rightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y));
 			touchingPixels.add(rightPixel);
 		}
 		
-		if (pixelIn.position.x > 0 && pixelIn.position.y > 0) {
+		if (pixelIn.position.x > minX && pixelIn.position.y > minY) {
 			Pixel upLeftPixel = new Pixel(new Point(pixelIn.position.x - 1, pixelIn.position.y - 1));
 			touchingPixels.add(upLeftPixel);
 		}
 
-		if (pixelIn.position.x < imageIn.getWidth() - 1 && pixelIn.position.y > 0) {
+		if (pixelIn.position.x < maxX && pixelIn.position.y > minY) {
 			Pixel upRightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y - 1));
 			touchingPixels.add(upRightPixel);
 		}
 
-		if (pixelIn.position.y < imageIn.getHeight() - 1 && pixelIn.position.x > 0) {
+		if (pixelIn.position.y < maxY && pixelIn.position.x > minX) {
 			Pixel downLeftPixel = new Pixel(new Point(pixelIn.position.x - 1, pixelIn.position.y + 1));
 			touchingPixels.add(downLeftPixel);
 		}
 
-		if (pixelIn.position.y < imageIn.getHeight() - 1 && pixelIn.position.x < imageIn.getWidth() - 1) {
+		if (pixelIn.position.y < maxY && pixelIn.position.x < maxX) {
 			Pixel downRightPixel = new Pixel(new Point(pixelIn.position.x + 1, pixelIn.position.y + 1));
 			touchingPixels.add(downRightPixel);	
 		}

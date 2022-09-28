@@ -10,7 +10,7 @@ public class RawEnvToAbstractEnv {
 	public static AbstractEnv extract(RawEnv rawEnvIn) {
 		
 		//Visual Abstract Senses
-		BufferedImage imageToExtractFrom = rawEnvIn.currentDisplay.getSubimage(0, 0, 100, 100);
+		BufferedImage imageToExtractFrom = rawEnvIn.currentDisplay.getSubimage(200, 200, 100, 100);
 		//Lowest-Complexity Visual Abstract Senses				//remove subimage when actually running .getSubimage(600, 400, 200, 200)
 		
 		long blobStart = System.currentTimeMillis();

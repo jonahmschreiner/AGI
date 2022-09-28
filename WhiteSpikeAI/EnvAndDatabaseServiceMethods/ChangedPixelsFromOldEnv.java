@@ -12,7 +12,7 @@ import Structure.Pixel;
 public class ChangedPixelsFromOldEnv {
 	
 	public static class junctionList {
-		List<Pixel> pixels = new ArrayList<Pixel>();
+		public List<Pixel> pixels = new ArrayList<Pixel>();
 		public junctionList() {}
 	}
 	public static List<junctionList> find(BufferedImage newImage, BufferedImage oldImage){
@@ -32,7 +32,8 @@ public class ChangedPixelsFromOldEnv {
 				for (int j = 0; j < width; j++) {
 					if (newImage.getRGB(j, i) != oldImage.getRGB(j, i)) {
 						Pixel changedPixel = new Pixel(new Point(j, i), new Color(newImage.getRGB(j, i)));
-						output.get(i/threadHeight).pixels.add(changedPixel);			
+						output.get(i/threadHeight).pixels.add(changedPixel);
+						//System.out.println("pixel added to " + i/threadHeight);
 					}
 				}
 			}

@@ -10,10 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import EnvAndDatabaseServiceMethods.BufferedImageToBlobsInParallel.BlobParallelFinder;
 import EnvAndDatabaseServiceMethods.ChangedPixelsFromOldEnv.junctionList;
 import Structure.Blob;
-import Structure.BlobThreadResult;
 import Structure.ChangedPixelsBlobThreadResult;
 import Structure.Pixel;
 import Structure.PixelColorRange;
@@ -36,52 +34,70 @@ public class ChangedPixelsToBlobs {
 			this.numOfThreads = numOfThreadsIn;
 			this.minY = (this.initialImage.getHeight()/this.numOfThreads) * this.iValue;
 			this.maxY = this.minY + (this.initialImage.getHeight()/this.numOfThreads) - 1;
-			this.image = this.initialImage.getSubimage(0, this.minY, this.initialImage.getWidth() - 1, (this.maxY - minY) + 1);
-//			System.out.println(this.iValue + ", " + this.minY + ", " + this.maxY);
+			this.image = this.initialImage.getSubimage(0, this.minY, this.initialImage.getWidth(), (this.maxY - minY) + 1);
 		}
 		public ChangedPixelsBlobThreadResult call() {
 			List<Blob> blobsOut = new ArrayList<Blob>();
-			
-			while(changedPixels.size() > 0) {
+			while(this.changedPixels.size() > 0) { //looping through all changed pixels in the thread
 				List<Pixel> blobPixelToCheckQueue = new ArrayList<Pixel>();
-				Pixel initialPixel = changedPixels.get(0);	
+				Pixel initialPixel = this.changedPixels.get(0);
+				this.changedPixels.remove(0);
 				blobPixelToCheckQueue.add(initialPixel);
 				Blob currentBlob = new Blob();
-				PixelColorRange range = new PixelColorRange(initialPixel.color);
-				while(blobPixelToCheckQueue.size() > 0) {
+				PixelColorRange range = new PixelColorRange(initialPixel.color);//add initial pixel remove from changedPixels list right after this
+				List<Pixel> pixelsChecked = new ArrayList<Pixel>();
+				
+				while(blobPixelToCheckQueue.size() > 0) { //loop through pixels that may be in the blob
+					
 					Pixel currentPixel = blobPixelToCheckQueue.get(0);
-					Pixel globalPixel = new Pixel(new Point(currentPixel.position.x, currentPixel.position.y + this.minY), currentPixel.color);
+					pixelsChecked.add(new Pixel(new Point(currentPixel.position.x, currentPixel.position.y)));
+					
+					//add currentPixel to blob (and changing the position data so it matches the global position instead of the subimage
+					Pixel globalPixel = new Pixel(new Point(currentPixel.position.x, currentPixel.position.y), currentPixel.color);
 					currentBlob.pixels.add(globalPixel);
+					
+					
+					//storing the current pixel global value? and adjusting it to be its subimage value
+					int currPixInitY = currentPixel.position.y;
+					currentPixel.position.y = currentPixel.position.y % 10;
+
 					List<Pixel> touchingPixels = BufferedImageToBlobsInParallel.getTouchingPixels(currentPixel, this.image);
-					for (int i = 0; i < touchingPixels.size(); i++) {
+					for (int i = 0; i < touchingPixels.size(); i++) { //loop through every pixel touching the current pixel
+						
+						
 						Pixel currentTouchingPixel = touchingPixels.get(i);
 						try {
+							//get and insert the color value for the touching pixel into its container
 							currentTouchingPixel.color = new Color(this.image.getRGB(currentTouchingPixel.position.x, currentTouchingPixel.position.y));
+							
+							
 							if(BufferedImageToBlobsInParallel.PixelWithinRange(currentTouchingPixel, range)) {
-								if (changedPixels.contains(currentTouchingPixel)) {
-									if (!blobPixelToCheckQueue.contains(currentTouchingPixel)) {
-										blobPixelToCheckQueue.add(currentTouchingPixel);
-									}
-									changedPixels.remove(currentTouchingPixel);
+								//if touching pixel is the same color as the initial pixel
+								
+								
+								//adds the touching pixel to the pixels that need to be checked and removes it from
+								//the initial pixels list so this blob isn't duplicated
+								Pixel initCurrTP = new Pixel(new Point(currentTouchingPixel.position.x, currPixInitY + (currentTouchingPixel.position.y - currentPixel.position.y)), currentTouchingPixel.color);
+								if (!blobPixelToCheckQueue.contains(initCurrTP) && !pixelsChecked.contains(initCurrTP)) {
+									blobPixelToCheckQueue.add(initCurrTP);
+								}
+								if (changedPixels.contains(initCurrTP)) {
+									changedPixels.remove(initCurrTP);
 								}	
 							}
+							
+							
 						} catch (Exception e) {
-							System.out.println("HERE2");
-							System.out.println(e);
 							//that pixel doesn't exist (trying a pixel with a negative x or y value when doing an edge pixel)
 						}
 					}
-					blobPixelToCheckQueue.remove(currentPixel);
-					changedPixels.remove(currentPixel);
+					blobPixelToCheckQueue.remove(0);
 				}
 				
 				if (currentBlob.pixels.size() > 1) {
 					blobsOut.add(currentBlob);
-//					System.out.println("blob found in thread" + this.iValue + ": current total of " + blobsOut.size());
-//					System.out.println("mainList pixels remaining for thread" + this.iValue + ": " + mainList.size());
 				}
 			}
-			
 			ChangedPixelsBlobThreadResult cpbtr = new ChangedPixelsBlobThreadResult(this.iValue, blobsOut);
 			return cpbtr;
 		}	
@@ -106,12 +122,10 @@ public class ChangedPixelsToBlobs {
 			blobsOutFromParallel = EXEC.invokeAll(tasks);
 			for (Future<ChangedPixelsBlobThreadResult> FutureResult : blobsOutFromParallel) {
 				ChangedPixelsBlobThreadResult futureResult = FutureResult.get();
-				//System.out.println("future list found, size: " + futureListBlob.size());
 				blobThreadResults.add(futureResult);
 				output.addAll(futureResult.blobList);
 			}
 		} catch (Exception e) {
-			System.out.println("HERE");
 			e.printStackTrace();
 		} finally {
 			EXEC.shutdown();
@@ -119,4 +133,16 @@ public class ChangedPixelsToBlobs {
 		
 		return output;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
