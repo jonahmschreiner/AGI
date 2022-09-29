@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import EnvAndDatabaseServiceMethods.ChangedPixelsFromOldEnv;
+import EnvAndDatabaseServiceMethods.ChangedPixelsFromOldEnv.junctionList;
 import Structure.Blob;
 import Structure.Env;
 import Structure.Pixel;
@@ -17,7 +18,7 @@ public class UpdateEnv {
 		BufferedImage newImage = newEnv.rawEnv.currentDisplay;
 		BufferedImage oldImage = envIn.rawEnv.currentDisplay;
 		
-		List<List<Pixel>> changedPixelsByThread = ChangedPixelsFromOldEnv.find(newImage, oldImage);
+		List<junctionList> changedPixelsByThread = ChangedPixelsFromOldEnv.find(newImage, oldImage);
 		List<Blob> newBlobs = ChangedPixelsToBlobs.exec(changedPixelsByThread, newImage);
 		List<Sense> newishSenses = new ArrayList<Sense>();
 		for (int i = 0; i < newBlobs.size(); i++) {
@@ -29,7 +30,7 @@ public class UpdateEnv {
 			//}		
 		}
 		try {
-			UpdateSenses.update(newishSenses, envIn);
+			envIn = UpdateSenses.update(newishSenses, envIn);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

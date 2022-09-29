@@ -22,10 +22,11 @@ import Structure.Sense;
 import Structure.OrientationChanges;
 
 public class UpdateSenses {
-	public class ComparisonClass{
+	public static class ComparisonClass{
 		public Map<Integer, Sense> comparisons = new HashMap<Integer, Sense>();
 		int highestScore = -99999;
 		int secondHighestScore = -99999;
+		public ComparisonClass() {}
 	}
 	
 	
@@ -75,13 +76,15 @@ public class UpdateSenses {
 			List<Sense> currSenseDefSenses = sensesBySenseDef.get(iter.next());
 			Map<Sense, Sense> newSenseToOldSenseMatches = new HashMap<Sense, Sense>();
 			for (int k = 0; k < currSenseDefSenses.size(); k++) { //iterate over each sense for the type of senseDef
-				Sense currSense = sensesIn.get(i);
+				Sense currSense = currSenseDefSenses.get(k);
 				Set<Integer> keys = currSense.comparisonClass.comparisons.keySet();
 				Iterator<Integer> iter2 = keys.iterator();
 				for (int j = 0; j < keys.size(); j++) { //iterate over each sense's possible matches and assign the highest score
 					int currScore = iter2.next();
 					if (currScore > currSense.comparisonClass.highestScore) {
+						currSense.comparisonClass.secondHighestScore = currSense.comparisonClass.highestScore;
 						currSense.comparisonClass.highestScore = currScore;
+						
 					} else if (currScore > currSense.comparisonClass.secondHighestScore) {
 						currSense.comparisonClass.secondHighestScore = currScore;
 					}
@@ -118,12 +121,12 @@ public class UpdateSenses {
 				List<Sense> envSenses = oldEnvIn.abstractEnv.senses;
 				
 				//update database
-				String sqlCommand = "SELECT Sense.id AS SenseID AS ORID FROM Sense INNER JOIN SenseDefinition ON SenseDefinition.Definition=" + oldSense.definition.toString() + " AND Sense.SenseDefinition = SenseDefinition.id INNER JOIN Orientation ON Sense.Orientation= Orientation.id AND Orientation.Height=" + oldSense.orientation.height + " AND Orientation.Width=" + oldSense.orientation.width + " AND Orientation.Rotation=" + oldSense.orientation.rotation + " AND Orientation.r=" + oldSense.orientation.color.getRed() + " AND Orientation.g=" + oldSense.orientation.color.getGreen() + " AND Orientation.b=" + oldSense.orientation.color.getBlue() + " LIMIT 1;";
+				String sqlCommand = "SELECT Sense.id AS SenseID FROM Sense INNER JOIN SenseDefinition ON SenseDefinition.Definition=\"" + oldSense.definition.toString() + "\" AND Sense.SenseDefinition = SenseDefinition.id INNER JOIN Orientation ON Sense.Orientation= Orientation.id AND Orientation.Height=" + oldSense.orientation.height + " AND Orientation.Width=" + oldSense.orientation.width + " AND Orientation.Rotation=" + oldSense.orientation.rotation + " AND Orientation.x=" + oldSense.orientation.position.x + " AND Orientation.y=" + oldSense.orientation.position.y + " AND Orientation.r=" + oldSense.orientation.color.getRed() + " AND Orientation.g=" + oldSense.orientation.color.getGreen() + " AND Orientation.b=" + oldSense.orientation.color.getBlue() + " LIMIT 1;";
 				ResultSet output = myState.executeQuery(sqlCommand);
 				output.next();
-				int senseDBId = output.getInt("SENSEID");
-				sqlCommand = "UPDATE Sense, Orientation INNER JOIN Orientation ON Sense.Orientation = Orientation.id SET Orientation.Height=" + newSense.orientation.height + "Orientation.Width=" + newSense.orientation.width + "Orientation.r=" + newSense.orientation.color.getRed() + "Orientation.g=" + newSense.orientation.color.getGreen() + "Orientation.b=" + newSense.orientation.color.getBlue() + "Orientation.x=" + newSense.orientation.position.x + "Orientation.y=" + newSense.orientation.position.y + " WHERE Sense.id= " + senseDBId + ";";
-				
+				int senseDBId = output.getInt("SenseID");
+				sqlCommand = "UPDATE Sense INNER JOIN Orientation ON Sense.Orientation = Orientation.id SET Orientation.Height=" + newSense.orientation.height + ", Orientation.Width=" + newSense.orientation.width + ", Orientation.r=" + newSense.orientation.color.getRed() + ", Orientation.g=" + newSense.orientation.color.getGreen() + ", Orientation.b=" + newSense.orientation.color.getBlue() + ", Orientation.x=" + newSense.orientation.position.x + ", Orientation.y=" + newSense.orientation.position.y + " WHERE Sense.id=" + senseDBId + ";";
+				myState.addBatch(sqlCommand);
 				//remove from sensesIn
 				sensesIn.remove(newSense);
 				//replace oldSense with newSense
@@ -131,6 +134,7 @@ public class UpdateSenses {
 				envSenses.set(index, newSense);
 				oldEnvIn.abstractEnv.recentlyChangedOldSenses.add(index);
 			}
+			myState.executeBatch();
 		}
 		//handle new senses that did not replace old ones
 		
@@ -242,7 +246,7 @@ public class UpdateSenses {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 		LocalDateTime localDate = LocalDateTime.now();
 		String timestamp = dtf.format(localDate);
-		String createEnvSQLCommand = "INSERT INTO Env (CpuUsage, CreationDateTime, Senses) VALUES (" + oldEnvIn.rawEnv.currentCpuUsage +  ", \"" + timestamp + "\", " + oldEnvIn.abstractEnv.dbSenseList;
+		String createEnvSQLCommand = "INSERT INTO Env (CpuUsage, CreationDateTime, Senses) VALUES (" + oldEnvIn.rawEnv.currentCpuUsage +  ", \"" + timestamp + "\", \"" + oldEnvIn.abstractEnv.dbSenseList + "\");";
 		myState.execute(createEnvSQLCommand);
 		
 		String readdForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=1;";

@@ -12,7 +12,7 @@ public class Sense {
 	public Orientation orientation = new Orientation();
 	public OrientationChanges orientationChanges;
 	public SenseDefinition definition = new SenseDefinition();
-	public ComparisonClass comparisonClass;
+	public ComparisonClass comparisonClass = new ComparisonClass();
 	public int dbId;
 	
 	@Override

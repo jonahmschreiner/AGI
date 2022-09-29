@@ -155,10 +155,10 @@ public class DatabaseHandler {
 				Sense currentSense = envIn.abstractEnv.senses.get(i);
 				
 				//SenseDefinition
-				String definitionString = "";
-				for (int j = 0; j < currentSense.definition.overallChangeDefString.size(); j++) {
-					definitionString = definitionString + currentSense.definition.overallChangeDefString.get(j).changeType + ";";
-				}
+				String definitionString = currentSense.definition.toString();
+//				for (int j = 0; j < currentSense.definition.overallChangeDefString.size(); j++) {
+//					definitionString = definitionString + currentSense.definition.overallChangeDefString.get(j).changeType + ";";
+//				}
 				indQueryCommand = "SELECT * FROM SenseDefinition WHERE Definition=\"" + definitionString + "\";";
 				ResultSet indQueryRS = indQueryStatement.executeQuery(indQueryCommand);
 				indQueryRS.next();
@@ -191,14 +191,22 @@ public class DatabaseHandler {
 				}
 				
 				//Activity
-				sqlCommand = "SELECT Sense.id FROM Sense INNER JOIN Orientation ON SenseDefinition=" + matchingSenseDefId + " AND Orientation.Height=" + currentSense.orientation.height + " AND Orientation.Width=" + currentSense.orientation.width + " AND Orientation.Rotation=" + currentSense.orientation.rotation + " AND Orientation.r=" + currentSense.orientation.color.getRed() + " AND Orientation.g=" + currentSense.orientation.color.getGreen() + " AND Orientation.b=" + currentSense.orientation.color.getBlue() + " LIMIT 1;";
+				sqlCommand = "SELECT Sense.id FROM Sense INNER JOIN Orientation ON SenseDefinition=" + matchingSenseDefId + " AND Orientation.id = Sense.Orientation" + " AND Orientation.Height=" + currentSense.orientation.height + " AND Orientation.Width=" + currentSense.orientation.width + " AND Orientation.Rotation=" + currentSense.orientation.rotation + " AND Orientation.r=" + currentSense.orientation.color.getRed() + " AND Orientation.g=" + currentSense.orientation.color.getGreen() + " AND Orientation.b=" + currentSense.orientation.color.getBlue() + " LIMIT 1;";
 				//SELECT Sense.id, Height FROM Sense LEFT JOIN Orientation ON Sense.Orientation = Orientation.Height AND Sense.SenseDefinition = 1;
 				ResultSet activityRS = myState.executeQuery(sqlCommand);				
 				int senseFound = -1;
 				try {
 					activityRS.next();
-					senseFound = activityRS.getInt("id");
-					sqlCommand = "SELECT id FROM Activity WHERE AssociatedSense= " + senseFound + " LIMIT 1;";
+					int foundSense = activityRS.getInt("id");
+					sqlCommand = "SELECT Sense.id FROM Sense INNER JOIN Orientation ON SenseDefinition=" + matchingSenseDefId + " AND Orientation.id = Sense.Orientation" + " AND Orientation.Height=" + currentSense.orientation.height + " AND Orientation.Width=" + currentSense.orientation.width + " AND Orientation.Rotation=" + currentSense.orientation.rotation + " AND Orientation.x=" + currentSense.orientation.position.x + " AND Orientation.y=" + currentSense.orientation.position.y + " AND Orientation.r=" + currentSense.orientation.color.getRed() + " AND Orientation.g=" + currentSense.orientation.color.getGreen() + " AND Orientation.b=" + currentSense.orientation.color.getBlue() + " LIMIT 1;";
+					ResultSet activityRSX = myState.executeQuery(sqlCommand);
+					try {
+						activityRSX.next();
+						senseFound = activityRSX.getInt("id");
+					} catch (Exception e) {
+						
+					}
+					sqlCommand = "SELECT id FROM Activity WHERE AssociatedSense= " + foundSense + " LIMIT 1;";
 					ResultSet activityRS2 = myState.executeQuery(sqlCommand);
 					int activityFound = -1;
 					try {
