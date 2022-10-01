@@ -187,7 +187,7 @@ public class BufferedImageToBlobsInParallel {
 			this.numOfThreads = numOfThreadsIn;
 			this.minY = (this.initialImage.getHeight()/this.numOfThreads) * this.iValue;
 			this.maxY = this.minY + (this.initialImage.getHeight()/this.numOfThreads) - 1;
-			this.image = this.initialImage.getSubimage(0, this.minY, this.initialImage.getWidth() - 1, (this.maxY - minY) + 1);
+			this.image = this.initialImage.getSubimage(0, this.minY, this.initialImage.getWidth(), (this.maxY - minY) + 1);
 //			System.out.println(this.iValue + ", " + this.minY + ", " + this.maxY);
 		}
 		public BlobThreadResult call(){
