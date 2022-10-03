@@ -10,10 +10,13 @@ import EnvAndDatabaseServiceMethods.UpdateSenses.ComparisonClass;
 public class Sense {
 	public List<Sense> components = new ArrayList<Sense>();
 	public Orientation orientation = new Orientation();
-	public OrientationChanges orientationChanges;
+	public OrientationChanges orientationChanges = new OrientationChanges();
 	public SenseDefinition definition = new SenseDefinition();
 	public ComparisonClass comparisonClass = new ComparisonClass();
 	public int dbId;
+	public Blob blob;
+	
+	public Sense () {}
 	
 	@Override
 	public boolean equals(Object o) {

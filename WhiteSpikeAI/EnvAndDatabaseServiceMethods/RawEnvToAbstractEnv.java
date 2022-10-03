@@ -34,7 +34,7 @@ public class RawEnvToAbstractEnv {
 			//}			
 		}
 		
-		
+		senses = SenseCombiner.exec(senses);
 		//long baseSenseEnd = System.currentTimeMillis();
 		//System.out.println("Total Raw Sense Creation Time: " + (baseSenseEnd-baseSenseStart));
 		

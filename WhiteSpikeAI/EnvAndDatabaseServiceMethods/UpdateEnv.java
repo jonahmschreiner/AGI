@@ -29,7 +29,9 @@ public class UpdateEnv {
 				//}		
 			//}		
 		}
+		newishSenses = SenseCombiner.exec(newishSenses);
 		try {
+			envIn.rawEnv = newEnv.rawEnv;
 			envIn = UpdateSenses.update(newishSenses, envIn);
 		} catch (Exception e) {
 			e.printStackTrace();

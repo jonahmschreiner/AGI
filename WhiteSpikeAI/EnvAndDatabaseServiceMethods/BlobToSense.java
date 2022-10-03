@@ -31,7 +31,7 @@ public class BlobToSense {
 		//posChanges to PixelChanges, pixelchanges to overallchanges (sense definition)
 		Sense sense = new Sense();
 		sense.definition = new SenseDefinition(OverallPixelChangesFromPixelChanges.exec(IdentifyPixelChange.exec(posChanges)));
-		
+		sense.blob = blob;
 		//orientation creation (from minAndMax class values)
 		Orientation orientation = new Orientation();
 		orientation.boundingBox = new BoundingBox(blob.minAndMaxes.minX, blob.minAndMaxes.minY, blob.minAndMaxes.maxX, blob.minAndMaxes.maxY);
