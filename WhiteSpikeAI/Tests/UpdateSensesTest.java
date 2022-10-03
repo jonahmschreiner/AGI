@@ -8,6 +8,7 @@ import EnvAndDatabaseServiceMethods.BlobToSense;
 import EnvAndDatabaseServiceMethods.ChangedPixelsFromOldEnv;
 import EnvAndDatabaseServiceMethods.ChangedPixelsToBlobs;
 import EnvAndDatabaseServiceMethods.DatabaseHandler;
+import EnvAndDatabaseServiceMethods.HandleOldSenseChanges;
 import EnvAndDatabaseServiceMethods.SenseCombiner;
 import EnvAndDatabaseServiceMethods.UpdateSenses;
 import EnvAndDatabaseServiceMethods.VisualOutputOfSensesFromSensesAndImage;
@@ -44,6 +45,7 @@ public class UpdateSensesTest {
 		try {
 			newishSenses = SenseCombiner.exec(newishSenses);
 			Env outputEnv = UpdateSenses.update(newishSenses, env);
+			outputEnv = HandleOldSenseChanges.exec(newishSenses, outputEnv);
 			outputEnv.rawEnv = newEnv.rawEnv;
 			VisualOutputOfSensesFromSensesAndImage.execute(outputEnv.abstractEnv.senses, outputEnv.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50), "outputEnv");
 			System.out.println();
