@@ -51,7 +51,7 @@ public class RemoveOldSensesFromEnv {
 						}
 					}				
 					if (flag) {
-						removeSenseFromAbstractEnvDBSenseListAndDB(currSense.dbId, oldEnvIn.abstractEnv);
+						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currSense.dbId, oldEnvIn);
 						oldEnvIn.abstractEnv.senses.remove(currSense);
 					}
 				}
@@ -69,22 +69,23 @@ public class RemoveOldSensesFromEnv {
 		return oldEnvIn;
 	}
 	
-	public static void removeSenseFromAbstractEnvDBSenseListAndDB (int dbIdIn, AbstractEnv aeIn) {
-		//remove from env db sense list
-		String[] array = aeIn.dbSenseList.split(" ");
+	public static void removeSenseFromAbstractEnvDBSenseListInJavaAndDB (int dbIdIn, Env envIn) {
+		//remove from java env db sense list
+		String[] array = envIn.abstractEnv.dbSenseList.split(" ");
 		List<String> strList = Arrays.asList(array);
-		strList.remove("" + dbIdIn);
+		List<String> strList2 = new ArrayList<String>(strList);
+		strList2.remove("" + dbIdIn);
 		String composite = "";
-		for (int i = 0; i < strList.size(); i++) {
-			composite = composite + strList.get(i) + " ";
+		for (int i = 0; i < strList2.size(); i++) {
+			composite = composite + strList2.get(i) + " ";
 		}
-		aeIn.dbSenseList = composite;
+		envIn.abstractEnv.dbSenseList = composite;
 		
-		//remove from db
+		//update env sense list in db
 		try {
 			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
-			String sqlCommand = "DELETE FROM Sense WHERE id=" + dbIdIn + ";";
+			String sqlCommand = "UPDATE Env SET Senses=\"" + envIn.abstractEnv.dbSenseList + "\" WHERE id=" + envIn.dbId + ";";
 			myState.execute(sqlCommand);
 		} catch (Exception e) {
 			e.printStackTrace();

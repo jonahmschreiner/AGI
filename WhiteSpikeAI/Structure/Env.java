@@ -13,6 +13,7 @@ public class Env {
 		public AbstractEnv abstractEnv = new AbstractEnv();
 		public RawEnv rawEnv = new RawEnv();
 		public Util util = new Util();
+		public int dbId;
 		
 		public Env() {
 			long envStart = System.currentTimeMillis();

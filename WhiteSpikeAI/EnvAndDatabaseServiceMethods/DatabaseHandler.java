@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import MainLLF.Constants;
+import Structure.DBObjectCountResults;
 import Structure.Env;
 import Structure.PixelOverallChange;
 import Structure.Sense;
@@ -146,7 +147,7 @@ public class DatabaseHandler {
 			LocalDateTime localDate = LocalDateTime.now();
 			String timestamp = dtf.format(localDate);
 			String createEnvSQLCommand = "INSERT INTO Env (CpuUsage, CreationDateTime, Senses) VALUES (" + envIn.rawEnv.currentCpuUsage +  ", \"" + timestamp + "\", ";
-			String EnvSenseListSerializedString = "\"" + firstSenseId + " ";
+			String EnvSenseListSerializedString = "\"";
 			//Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, activitiesExtracted BOOLEAN, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id)
 			int numOfSenseDefMatches = 0;
 			int numOfOrientationMatches = 0;
@@ -317,6 +318,8 @@ public class DatabaseHandler {
 				if (senseFound == -1) {
 					sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation) VALUES (" + EnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ");";
 					myState.execute(sqlCommand);
+					DBObjectCountResults dbocr = new DBObjectCountResults();
+					currentSense.dbId = dbocr.senseCount;
 					//myState.addBatch(sqlCommand);
 					
 					EnvSenseListSerializedString = EnvSenseListSerializedString + (firstSenseId + i - numOfSenseMatches) + " ";
@@ -331,6 +334,8 @@ public class DatabaseHandler {
 			}
 			createEnvSQLCommand = createEnvSQLCommand + EnvSenseListSerializedString + "\");";
 			myState.execute(createEnvSQLCommand);
+			DBObjectCountResults dbocr = new DBObjectCountResults();
+			envIn.dbId = dbocr.envCount;
 			//myState.addBatch(createEnvSQLCommand);
 			//myState.executeBatch();
 			
