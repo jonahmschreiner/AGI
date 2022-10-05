@@ -45,8 +45,8 @@ public class UpdateSensesTest {
 		try {
 			newishSenses = SenseCombiner.exec(newishSenses);
 			Env outputEnv = UpdateSenses.update(newishSenses, env);
-			outputEnv = HandleOldSenseChanges.exec(newishSenses, outputEnv);
 			outputEnv.rawEnv = newEnv.rawEnv;
+			outputEnv = HandleOldSenseChanges.exec(newishSenses, outputEnv);
 			VisualOutputOfSensesFromSensesAndImage.execute(outputEnv.abstractEnv.senses, outputEnv.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50), "outputEnv");
 			System.out.println();
 		} catch (Exception e) {

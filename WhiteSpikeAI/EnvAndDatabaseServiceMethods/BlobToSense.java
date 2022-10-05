@@ -18,15 +18,23 @@ public class BlobToSense {
 	public static Sense getSense(Blob blobIn) {
 		//blob to edge
 		Blob blob = BlobEdgeFromBlob.getEdge(blobIn);
-		
+		if (blob.edgePixels.contains(new Pixel(new Point(10000, 0)))) {
+			System.out.println();
+		}
 		//edge to posChanges
 		List<PixelPosChange> posChanges = new ArrayList<PixelPosChange>();
 		for (int i = 1; i < blob.edgePixels.size(); i++) {
 			PixelPosChange posChange = new PixelPosChange(blob.edgePixels.get(i - 1), blob.edgePixels.get(i));
 			posChanges.add(posChange);
 		}
-		PixelPosChange posChange = new PixelPosChange(blob.edgePixels.get(blob.edgePixels.size() - 1), blob.edgePixels.get(0));
-		posChanges.add(posChange);
+		if (blob.edgePixels.size() == 0) {
+			System.out.println();
+		}
+		if (blob.edgePixels.size() > 0) {
+			PixelPosChange posChange = new PixelPosChange(blob.edgePixels.get(blob.edgePixels.size() - 1), blob.edgePixels.get(0));
+			posChanges.add(posChange);
+		}
+
 		
 		//posChanges to PixelChanges, pixelchanges to overallchanges (sense definition)
 		Sense sense = new Sense();

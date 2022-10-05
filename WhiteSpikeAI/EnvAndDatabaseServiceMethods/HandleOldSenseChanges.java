@@ -1,6 +1,9 @@
 package EnvAndDatabaseServiceMethods;
 
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -9,40 +12,60 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
 import Structure.AbstractEnv;
 import Structure.Blob;
 import Structure.BoundingBox;
+import Structure.DBObjectCountResults;
 import Structure.Env;
 import Structure.Pixel;
+import Structure.PixelColorRange;
 import Structure.Sense;
 import EnvAndDatabaseServiceMethods.UpdateSenses;
 import MainLLF.Constants;
 
 public class HandleOldSenseChanges {
 	public static Env exec(List<Sense> newSensesIn, Env oldEnvIn){
+		
 		try {
+			List<Sense> sensesCopied = new ArrayList<Sense>();
+			sensesCopied.addAll(oldEnvIn.abstractEnv.senses);
 			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String removeForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=0;";
 			Statement removeChecksState = myConnection.createStatement();
 			removeChecksState.execute(removeForeignKeyChecksCommand);
-			for (int i = 0; i < oldEnvIn.abstractEnv.senses.size(); i++) {
-				Sense currSense = oldEnvIn.abstractEnv.senses.get(i);
-				if (aBoxOverlaps(newSensesIn, currSense)) {
-					Blob newBlob = new Blob();
+			for (int i = 0; i < sensesCopied.size(); i++) {
+				Sense currSense = sensesCopied.get(i);
+				if (aBoxOverlaps(newSensesIn, currSense) && !newSensesIn.contains(currSense)) {
+					List<Pixel> pixelsToCheck = new ArrayList<Pixel>();
+					boolean flag = false;
 					for (int j = 0; j < currSense.blob.pixels.size(); j++) {
 						Pixel currPixel = currSense.blob.pixels.get(j);
-						if (currPixel.color.equals(new Color(oldEnvIn.rawEnv.currentDisplay.getRGB(currPixel.position.x, currPixel.position.y)))) {
-							newBlob.pixels.add(currPixel);
+						Color checkRGB = new Color (oldEnvIn.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50).getRGB(currPixel.position.x, currPixel.position.y));
+						PixelColorRange currPixelPCR = new PixelColorRange(currPixel.color);
+						PixelColorRange checkRGBPCR = new PixelColorRange(checkRGB);
+						if (!currPixelPCR.color.equals(checkRGBPCR.color)) {
+							//pixelsToCheck.add(currPixel);
+							flag = true;
+							break;
 						}
 					}
-					if (newBlob.pixels.size() == 0) {
+					
+					if (flag) {
+						oldEnvIn.abstractEnv.senses.remove(currSense);
+					}
+					List<Blob> remnantBlobs = findBlobOfSameColor(pixelsToCheck, oldEnvIn.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50));
+
+					if (remnantBlobs.size() == 0) {
 						removeSenseFromAbstractEnvDBSenseListAndDB(currSense.dbId, oldEnvIn.abstractEnv);
 						oldEnvIn.abstractEnv.senses.remove(currSense);
 						//remove it from abstractEnv dbSenseList
 						
 						
-					} else {
+					} else { //update sense if it is still intact, just changed
+						Blob newBlob = remnantBlobs.get(0);
 						Sense newSense = BlobToSense.getSense(newBlob);
 						newSense.blob = newBlob;
 						newSense.dbId = currSense.dbId;
@@ -50,16 +73,29 @@ public class HandleOldSenseChanges {
 						oldEnvIn.abstractEnv.senses.set(i, newSense);
 
 						//update database
-						String sqlCommand = "SELECT Sense.id AS SenseID FROM Sense INNER JOIN SenseDefinition ON SenseDefinition.Definition=\"" + currSense.definition.toString() + "\" AND Sense.SenseDefinition = SenseDefinition.id INNER JOIN Orientation ON Sense.Orientation= Orientation.id AND Orientation.Height=" + currSense.orientation.height + " AND Orientation.Width=" + currSense.orientation.width + " AND Orientation.Rotation=" + currSense.orientation.rotation + " AND Orientation.x=" + currSense.orientation.position.x + " AND Orientation.y=" + currSense.orientation.position.y + " AND Orientation.r=" + currSense.orientation.color.getRed() + " AND Orientation.g=" + currSense.orientation.color.getGreen() + " AND Orientation.b=" + currSense.orientation.color.getBlue() + " LIMIT 1;";
-						ResultSet output = myState.executeQuery(sqlCommand);
-						output.next();
-						int senseDBId = output.getInt("SenseID");
-						sqlCommand = "UPDATE Sense INNER JOIN Orientation ON Sense.Orientation = Orientation.id SET Orientation.Height=" + newSense.orientation.height + ", Orientation.Width=" + newSense.orientation.width + ", Orientation.r=" + newSense.orientation.color.getRed() + ", Orientation.g=" + newSense.orientation.color.getGreen() + ", Orientation.b=" + newSense.orientation.color.getBlue() + ", Orientation.x=" + newSense.orientation.position.x + ", Orientation.y=" + newSense.orientation.position.y + " WHERE Sense.id=" + senseDBId + ";";
+						String sqlCommand = "UPDATE Sense INNER JOIN Orientation ON Sense.Orientation = Orientation.id SET Orientation.Height=" + newSense.orientation.height + ", Orientation.Width=" + newSense.orientation.width + ", Orientation.r=" + newSense.orientation.color.getRed() + ", Orientation.g=" + newSense.orientation.color.getGreen() + ", Orientation.b=" + newSense.orientation.color.getBlue() + ", Orientation.x=" + newSense.orientation.position.x + ", Orientation.y=" + newSense.orientation.position.y + " WHERE Sense.id=" + currSense.dbId + ";";
 						myState.addBatch(sqlCommand);
+						
+						//handle multiple new blobs if it was split (update sense and add new ones)
+						for (int j = 1; j < remnantBlobs.size(); j++) {
+							Blob currBlob = remnantBlobs.get(j);
+							Sense currRemSense = BlobToSense.getSense(currBlob);
+							currRemSense.blob = currBlob;
+							
+							//assign new dbId
+							DBObjectCountResults dbocr = new DBObjectCountResults();
+							currRemSense.dbId = dbocr.senseCount + 1;
+							
+							//add to env in both db and java
+							InsertSenseIntoLatestEnvInDB.insert(currRemSense);
+							oldEnvIn.abstractEnv.senses.add(currRemSense);
+						}
 					}
 				}
 			}
-			String updateEnvSQLCommand = "UPDATE Env (Senses) VALUES (" + oldEnvIn.abstractEnv.dbSenseList + "\");";
+			myState.executeBatch();
+			DBObjectCountResults dbocr = new DBObjectCountResults();
+			String updateEnvSQLCommand = "UPDATE Env (Senses) VALUES (\"" + oldEnvIn.abstractEnv.dbSenseList + "\") WHERE id=" + dbocr.envCount + ";";
 			myState.execute(updateEnvSQLCommand);
 			String readdForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=1;";
 			Statement readdChecksState = myConnection.createStatement();
@@ -92,6 +128,89 @@ public class HandleOldSenseChanges {
 			e.printStackTrace();
 		}
 	}
+	
+	public static List<Blob> findBlobOfSameColor (List<Pixel> pixelsToCheckQueue, BufferedImage imageIn) {
+		//For Testing
+		BufferedImage bi = new BufferedImage(50, 50, 1);
+		for (int i = 0; i < pixelsToCheckQueue.size(); i++) {
+			Pixel p = pixelsToCheckQueue.get(i);
+			bi.setRGB(p.position.x, p.position.y, p.color.hashCode());
+		}
+		File outputFile = new File("/home/agi/Desktop/testingthis.jpg");
+		File outputFile2 = new File("/home/agi/Desktop/againstthis.jpg");
+		try {
+			ImageIO.write(bi, "jpg", outputFile);
+			ImageIO.write(imageIn, "jpg", outputFile2);
+		} catch (Exception e) {
+			
+		}
+		
+		//
+		
+		List<Blob> blobsOut = new ArrayList<Blob>();
+		while(pixelsToCheckQueue.size() > 0) { //looping through all changed pixels in the thread
+			List<Pixel> blobPixelToCheckQueue = new ArrayList<Pixel>();
+			Pixel initialPixel = pixelsToCheckQueue.get(0);
+			pixelsToCheckQueue.remove(0);
+			blobPixelToCheckQueue.add(initialPixel);
+			Blob currentBlob = new Blob();
+			PixelColorRange range = new PixelColorRange(initialPixel.color);//add initial pixel remove from changedPixels list right after this
+			List<Pixel> pixelsChecked = new ArrayList<Pixel>();
+			
+			while(blobPixelToCheckQueue.size() > 0) { //loop through pixels that may be in the blob
+				Pixel currentPixel = blobPixelToCheckQueue.get(0);
+				pixelsChecked.add(new Pixel(new Point(currentPixel.position.x, currentPixel.position.y)));
+				currentBlob.pixels.add(currentPixel);
+				
+				
+
+				List<Pixel> touchingPixels = BufferedImageToBlobsInParallel.getTouchingPixels(currentPixel, imageIn);
+				for (int i = 0; i < touchingPixels.size(); i++) { //loop through every pixel touching the current pixel
+					
+					
+					Pixel currentTouchingPixel = touchingPixels.get(i);
+					try {
+						//get and insert the color value for the touching pixel into its container
+						currentTouchingPixel.color = new Color(imageIn.getRGB(currentTouchingPixel.position.x, currentTouchingPixel.position.y));
+						
+						
+						if(BufferedImageToBlobsInParallel.PixelWithinRange(currentTouchingPixel, range)) {
+							//if touching pixel is the same color as the initial pixel
+							
+							
+							//adds the touching pixel to the pixels that need to be checked and removes it from
+							//the initial pixels list so this blob isn't duplicated
+							Pixel initCurrTP = new Pixel(new Point(currentTouchingPixel.position.x, currentTouchingPixel.position.y), currentTouchingPixel.color);
+							if (!blobPixelToCheckQueue.contains(initCurrTP) && !pixelsChecked.contains(initCurrTP)) {
+								blobPixelToCheckQueue.add(initCurrTP);
+							}
+							if (pixelsToCheckQueue.contains(initCurrTP)) {
+								pixelsToCheckQueue.remove(initCurrTP);
+							}	
+						} else {
+							if (pixelsToCheckQueue.contains(currentTouchingPixel)) {
+								pixelsToCheckQueue.remove(currentTouchingPixel);
+							}	
+						}
+						
+						
+					} catch (Exception e) {
+						//that pixel doesn't exist (trying a pixel with a negative x or y value when doing an edge pixel)
+					}
+				}
+				blobPixelToCheckQueue.remove(0);
+			}
+			
+			if (currentBlob.pixels.size() > 1) {
+				blobsOut.add(currentBlob);
+			}
+		}
+		return blobsOut;
+	}
+	
+	
+	
+	
 	
 	public static boolean aBoxOverlaps (List<Sense> sensesIn, Sense currSense) {
 		boolean output = false;

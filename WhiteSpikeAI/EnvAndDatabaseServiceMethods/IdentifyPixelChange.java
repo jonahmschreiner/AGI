@@ -98,7 +98,13 @@ public class IdentifyPixelChange {
 				pixelChange.setChange("None");
 			} else {
 				String key = "" + change1.xChange + change2.xChange + change1.yChange + change2.yChange;
-				pixelChange.setChange(pixelChanges.get(key));
+				try {
+					pixelChange.setChange(pixelChanges.get(key));
+				} catch (Exception e) {
+					System.out.println();
+					e.printStackTrace();
+					System.out.println();
+				}	
 			}
 			pixelChangesOutput.add(pixelChange);
 		}
