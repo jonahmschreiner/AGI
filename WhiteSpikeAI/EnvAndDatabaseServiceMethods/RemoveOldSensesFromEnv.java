@@ -25,7 +25,7 @@ import Structure.Sense;
 import EnvAndDatabaseServiceMethods.UpdateSenses;
 import MainLLF.Constants;
 
-public class HandleOldSenseChanges {
+public class RemoveOldSensesFromEnv {
 	public static Env exec(List<Sense> newSensesIn, Env oldEnvIn){
 		
 		try {
@@ -39,7 +39,6 @@ public class HandleOldSenseChanges {
 			for (int i = 0; i < sensesCopied.size(); i++) {
 				Sense currSense = sensesCopied.get(i);
 				if (aBoxOverlaps(newSensesIn, currSense) && !newSensesIn.contains(currSense)) {
-					List<Pixel> pixelsToCheck = new ArrayList<Pixel>();
 					boolean flag = false;
 					for (int j = 0; j < currSense.blob.pixels.size(); j++) {
 						Pixel currPixel = currSense.blob.pixels.get(j);
@@ -47,55 +46,18 @@ public class HandleOldSenseChanges {
 						PixelColorRange currPixelPCR = new PixelColorRange(currPixel.color);
 						PixelColorRange checkRGBPCR = new PixelColorRange(checkRGB);
 						if (!currPixelPCR.color.equals(checkRGBPCR.color)) {
-							//pixelsToCheck.add(currPixel);
 							flag = true;
 							break;
 						}
-					}
-					
+					}				
 					if (flag) {
-						oldEnvIn.abstractEnv.senses.remove(currSense);
-					}
-					List<Blob> remnantBlobs = findBlobOfSameColor(pixelsToCheck, oldEnvIn.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50));
-
-					if (remnantBlobs.size() == 0) {
 						removeSenseFromAbstractEnvDBSenseListAndDB(currSense.dbId, oldEnvIn.abstractEnv);
 						oldEnvIn.abstractEnv.senses.remove(currSense);
-						//remove it from abstractEnv dbSenseList
-						
-						
-					} else { //update sense if it is still intact, just changed
-						Blob newBlob = remnantBlobs.get(0);
-						Sense newSense = BlobToSense.getSense(newBlob);
-						newSense.blob = newBlob;
-						newSense.dbId = currSense.dbId;
-						newSense.orientationChanges = UpdateSenses.extractOrientationChanges(newSense.orientation, currSense.orientation);
-						oldEnvIn.abstractEnv.senses.set(i, newSense);
-
-						//update database
-						String sqlCommand = "UPDATE Sense INNER JOIN Orientation ON Sense.Orientation = Orientation.id SET Orientation.Height=" + newSense.orientation.height + ", Orientation.Width=" + newSense.orientation.width + ", Orientation.r=" + newSense.orientation.color.getRed() + ", Orientation.g=" + newSense.orientation.color.getGreen() + ", Orientation.b=" + newSense.orientation.color.getBlue() + ", Orientation.x=" + newSense.orientation.position.x + ", Orientation.y=" + newSense.orientation.position.y + " WHERE Sense.id=" + currSense.dbId + ";";
-						myState.addBatch(sqlCommand);
-						
-						//handle multiple new blobs if it was split (update sense and add new ones)
-						for (int j = 1; j < remnantBlobs.size(); j++) {
-							Blob currBlob = remnantBlobs.get(j);
-							Sense currRemSense = BlobToSense.getSense(currBlob);
-							currRemSense.blob = currBlob;
-							
-							//assign new dbId
-							DBObjectCountResults dbocr = new DBObjectCountResults();
-							currRemSense.dbId = dbocr.senseCount + 1;
-							
-							//add to env in both db and java
-							InsertSenseIntoLatestEnvInDB.insert(currRemSense);
-							oldEnvIn.abstractEnv.senses.add(currRemSense);
-						}
 					}
 				}
 			}
-			myState.executeBatch();
 			DBObjectCountResults dbocr = new DBObjectCountResults();
-			String updateEnvSQLCommand = "UPDATE Env (Senses) VALUES (\"" + oldEnvIn.abstractEnv.dbSenseList + "\") WHERE id=" + dbocr.envCount + ";";
+			String updateEnvSQLCommand = "UPDATE Env SET Senses=\"" + oldEnvIn.abstractEnv.dbSenseList + "\" WHERE id=" + dbocr.envCount + ";";
 			myState.execute(updateEnvSQLCommand);
 			String readdForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=1;";
 			Statement readdChecksState = myConnection.createStatement();
@@ -103,7 +65,7 @@ public class HandleOldSenseChanges {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		return oldEnvIn;
 	}
 	
@@ -122,7 +84,7 @@ public class HandleOldSenseChanges {
 		try {
 			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
-			String sqlCommand = "DROP Sense WHERE id=" + dbIdIn + ";";
+			String sqlCommand = "DELETE FROM Sense WHERE id=" + dbIdIn + ";";
 			myState.execute(sqlCommand);
 		} catch (Exception e) {
 			e.printStackTrace();
