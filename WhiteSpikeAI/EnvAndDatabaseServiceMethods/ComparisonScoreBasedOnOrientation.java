@@ -9,15 +9,17 @@ public class ComparisonScoreBasedOnOrientation {
 		int score = Constants.initialSenseComparisonScore;
 		
 		//size
-		score -= Math.abs(newSenseOr.size - oldSenseOr.size);
-		
+		score -= Math.abs(newSenseOr.height - oldSenseOr.height);
+		score -= Math.abs(newSenseOr.width - oldSenseOr.width);
 
 		//position
 		score -= Math.abs(newSenseOr.position.x - oldSenseOr.position.x);
 		score -= Math.abs(newSenseOr.position.y - oldSenseOr.position.y);
 		
 		//color
-		if (new PixelColorRange(newSenseOr.color).equals(new PixelColorRange(oldSenseOr.color))) {
+		PixelColorRange newRange = new PixelColorRange(newSenseOr.color);
+		PixelColorRange oldRange = new PixelColorRange(oldSenseOr.color);
+		if (newRange.equals(oldRange)) {
 			score += Constants.SenseComparisonColorMatchBonus;
 		}
 

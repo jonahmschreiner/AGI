@@ -191,6 +191,21 @@ public class DatabaseHandler {
 					matchingOrientationId = firstSenseId + i - numOfOrientationMatches;
 				}
 				
+				//Empty OrientationChange
+				sqlCommand = "SELECT COUNT(*) AS total FROM OrientationChange;";
+				ResultSet rs4 = myState.executeQuery(sqlCommand);
+				rs4.next();
+				int orChangeId = -1;
+				try {
+					orChangeId = rs4.getInt("total");
+					orChangeId++;
+				} catch (Exception e) {
+					
+				}
+				
+				sqlCommand = "INSERT INTO OrientationChange (HeightChange, WidthChange, RotationChange, xChange, yChange, rChange, gChange, bChange) VALUES (" + currentSense.orientationChanges.heightChange + ", " + currentSense.orientationChanges.widthChange + ", " + currentSense.orientationChanges.rotationChange + ", " + currentSense.orientationChanges.xChange + ", " + currentSense.orientationChanges.yChange + ", " + currentSense.orientationChanges.rChange + ", " + currentSense.orientationChanges.gChange + ", " + currentSense.orientationChanges.bChange +");";
+				myState.execute(sqlCommand);
+				
 				//Activity
 				sqlCommand = "SELECT Sense.id FROM Sense INNER JOIN Orientation ON SenseDefinition=" + matchingSenseDefId + " AND Orientation.id = Sense.Orientation" + " AND Orientation.Height=" + currentSense.orientation.height + " AND Orientation.Width=" + currentSense.orientation.width + " AND Orientation.Rotation=" + currentSense.orientation.rotation + " AND Orientation.r=" + currentSense.orientation.color.getRed() + " AND Orientation.g=" + currentSense.orientation.color.getGreen() + " AND Orientation.b=" + currentSense.orientation.color.getBlue() + " LIMIT 1;";
 				//SELECT Sense.id, Height FROM Sense LEFT JOIN Orientation ON Sense.Orientation = Orientation.Height AND Sense.SenseDefinition = 1;
@@ -316,7 +331,7 @@ public class DatabaseHandler {
 				
 				//Sense
 				if (senseFound == -1) {
-					sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation) VALUES (" + EnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ");";
+					sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, OrientationChange) VALUES (" + EnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ", " + orChangeId + ");";
 					myState.execute(sqlCommand);
 					DBObjectCountResults dbocr = new DBObjectCountResults();
 					currentSense.dbId = dbocr.senseCount;

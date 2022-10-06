@@ -33,6 +33,8 @@ public class UpdateEnv {
 		try {
 			envIn.rawEnv = newEnv.rawEnv;
 			envIn = UpdateSenses.update(newishSenses, envIn);
+			envIn = RemoveOldSensesFromEnv.exec(newishSenses, envIn);
+			UploadOrientationChangesToDB.upload(envIn);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

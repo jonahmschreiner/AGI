@@ -93,23 +93,37 @@ public class UpdateSenses {
 				Sense oldMatchingSense = currSense.comparisonClass.comparisons.get(currSense.comparisonClass.highestScore);
 				if (oldMatchingSense != null) {
 					try {
+						if (newSenseToOldSenseMatches.keySet().contains(oldMatchingSense)) {
+							throw new Exception();
+						}
 						newSenseToOldSenseMatches.put(oldMatchingSense, currSense);
 						currSense.dbId = oldMatchingSense.dbId;
 					} catch (Exception e) {
 						Sense blockerSense = newSenseToOldSenseMatches.get(oldMatchingSense);
 						if (blockerSense.comparisonClass.highestScore < currSense.comparisonClass.highestScore) {
+							Sense senseToReUp = newSenseToOldSenseMatches.get(oldMatchingSense);
+							currSenseDefSenses.add(senseToReUp);
 							newSenseToOldSenseMatches.replace(oldMatchingSense, currSense);
 							currSense.dbId = oldMatchingSense.dbId;
+							newSenseToOldSenseMatches.remove(null, senseToReUp);
 						} else {
 							Sense secondOldMatchingSense = currSense.comparisonClass.comparisons.get(currSense.comparisonClass.secondHighestScore);
-							try {
-								newSenseToOldSenseMatches.put(secondOldMatchingSense, currSense);
-								currSense.dbId = secondOldMatchingSense.dbId;
-							} catch (Exception f) {
-								Sense blockerSense2 = newSenseToOldSenseMatches.get(secondOldMatchingSense);
-								if (blockerSense2.comparisonClass.secondHighestScore < currSense.comparisonClass.secondHighestScore) {
-									newSenseToOldSenseMatches.replace(secondOldMatchingSense, currSense);
+							if (secondOldMatchingSense != null) {
+								try {
+									if (newSenseToOldSenseMatches.keySet().contains(secondOldMatchingSense)) {
+										throw new Exception();
+									}
+									newSenseToOldSenseMatches.put(secondOldMatchingSense, currSense);
 									currSense.dbId = secondOldMatchingSense.dbId;
+								} catch (Exception f) {
+									Sense blockerSense2 = newSenseToOldSenseMatches.get(secondOldMatchingSense);
+									if (blockerSense2.comparisonClass.secondHighestScore < currSense.comparisonClass.secondHighestScore) {
+										Sense senseToReUp = newSenseToOldSenseMatches.get(oldMatchingSense);
+										currSenseDefSenses.add(senseToReUp);
+										newSenseToOldSenseMatches.replace(secondOldMatchingSense, currSense);
+										currSense.dbId = secondOldMatchingSense.dbId;
+										newSenseToOldSenseMatches.remove(null, senseToReUp);
+									}
 								}
 							}
 						}

@@ -11,6 +11,7 @@ import EnvAndDatabaseServiceMethods.DatabaseHandler;
 import EnvAndDatabaseServiceMethods.RemoveOldSensesFromEnv;
 import EnvAndDatabaseServiceMethods.SenseCombiner;
 import EnvAndDatabaseServiceMethods.UpdateSenses;
+import EnvAndDatabaseServiceMethods.UploadOrientationChangesToDB;
 import EnvAndDatabaseServiceMethods.VisualOutputOfSensesFromSensesAndImage;
 import EnvAndDatabaseServiceMethods.ChangedPixelsFromOldEnv.junctionList;
 import Structure.Blob;
@@ -47,6 +48,7 @@ public class UpdateSensesTest {
 			Env outputEnv = UpdateSenses.update(newishSenses, env);
 			outputEnv.rawEnv = newEnv.rawEnv;
 			outputEnv = RemoveOldSensesFromEnv.exec(newishSenses, outputEnv);
+			UploadOrientationChangesToDB.upload(outputEnv);
 			VisualOutputOfSensesFromSensesAndImage.execute(outputEnv.abstractEnv.senses, outputEnv.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50), "outputEnv");
 			System.out.println();
 		} catch (Exception e) {
