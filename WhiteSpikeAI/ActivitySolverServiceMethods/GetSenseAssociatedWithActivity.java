@@ -61,13 +61,27 @@ public class GetSenseAssociatedWithActivity {
 						}
 					}
 				}
+				
+				if (output == null) {
+					List<Sense> senses = envIn.abstractEnv.senses;
+					for (int i = 0; i < senses.size(); i++) {
+						Sense currPotMatch = senses.get(i);
+						if (currPotMatch.orientation.height == height && currPotMatch.orientation.width == width 
+								&& currPotMatch.orientation.rotation == rotation && currPotMatch.orientation.position.x == x 
+								&& currPotMatch.orientation.position.y == y && currPotMatch.orientation.color.getRed() == r 
+								&& currPotMatch.orientation.color.getBlue() == b && currPotMatch.orientation.color.getGreen() == g) {
+							output = currPotMatch;
+							break;
+						}
+					}
+				}
 
 			} catch (Exception e) {
-				
+				e.printStackTrace();
 			}
 
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 		return output;
 	}
