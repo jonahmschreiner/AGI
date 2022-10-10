@@ -15,6 +15,7 @@ public class CheckIfActivityWasSolved {
 		//get propId and increaseOrDecreaseValues from DB for this activity id
 		int propId = -1;
 		int increaseOrDecreaseProp = -999;
+		String increaseOrDecreasePropAsString = null;
 		try {
 			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
@@ -23,7 +24,13 @@ public class CheckIfActivityWasSolved {
 			rs.next();
 			try {
 				propId = rs.getInt("PropertyId");
-				increaseOrDecreaseProp = rs.getInt("increaseOrDecreaseProp");
+				String str = rs.getString("increaseOrDecreaseProp");
+				try {
+					increaseOrDecreaseProp = Integer.valueOf(str);
+				} catch (Exception e) {
+					increaseOrDecreasePropAsString = str;
+				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -37,24 +44,21 @@ public class CheckIfActivityWasSolved {
 			}	
 			return output;
 		}
-		
-		if (propId == 0 && increaseOrDecreaseProp == senseIn.orientationChanges.heightChange) {
+		if (increaseOrDecreasePropAsString == null) {
+			if (propId == 0 && increaseOrDecreaseProp == senseIn.orientationChanges.heightChange) {
+				output = true;
+			} else if (propId == 1 && increaseOrDecreaseProp == senseIn.orientationChanges.widthChange) {
+				output = true;
+			} else if (propId == 2 && increaseOrDecreaseProp == senseIn.orientationChanges.rotationChange) {
+				output = true;
+			} else if (propId == 3 && increaseOrDecreaseProp == senseIn.orientationChanges.xChange) {
+				output = true;
+			} else if (propId == 4 && increaseOrDecreaseProp == senseIn.orientationChanges.yChange) {
+				output = true;
+			}
+		} else if (propId == 5 && increaseOrDecreasePropAsString.equals(senseIn.orientationChanges.colorChange)) {
 			output = true;
-		} else if (propId == 1 && increaseOrDecreaseProp == senseIn.orientationChanges.widthChange) {
-			output = true;
-		} else if (propId == 2 && increaseOrDecreaseProp == senseIn.orientationChanges.rotationChange) {
-			output = true;
-		} else if (propId == 3 && increaseOrDecreaseProp == senseIn.orientationChanges.xChange) {
-			output = true;
-		} else if (propId == 4 && increaseOrDecreaseProp == senseIn.orientationChanges.yChange) {
-			output = true;
-		} else if (propId == 5 && increaseOrDecreaseProp == senseIn.orientationChanges.rChange) {
-			output = true;
-		} else if (propId == 6 && increaseOrDecreaseProp == senseIn.orientationChanges.gChange) {
-			output = true;
-		} else if (propId == 7 && increaseOrDecreaseProp == senseIn.orientationChanges.bChange) {
-			output = true;
-		}
+		} 
 		
 		return output;
 	}

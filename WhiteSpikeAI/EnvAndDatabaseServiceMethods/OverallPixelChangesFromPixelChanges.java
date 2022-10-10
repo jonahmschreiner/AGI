@@ -41,6 +41,8 @@ public class OverallPixelChangesFromPixelChanges {
 		String keyValue;
 		String keyValue2;
 		String changeValue;
+		int irregularTurnCode = 0;
+		
 		List<PixelOverallChange> overallPixelChanges = new ArrayList<PixelOverallChange>();
 		for (int i = 1; i < pixelChangesIn.size(); i++) {
 			keyValue = "" + pixelChangesIn.get(i - 1).changeCode + pixelChangesIn.get(i).changeCode;
@@ -50,11 +52,70 @@ public class OverallPixelChangesFromPixelChanges {
 				keyValue2 = "" + pixelChangesIn.get(i).changeCode;
 				if (map2.get(keyValue2)) {
 					PixelOverallChange overallChange = new PixelOverallChange(changeValue);
+					
+					if (irregularTurnCode != 0) {
+						if (overallChange.changeType.equals("MaintainRightUpDiagonal") && irregularTurnCode == 1){
+							irregularTurnCode = 10;
+						}else if(overallChange.changeType.equals("MaintainLeftUpDiagonal") && irregularTurnCode == -1) {
+							irregularTurnCode = 11;
+						} else {
+							if (overallChange.changeType.equals("Straight")) {
+								overallPixelChanges.remove(overallPixelChanges.size() - 1);
+								overallPixelChanges.remove(overallPixelChanges.size() - 1);
+								
+								if (irregularTurnCode == 10) {
+									PixelOverallChange newTurn = new PixelOverallChange("RightTurn");
+									overallPixelChanges.add(newTurn);
+								} else if (irregularTurnCode == 11) {
+									PixelOverallChange newTurn = new PixelOverallChange("LeftTurn");
+									overallPixelChanges.add(newTurn);
+								}	
+							}
+							irregularTurnCode = 0;
+						}
+					}
+					
+					if (overallChange.changeType.equals("StartRightUpDiagonal")) {
+						irregularTurnCode = 1;
+					} else if (overallChange.changeType.equals("StartLeftUpDiagonal")) {
+						irregularTurnCode = -1;
+					} else {
+						irregularTurnCode = 0;
+					}
 					overallPixelChanges.add(overallChange);
 				}
 			} else {
 				prevValue = changeValue;
 				PixelOverallChange overallChange = new PixelOverallChange(changeValue);
+				if (irregularTurnCode != 0) {
+					if (overallChange.changeType.equals("MaintainRightUpDiagonal") && irregularTurnCode == 1){
+						irregularTurnCode = 10;
+					}else if(overallChange.changeType.equals("MaintainLeftUpDiagonal") && irregularTurnCode == -1) {
+						irregularTurnCode = 11;
+					} else {
+						if (overallChange.changeType.equals("Straight")) {
+							if (irregularTurnCode == 10 || irregularTurnCode == 11) {
+								overallPixelChanges.remove(overallPixelChanges.size() - 1);
+								overallPixelChanges.remove(overallPixelChanges.size() - 1);
+							}
+							
+							if (irregularTurnCode == 10) {
+								PixelOverallChange newTurn = new PixelOverallChange("RightTurn");
+								overallPixelChanges.add(newTurn);
+							} else if (irregularTurnCode == 11) {
+								PixelOverallChange newTurn = new PixelOverallChange("LeftTurn");
+								overallPixelChanges.add(newTurn);
+							}	
+						}
+						irregularTurnCode = 0;
+					}
+				}
+				
+				if (overallChange.changeType.equals("StartRightUpDiagonal")) {
+					irregularTurnCode = 1;
+				} else if (overallChange.changeType.equals("StartLeftUpDiagonal")) {
+					irregularTurnCode = -1;
+				}
 				overallPixelChanges.add(overallChange);
 			}
 		}
@@ -64,13 +125,70 @@ public class OverallPixelChangesFromPixelChanges {
 		if (changeValue == prevValue || changeValue == overallPixelChanges.get(0).changeType) {
 			prevValue = changeValue;
 			keyValue2 = "" + pixelChangesIn.get(0).changeCode;
-			if (map2.get(keyValue2)) {
+			if (map2.get(keyValue2) || irregularTurnCode != 0) {
 				PixelOverallChange overallChange = new PixelOverallChange(changeValue);
+				if (irregularTurnCode != 0) {
+					if (overallChange.changeType.equals("MaintainRightUpDiagonal") && irregularTurnCode == 1){
+						irregularTurnCode = 10;
+					}else if(overallChange.changeType.equals("MaintainLeftUpDiagonal") && irregularTurnCode == -1) {
+						irregularTurnCode = 11;
+					} else {
+						if (overallChange.changeType.equals("Straight")) {
+							if (irregularTurnCode == 10 || irregularTurnCode == 11) {
+								overallPixelChanges.remove(overallPixelChanges.size() - 1);
+								overallPixelChanges.remove(overallPixelChanges.size() - 1);
+								overallPixelChanges.remove(0);
+							}
+							if (irregularTurnCode == 10) {
+								PixelOverallChange newTurn = new PixelOverallChange("RightTurn");
+								overallPixelChanges.add(newTurn);
+							} else if (irregularTurnCode == 11) {
+								PixelOverallChange newTurn = new PixelOverallChange("LeftTurn");
+								overallPixelChanges.add(newTurn);
+							}	
+						}
+						irregularTurnCode = 0;
+					}
+				}
+				
+				if (overallChange.changeType.equals("StartRightUpDiagonal")) {
+					irregularTurnCode = 1;
+				} else if (overallChange.changeType.equals("StartLeftUpDiagonal")) {
+					irregularTurnCode = -1;
+				}
 				overallPixelChanges.add(overallChange);
 			}
 		} else {
 			prevValue = changeValue;
 			PixelOverallChange overallChange = new PixelOverallChange(changeValue);
+			if (irregularTurnCode != 0) {
+				if (overallChange.changeType.equals("MaintainRightUpDiagonal") && irregularTurnCode == 1){
+					irregularTurnCode = 10;
+				}else if(overallChange.changeType.equals("MaintainLeftUpDiagonal") && irregularTurnCode == -1) {
+					irregularTurnCode = 11;
+				} else {
+					if (overallChange.changeType.equals("Straight")) {
+						if (irregularTurnCode == 10 || irregularTurnCode == 11) {
+							overallPixelChanges.remove(overallPixelChanges.size() - 1);
+							overallPixelChanges.remove(overallPixelChanges.size() - 1);
+						}
+						if (irregularTurnCode == 10) {
+							PixelOverallChange newTurn = new PixelOverallChange("RightTurn");
+							overallPixelChanges.add(newTurn);
+						} else if (irregularTurnCode == 11) {
+							PixelOverallChange newTurn = new PixelOverallChange("LeftTurn");
+							overallPixelChanges.add(newTurn);
+						}	
+					}
+					irregularTurnCode = 0;
+				}
+			}
+			
+			if (overallChange.changeType.equals("StartRightUpDiagonal")) {
+				irregularTurnCode = 1;
+			} else if (overallChange.changeType.equals("StartLeftUpDiagonal")) {
+				irregularTurnCode = -1;
+			}
 			overallPixelChanges.add(overallChange);
 		}
 		
@@ -153,10 +271,10 @@ public class OverallPixelChangesFromPixelChanges {
 	
 	//for testing
 	public static void main(String[] args) {
-		PixelChange change1 = new PixelChange("RightDownDiagonal");
-		PixelChange change2 = new PixelChange("None");
-		PixelChange change3 = new PixelChange("RightDownDiagonal");
-		PixelChange change4 = new PixelChange("RightTurn");
+		PixelChange change1 = new PixelChange("None");
+		PixelChange change2 = new PixelChange("LeftUpDiagonal");
+		PixelChange change3 = new PixelChange("RightUpDiagonal");
+		PixelChange change4 = new PixelChange("RightUpDiagonal");
 		
 		List<PixelChange> pChanges = new ArrayList<PixelChange>();
 		pChanges.add(change1);

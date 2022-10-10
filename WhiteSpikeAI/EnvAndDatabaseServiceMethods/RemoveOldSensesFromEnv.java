@@ -38,7 +38,19 @@ public class RemoveOldSensesFromEnv {
 			removeChecksState.execute(removeForeignKeyChecksCommand);
 			for (int i = 0; i < sensesCopied.size(); i++) {
 				Sense currSense = sensesCopied.get(i);
-				if (aBoxOverlaps(newSensesIn, currSense) && !newSensesIn.contains(currSense)) {
+				List<Sense> overlappingSenses = getOverlappingSenses(newSensesIn, currSense);
+				boolean flag2 = true;
+				for (int l = 0; l < overlappingSenses.size(); l++) {
+					Sense currOvSense2 = overlappingSenses.get(l);
+					if (currOvSense2.blob.pixels.containsAll(currSense.blob.pixels) && !currOvSense2.blob.pixels.equals(currSense.blob.pixels)) {
+						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currSense.dbId, oldEnvIn);
+						oldEnvIn.abstractEnv.senses.remove(currSense);
+						flag2 = false;
+					}
+				}
+				
+				
+				if (overlappingSenses.size() > 0 && !newSensesIn.contains(currSense) && flag2) {
 					boolean flag = false;
 					for (int j = 0; j < currSense.blob.pixels.size(); j++) {
 						Pixel currPixel = currSense.blob.pixels.get(j);
@@ -53,6 +65,8 @@ public class RemoveOldSensesFromEnv {
 					if (flag) {
 						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currSense.dbId, oldEnvIn);
 						oldEnvIn.abstractEnv.senses.remove(currSense);
+					} else {
+						
 					}
 				}
 			}
@@ -174,16 +188,18 @@ public class RemoveOldSensesFromEnv {
 	
 	
 	
-	
-	public static boolean aBoxOverlaps (List<Sense> sensesIn, Sense currSense) {
+	public static List<Sense> getOverlappingSenses (List<Sense> sensesIn, Sense currSense) {
 		boolean output = false;
+		List<Sense> sensesOut = new ArrayList<Sense>();
 		for (int i = 0; i < sensesIn.size(); i++) {
-			output = boxesOverlap(sensesIn.get(i).orientation.boundingBox, currSense.orientation.boundingBox);
+			Sense currSensesInSense = sensesIn.get(i);
+			output = boxesOverlap(currSensesInSense.orientation.boundingBox, currSense.orientation.boundingBox);
 			if (output) {
-				break;
+				sensesOut.add(currSensesInSense);
+				output = false;
 			}
 		}
-		return output;
+		return sensesOut;
 	}
 	
 	public static boolean boxesOverlap (BoundingBox newSense, BoundingBox potOldSense) {

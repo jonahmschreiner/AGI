@@ -48,7 +48,8 @@ public class BlobToSense {
 		orientation.size = orientation.height * orientation.width;
 		orientation.rotation = blob.minAndMaxes.slope;
 		orientation.color = new Color(blob.minAndMaxes.averageRValue, blob.minAndMaxes.averageGValue, blob.minAndMaxes.averageBValue);
-		orientation.position = new Point(blob.minAndMaxes.averageXValue, blob.minAndMaxes.averageYValue);
+		//orientation.position = new Point(blob.minAndMaxes.averageXValue, blob.minAndMaxes.averageYValue);
+		orientation.position = new Point(blob.minAndMaxes.minX + ((blob.minAndMaxes.maxX - blob.minAndMaxes.minX) / 2), blob.minAndMaxes.minY + ((blob.minAndMaxes.maxY - blob.minAndMaxes.minY) / 2));
 		sense.orientation = orientation;
 		return sense;
 	}

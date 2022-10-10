@@ -82,7 +82,7 @@ public class UploadEnvToDBTest {
 				int envTotal = rs.getInt("envTotal");
 				System.out.println("Should be one: " + envTotal);
 				int actTotal = rs.getInt("actTotal");
-				System.out.println("Should be 460: " + actTotal);
+				System.out.println("Should be 463: " + actTotal);
 				int seTotal = rs.getInt("seTotal");
 				System.out.println("Should be one: " + seTotal);
 			} catch (Exception e) {

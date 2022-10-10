@@ -21,6 +21,7 @@ import Structure.Env;
 import Structure.Orientation;
 import Structure.Sense;
 import Structure.OrientationChanges;
+import Structure.PixelColorRange;
 
 public class UpdateSenses {
 	public static class ComparisonClass{
@@ -141,11 +142,13 @@ public class UpdateSenses {
 				List<Sense> envSenses = oldEnvIn.abstractEnv.senses;
 				
 				//update database
-				String sqlCommand = "SELECT Sense.id AS SenseID FROM Sense INNER JOIN SenseDefinition ON SenseDefinition.Definition=\"" + oldSense.definition.toString() + "\" AND Sense.SenseDefinition = SenseDefinition.id INNER JOIN Orientation ON Sense.Orientation= Orientation.id AND Orientation.Height=" + oldSense.orientation.height + " AND Orientation.Width=" + oldSense.orientation.width + " AND Orientation.Rotation=" + oldSense.orientation.rotation + " AND Orientation.x=" + oldSense.orientation.position.x + " AND Orientation.y=" + oldSense.orientation.position.y + " AND Orientation.r=" + oldSense.orientation.color.getRed() + " AND Orientation.g=" + oldSense.orientation.color.getGreen() + " AND Orientation.b=" + oldSense.orientation.color.getBlue() + " LIMIT 1;";
+				PixelColorRange pcr3 = new PixelColorRange(oldSense.orientation.color);
+				PixelColorRange pcr4 = new PixelColorRange(newSense.orientation.color);
+				String sqlCommand = "SELECT Sense.id AS SenseID FROM Sense INNER JOIN SenseDefinition ON SenseDefinition.Definition=\"" + oldSense.definition.toString() + "\" AND Sense.SenseDefinition = SenseDefinition.id INNER JOIN Orientation ON Sense.Orientation= Orientation.id AND Orientation.Height=" + oldSense.orientation.height + " AND Orientation.Width=" + oldSense.orientation.width + " AND Orientation.Rotation=" + oldSense.orientation.rotation + " AND Orientation.x=" + oldSense.orientation.position.x + " AND Orientation.y=" + oldSense.orientation.position.y + " AND Orientation.color=\"" + pcr3.color + "\" LIMIT 1;";
 				ResultSet output = myState.executeQuery(sqlCommand);
 				output.next();
 				int senseDBId = output.getInt("SenseID");
-				sqlCommand = "UPDATE Sense INNER JOIN Orientation ON Sense.Orientation = Orientation.id SET Orientation.Height=" + newSense.orientation.height + ", Orientation.Width=" + newSense.orientation.width + ", Orientation.r=" + newSense.orientation.color.getRed() + ", Orientation.g=" + newSense.orientation.color.getGreen() + ", Orientation.b=" + newSense.orientation.color.getBlue() + ", Orientation.x=" + newSense.orientation.position.x + ", Orientation.y=" + newSense.orientation.position.y + " WHERE Sense.id=" + senseDBId + ";";
+				sqlCommand = "UPDATE Sense INNER JOIN Orientation ON Sense.Orientation = Orientation.id SET Orientation.Height=" + newSense.orientation.height + ", Orientation.Width=" + newSense.orientation.width + ", Orientation.rotation=" + newSense.orientation.rotation + ", Orientation.color=\"" + pcr4.color + "\", Orientation.x=" + newSense.orientation.position.x + ", Orientation.y=" + newSense.orientation.position.y + " WHERE Sense.id=" + senseDBId + ";";
 				myState.execute(sqlCommand);
 				newSense.dbId = senseDBId; 
 				//remove from sensesIn
@@ -176,7 +179,7 @@ public class UpdateSenses {
 			Sense currentSense = sensesIn.get(i);
 			oldEnvIn.abstractEnv.senses.add(currentSense);
 			oldEnvIn.abstractEnv.recentlyAddedSenses.add(currentSense);
-
+			PixelColorRange pcr = new PixelColorRange(currentSense.orientation.color);
 			
 			String currDef = currentSense.definition.toString();
 			String sqlCommand = "SELECT id FROM SenseDefinition WHERE Definition=\"" + currDef + "\";";
@@ -197,10 +200,9 @@ public class UpdateSenses {
 					try {
 						int orientationChangesCount = rs4.getInt("total");
 						orientationChangesCount++;
-						
-						sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, r, g, b) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", " + currentSense.orientation.color.getRed() + ", " + currentSense.orientation.color.getGreen() + ", " + currentSense.orientation.color.getBlue() +");";
+						sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, color) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", \"" + pcr.color + "\");";
 						myState.execute(sqlCommand);
-						sqlCommand = "INSERT INTO OrientationChange (HeightChange, WidthChange, RotationChange, xChange, yChange, rChange, gChange, bChange) VALUES (" + currentSense.orientationChanges.heightChange + ", " + currentSense.orientationChanges.widthChange + ", " + currentSense.orientationChanges.rotationChange + ", " + currentSense.orientationChanges.xChange + ", " + currentSense.orientationChanges.yChange + ", " + currentSense.orientationChanges.rChange + ", " + currentSense.orientationChanges.gChange + ", " + currentSense.orientationChanges.bChange +");";
+						sqlCommand = "INSERT INTO OrientationChange (HeightChange, WidthChange, RotationChange, xChange, yChange, colorChange) VALUES (" + currentSense.orientationChanges.heightChange + ", " + currentSense.orientationChanges.widthChange + ", " + currentSense.orientationChanges.rotationChange + ", " + currentSense.orientationChanges.xChange + ", " + currentSense.orientationChanges.yChange + ", \"" + currentSense.orientationChanges.colorChange + "\");";
 						myState.execute(sqlCommand);
 						sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, OrientationChange) VALUES (" + totalNumberOfEnvs + ", " + senseDefId + ", " + orientationCount + ", " + orientationChangesCount + ");";
 						myState.execute(sqlCommand);
@@ -236,9 +238,9 @@ public class UpdateSenses {
 							
 							sqlCommand = "INSERT INTO SenseDefinition (Definition) VALUES (\"" + currDef + "\");";
 							myState.execute(sqlCommand);
-							sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, r, g, b) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", " + currentSense.orientation.color.getRed() + ", " + currentSense.orientation.color.getGreen() + ", " + currentSense.orientation.color.getBlue() +");";
+							sqlCommand = "INSERT INTO Orientation (Height, Width, Rotation, x, y, color) VALUES (" + currentSense.orientation.height + ", " + currentSense.orientation.width + ", " + currentSense.orientation.rotation + ", " + currentSense.orientation.position.x + ", " + currentSense.orientation.position.y + ", \"" + pcr.color + "\");";
 							myState.execute(sqlCommand);
-							sqlCommand = "INSERT INTO OrientationChange (HeightChange, WidthChange, RotationChange, xChange, yChange, rChange, gChange, bChange) VALUES (" + currentSense.orientationChanges.heightChange + ", " + currentSense.orientationChanges.widthChange + ", " + currentSense.orientationChanges.rotationChange + ", " + currentSense.orientationChanges.xChange + ", " + currentSense.orientationChanges.yChange + ", " + currentSense.orientationChanges.rChange + ", " + currentSense.orientationChanges.gChange + ", " + currentSense.orientationChanges.bChange +");";
+							sqlCommand = "INSERT INTO OrientationChange (HeightChange, WidthChange, RotationChange, xChange, yChange, colorChange) VALUES (" + currentSense.orientationChanges.heightChange + ", " + currentSense.orientationChanges.widthChange + ", " + currentSense.orientationChanges.rotationChange + ", " + currentSense.orientationChanges.xChange + ", " + currentSense.orientationChanges.yChange + ", \"" + pcr.color + "\");";
 							myState.execute(sqlCommand);
 							sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, OrientationChange) VALUES (" + totalNumberOfEnvs + ", " + senseDefCount + ", " + orientationCount + ", "  + orientationChangesCount + ");";
 							myState.execute(sqlCommand);
@@ -312,32 +314,14 @@ public class UpdateSenses {
 			oc.rotationChange = 0;
 		}
 		//r
-		int rChange = newSenseOrIn.color.getRed() - oldSenseOrIn.color.getRed();
-		if (rChange > 0) {
-			oc.rChange = 1;
-		} else if (rChange < 0) {
-			oc.rChange = -1;
-		} else {
-			oc.rChange = 0;
+		
+		PixelColorRange pcr1 = new PixelColorRange(newSenseOrIn.color);
+		PixelColorRange pcr2 = new PixelColorRange(oldSenseOrIn.color);
+		String colorChange = pcr1.color;
+		if (pcr1.color.equals(pcr2.color)) {
+			colorChange = "";
 		}
-		//g
-		int gChange = newSenseOrIn.color.getGreen() - oldSenseOrIn.color.getGreen();
-		if (gChange > 0) {
-			oc.gChange = 1;
-		} else if (gChange < 0) {
-			oc.gChange = -1;
-		} else {
-			oc.gChange = 0;
-		}
-		//b
-		int bChange = newSenseOrIn.color.getBlue() - oldSenseOrIn.color.getBlue();
-		if (bChange > 0) {
-			oc.bChange = 1;
-		} else if (bChange < 0) {
-			oc.bChange = -1;
-		} else {
-			oc.bChange = 0;
-		}
+		oc.colorChange = colorChange;
 		//x
 		int xChange = newSenseOrIn.position.x - oldSenseOrIn.position.x;
 		if (xChange > 0) {

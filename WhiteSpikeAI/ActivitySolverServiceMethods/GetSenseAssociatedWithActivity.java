@@ -8,6 +8,7 @@ import java.util.List;
 
 import MainLLF.Constants;
 import Structure.Env;
+import Structure.PixelColorRange;
 import Structure.Sense;
 
 public class GetSenseAssociatedWithActivity {
@@ -19,19 +20,17 @@ public class GetSenseAssociatedWithActivity {
 		try {
 			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
-			String sqlCommand = "SELECT SenseDefinition.Definition, Orientation.Height, Orientation.Width, Orientation.Rotation, Orientation.x, Orientation.y, Orientation.r, Orientation.g, Orientation.b FROM Activity INNER JOIN Sense ON Activity.AssociatedSense=Sense.id INNER JOIN SenseDefinition ON Sense.SenseDefinition=SenseDefinition.id INNER JOIN Orientation ON Sense.Orientation=Orientation.id WHERE Activity.id=" + ActivityDBIdIn + ";";
+			String sqlCommand = "SELECT SenseDefinition.Definition, Orientation.Height, Orientation.Width, Orientation.Rotation, Orientation.x, Orientation.y, Orientation.color FROM Activity INNER JOIN Sense ON Activity.AssociatedSense=Sense.id INNER JOIN SenseDefinition ON Sense.SenseDefinition=SenseDefinition.id INNER JOIN Orientation ON Sense.Orientation=Orientation.id WHERE Activity.id=" + ActivityDBIdIn + ";";
 			ResultSet rs = myState.executeQuery(sqlCommand);
 			rs.next();
 			try {
-				String definition = rs.getString("SenseDefinition.Definition");
+				//String definition = rs.getString("SenseDefinition.Definition");
 				int height = rs.getInt("Orientation.Height");
 				int width = rs.getInt("Orientation.Width");
 				int rotation = rs.getInt("Orientation.Rotation");
 				int x = rs.getInt("Orientation.x");
 				int y = rs.getInt("Orientation.y");
-				int r = rs.getInt("Orientation.r");
-				int g = rs.getInt("Orientation.g");
-				int b = rs.getInt("Orientation.b");
+				String color = rs.getString("Orientation.color");
 				
 				
 				//loop through env recentlyChangedOldSenses and recentlyAddedSenses (if not found in the first one) to find the match
@@ -39,10 +38,10 @@ public class GetSenseAssociatedWithActivity {
 				List<Integer> rcos = envIn.abstractEnv.recentlyChangedOldSenses;
 				for (int i = 0; i < rcos.size(); i++) {
 					Sense currPotMatch = envIn.abstractEnv.senses.get(rcos.get(i));
+					PixelColorRange currPCR = new PixelColorRange(currPotMatch.orientation.color);
 					if (currPotMatch.orientation.height == height && currPotMatch.orientation.width == width 
 							&& currPotMatch.orientation.rotation == rotation && currPotMatch.orientation.position.x == x 
-							&& currPotMatch.orientation.position.y == y && currPotMatch.orientation.color.getRed() == r 
-							&& currPotMatch.orientation.color.getBlue() == b && currPotMatch.orientation.color.getGreen() == g) {
+							&& currPotMatch.orientation.position.y == y && currPCR.color.equals(color)) {
 						output = currPotMatch;
 						break;
 					}
@@ -50,12 +49,12 @@ public class GetSenseAssociatedWithActivity {
 				
 				if (output == null) {
 					List<Sense> ras = envIn.abstractEnv.recentlyAddedSenses;
-					for (int i = 0; i < rcos.size(); i++) {
+					for (int i = 0; i < ras.size(); i++) {
 						Sense currPotMatch = ras.get(i);
+						PixelColorRange currPCR = new PixelColorRange(currPotMatch.orientation.color);
 						if (currPotMatch.orientation.height == height && currPotMatch.orientation.width == width 
 								&& currPotMatch.orientation.rotation == rotation && currPotMatch.orientation.position.x == x 
-								&& currPotMatch.orientation.position.y == y && currPotMatch.orientation.color.getRed() == r 
-								&& currPotMatch.orientation.color.getBlue() == b && currPotMatch.orientation.color.getGreen() == g) {
+								&& currPotMatch.orientation.position.y == y && currPCR.color.equals(color)) {
 							output = currPotMatch;
 							break;
 						}
@@ -66,10 +65,10 @@ public class GetSenseAssociatedWithActivity {
 					List<Sense> senses = envIn.abstractEnv.senses;
 					for (int i = 0; i < senses.size(); i++) {
 						Sense currPotMatch = senses.get(i);
+						PixelColorRange currPCR = new PixelColorRange(currPotMatch.orientation.color);
 						if (currPotMatch.orientation.height == height && currPotMatch.orientation.width == width 
 								&& currPotMatch.orientation.rotation == rotation && currPotMatch.orientation.position.x == x 
-								&& currPotMatch.orientation.position.y == y && currPotMatch.orientation.color.getRed() == r 
-								&& currPotMatch.orientation.color.getBlue() == b && currPotMatch.orientation.color.getGreen() == g) {
+								&& currPotMatch.orientation.position.y == y && currPCR.color.equals(color)) {
 							output = currPotMatch;
 							break;
 						}
