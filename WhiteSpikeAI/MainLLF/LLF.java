@@ -52,7 +52,7 @@ public class LLF {
 				try {
 					Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 					Statement myState = myConnection.createStatement();
-					String sqlCommand = "UPDATE Activity SET SubActivities=\"" + activitiesToTryQueue.get(0) + "\" SolvedStatus=1 numOfSolveAttempts=numOfSolveAttempts + 1 WHERE id=" + currentActivityToSolveID + ";";
+					String sqlCommand = "UPDATE Activity SET SubActivities=\"" + activitiesToTryQueue.get(0) + "\", SolvedStatus=1, numOfSolveAttempts=numOfSolveAttempts + 1 WHERE id=" + currentActivityToSolveID + ";";
 					myState.execute(sqlCommand);
 				} catch (Exception e) {
 					
