@@ -42,8 +42,9 @@ public class RemoveOldSensesFromEnv {
 				boolean flag2 = true;
 				for (int l = 0; l < overlappingSenses.size(); l++) {
 					Sense currOvSense2 = overlappingSenses.get(l);
-					if (currOvSense2.blob.pixels.containsAll(currSense.blob.pixels) && !currOvSense2.blob.pixels.equals(currSense.blob.pixels)) {
-						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currSense.dbId, oldEnvIn);
+					if (currOvSense2.blob.pixels.containsAll(currSense.blob.pixels) && !currOvSense2.blob.pixels.equals(currSense.blob.pixels)) {	
+						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currOvSense2.dbId, oldEnvIn);
+						UpdateSenseToBeSenseIn.update(currSense, currOvSense2, oldEnvIn);
 						oldEnvIn.abstractEnv.senses.remove(currSense);
 						flag2 = false;
 					}

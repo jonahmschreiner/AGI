@@ -7,6 +7,7 @@ public class OrientationChanges {
 	public String colorChange;
 	public int xChange;
 	public int yChange;
+	public String defChange;
 	
 	public OrientationChanges() {}
 }
