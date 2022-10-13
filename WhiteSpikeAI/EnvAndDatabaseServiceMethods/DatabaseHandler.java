@@ -88,7 +88,7 @@ public class DatabaseHandler {
 			
 			//insert core action activities
 			Statement CAActivityInsertState = myConnection.createStatement();
-			for (int i = 0; i < 444; i++) {
+			for (int i = 0; i < Constants.numOfCoreActions; i++) {
 				sqlCommand = "INSERT INTO Activity (CoreActivity, SolvedStatus, numOfSolveAttempts) VALUES (" + i + ", 1, NULL);";
 				CAActivityInsertState.addBatch(sqlCommand);
 			}
@@ -255,87 +255,87 @@ public class DatabaseHandler {
 						
 					} catch (Exception e) {
 						//create new activity
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 0, 1);"; //height prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 0, 1, -1);"; //height prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 1, 1);"; //width prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 1, 1, -1);"; //width prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 2, 1);"; //rotation prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 2, 1, -1);"; //rotation prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 3, 1);"; //x prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 3, 1, -1);"; //x prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 4, 1);"; //y prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 4, 1, -1);"; //y prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Red\");"; //color prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Red\", -1);"; //color prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Brown\");"; //color prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Brown\", -1);"; //color prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Orange\");"; //color prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Orange\", -1);"; //color prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Yellow\");"; //color prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Yellow\", -1);"; //color prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Green\");"; //color prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Green\", -1);"; //color prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Teal\");"; //color prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Teal\", -1);"; //color prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Blue\");"; //color prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Blue\", -1);"; //color prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Purple\");"; //color prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Purple\", -1);"; //color prop activity +
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Pink\");"; //color prop activity +
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Pink\", -1);"; //color prop activity +
 						myState.addBatch(sqlCommand);
 						
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 0, -1);"; //height prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 0, -1, -1);"; //height prop activity -
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 1, -1);"; //width prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 1, -1, -1);"; //width prop activity -
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 2, -1);"; //rotation prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 2, -1, -1);"; //rotation prop activity -
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 3, -1);"; //x prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 3, -1, -1);"; //x prop activity -
 						myState.addBatch(sqlCommand);
-						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 4, -1);"; //y prop activity -
+						sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 4, -1, -1);"; //y prop activity -
 						myState.addBatch(sqlCommand);
 						myState.executeBatch();
 					}
 				} catch (Exception e) {
 					//create new activity
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 0, 1);"; //height prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 0, 1, -1);"; //height prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 1, 1);"; //width prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 1, 1, -1);"; //width prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 2, 1);"; //rotation prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 2, 1, -1);"; //rotation prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 3, 1);"; //x prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 3, 1, -1);"; //x prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 4, 1);"; //y prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 4, 1, -1);"; //y prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Red\");"; //color prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Red\", -1);"; //color prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Brown\");"; //color prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Brown\", -1);"; //color prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Orange\");"; //color prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Orange\", -1);"; //color prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Yellow\");"; //color prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Yellow\", -1);"; //color prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Green\");"; //color prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Green\", -1);"; //color prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Teal\");"; //color prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Teal\", -1);"; //color prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Blue\");"; //color prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Blue\", -1);"; //color prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Purple\");"; //color prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Purple\", -1);"; //color prop activity +
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Pink\");"; //color prop activity +
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 5, \"Pink\", -1);"; //color prop activity +
 					myState.addBatch(sqlCommand);
 					
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 0, -1);"; //height prop activity -
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 0, -1, -1);"; //height prop activity -
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 1, -1);"; //width prop activity -
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 1, -1, -1);"; //width prop activity -
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 2, -1);"; //rotation prop activity -
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 2, -1, -1);"; //rotation prop activity -
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 3, -1);"; //x prop activity -
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 3, -1, -1);"; //x prop activity -
 					myState.addBatch(sqlCommand);
-					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 4, -1);"; //y prop activity -
+					sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + EnvId + ", " + (firstSenseId + i) + ", 4, -1, -1);"; //y prop activity -
 					myState.addBatch(sqlCommand);
 					myState.executeBatch();
 				}

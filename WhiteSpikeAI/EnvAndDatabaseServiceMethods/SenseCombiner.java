@@ -19,6 +19,7 @@ import Structure.Sense;
 public class SenseCombiner {
 	public static List<Sense> exec(List<Sense> listIn){
 		List<Sense> sensesOut = new ArrayList<Sense>();
+		try {
 		Map<String, List<Sense>> sensesByColor = getSensesByColorRange(listIn);
 		Iterator<String> iter = sensesByColor.keySet().iterator();
 		
@@ -43,7 +44,9 @@ public class SenseCombiner {
 		} finally {
 			EXEC.shutdown();
 		}
-		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return sensesOut;
 	}
 	
