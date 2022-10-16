@@ -14,6 +14,11 @@ public class DBObjectCountResults {
 	public int envCount = -1;
 	public int activityCount = -1;
 	public int orChangeCount = -1;
+	public int conditionSenseCount = -1;
+	public int conditionSenseDefCount = -1;
+	public int conditionOrientationChangeCount = -1;
+	public int conditionOrientationCount = -1;
+	public int conditionEnvCount = -1;
 	
 	public DBObjectCountResults () {
 		try {
@@ -49,26 +54,66 @@ public class DBObjectCountResults {
 								rs6.next();
 								try {
 									this.orChangeCount = rs6.getInt("total");
+									sqlCommand = "SELECT COUNT(*) as total FROM ConditionOrientationChange";
+									ResultSet rs7 = myState.executeQuery(sqlCommand);
+									rs7.next();
+									try {
+										this.conditionOrientationChangeCount = rs7.getInt("total");
+										sqlCommand = "SELECT COUNT(*) as total FROM ConditionOrientation";
+										ResultSet rs8 = myState.executeQuery(sqlCommand);
+										rs8.next();
+										try {
+											this.conditionOrientationCount = rs8.getInt("total");
+											sqlCommand = "SELECT COUNT(*) as total FROM ConditionSenseDefinition";
+											ResultSet rs9 = myState.executeQuery(sqlCommand);
+											rs9.next();
+											try {
+												this.conditionSenseDefCount = rs9.getInt("total");
+												sqlCommand = "SELECT COUNT(*) as total FROM ConditionSense";
+												ResultSet rs10 = myState.executeQuery(sqlCommand);
+												rs10.next();
+												try {
+													this.conditionSenseCount = rs10.getInt("total");
+													sqlCommand = "SELECT COUNT(*) as total FROM ConditionEnv";
+													ResultSet rs11 = myState.executeQuery(sqlCommand);
+													rs11.next();
+													try {
+														this.conditionEnvCount = rs11.getInt("total");
+													} catch (Exception e) {
+														e.printStackTrace();
+													}
+												} catch (Exception e) {
+													e.printStackTrace();
+												}
+											} catch (Exception e) {
+												e.printStackTrace();
+											}
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
 								} catch (Exception e) {
-									
+									e.printStackTrace();
 								}
 							} catch (Exception e) {
-								
+								e.printStackTrace();
 							}
 						} catch (Exception e) {
-							
+							e.printStackTrace();
 						}
 					} catch (Exception e) {
-						
+						e.printStackTrace();
 					}
 				} catch (Exception e) {
-					
+					e.printStackTrace();
 				}
 			} catch (Exception e) {
-				
+				e.printStackTrace();
 			}
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 	}
 }

@@ -10,22 +10,35 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import EnvAndDatabaseServiceMethods.CreateDeepCopyOfEnv;
 import EnvAndDatabaseServiceMethods.DatabaseHandler;
 import EnvAndDatabaseServiceMethods.ExecuteCoreAction;
 import EnvAndDatabaseServiceMethods.UpdateEnv;
+import EnvAndDatabaseServiceMethods.UploadConditionEnvToDB;
 import MainLLF.Constants;
+import Structure.DBObjectCountResults;
 import Structure.Env;
 import Structure.PixelColorRange;
 import Structure.PixelOverallChange;
 import Structure.Sense;
 public class ExecuteActivity {
 	public static Env execByDBId(Env envIn, int activityId) {
+		Env prevEnv = CreateDeepCopyOfEnv.exec(envIn);
 		List<Sense> prevEnvSenses2 = new ArrayList<Sense>();
 		prevEnvSenses2.addAll(envIn.abstractEnv.senses);
 		ResultSet rs = DatabaseHandler.getActivityForExecution(activityId);
+		int propId = -1;
+		int increaseOrDecreaseProp = -1;
+		int coreActivityToExecute = -1;
 		try {
-			rs.next();
-			int coreActivityToExecute = rs.getInt("CoreActivity");
+			rs.next();	
+			try {
+				propId = rs.getInt("PropertyId");
+				increaseOrDecreaseProp = rs.getInt("increaseOrDecreaseProp");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			coreActivityToExecute = rs.getInt("CoreActivity");
 			if (coreActivityToExecute == -1) {
 				throw new Exception();
 			}
@@ -50,7 +63,7 @@ public class ExecuteActivity {
 								Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 								Statement myState = myConnection.createStatement();
 								int conditionEnvDBId = rs.getInt("ConditionEnv");
-								String sqlCommand = "SELECT Senses FROM Env WHERE id=" + conditionEnvDBId + ";";
+								String sqlCommand = "SELECT Senses FROM ConditionEnv WHERE id=" + conditionEnvDBId + ";";
 								ResultSet rs2 = myState.executeQuery(sqlCommand);
 								rs2.next();
 								String senseIdString = rs2.getString("Senses");
@@ -63,22 +76,22 @@ public class ExecuteActivity {
 									}
 								}
 								inString = inString + ")";
-								sqlCommand = "SELECT SenseDefinition.Definition, Orientation.Height, Orientation.Width, Orientation.Rotation, Orientation.x, Orientation.y, Orientation.color FROM Sense INNER JOIN Orientation ON Sense.Orientation=Orientation.id INNER JOIN SenseDefinition ON Sense.SenseDefinition=SenseDefinition.id WHERE Sense.id IN" + inString + ";";
+								sqlCommand = "SELECT ConditionSenseDefinition.Definition, ConditionOrientation.Height, ConditionOrientation.Width, ConditionOrientation.Rotation, ConditionOrientation.x, ConditionOrientation.y, ConditionOrientation.color FROM ConditionSense INNER JOIN ConditionOrientation ON ConditionSense.ConditionOrientation=ConditionOrientation.id INNER JOIN ConditionSenseDefinition ON ConditionSense.ConditionSenseDefinition=ConditionSenseDefinition.id WHERE ConditionSense.id IN" + inString + ";";
 								ResultSet rs3 = myState.executeQuery(sqlCommand);
 								List<Sense> conditionEnvSenses = new ArrayList<Sense>();
 								while (true) {
 									try {
 										rs3.next();
 										Sense newSense = new Sense();
-										newSense.orientation.height = rs3.getInt("Orientation.Height");
-										newSense.orientation.width = rs3.getInt("Orientation.Width");
-										newSense.orientation.rotation = rs3.getInt("Orientation.Rotation");
-										newSense.orientation.position.x = rs3.getInt("Orientation.x");
-										newSense.orientation.position.y = rs3.getInt("Orientation.y");
-										Color color = createColorFromRange(rs3.getString("Orientation.color"));
+										newSense.orientation.height = rs3.getInt("ConditionOrientation.Height");
+										newSense.orientation.width = rs3.getInt("ConditionOrientation.Width");
+										newSense.orientation.rotation = rs3.getInt("ConditionOrientation.Rotation");
+										newSense.orientation.position.x = rs3.getInt("ConditionOrientation.x");
+										newSense.orientation.position.y = rs3.getInt("ConditionOrientation.y");
+										Color color = createColorFromRange(rs3.getString("ConditionOrientation.color"));
 										newSense.orientation.color = color;
 										List<PixelOverallChange> pocs = new ArrayList<PixelOverallChange>();
-										String[] changeDefValues = rs3.getString("SenseDefinition.Definition").split(";");
+										String[] changeDefValues = rs3.getString("ConditionSenseDefinition.Definition").split(";");
 										for (int z = 0; z < changeDefValues.length; z++) {
 											pocs.add(new PixelOverallChange(changeDefValues[z]));
 										}
@@ -122,17 +135,25 @@ public class ExecuteActivity {
 									conditionSensesString = conditionSensesString + newConditionEnv.abstractEnv.senses.get(l).dbId + " ";
 								}
 								//replace ConditionEnv in db for this activity with the new ConditionEnv
-								DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
-								LocalDateTime localDate = LocalDateTime.now();
-								String timestamp = dtf.format(localDate);
-								sqlCommand = "UPDATE Activity INNER JOIN Env ON Activity.Env=Env.id SET Env.Senses=" + conditionSensesString + "Env.CpuUsage=" + newConditionEnv.rawEnv.currentCpuUsage + "Env.CreationDateTime=\"" + timestamp + "\" WHERE Activity.id=" + activityId + ";";
+								sqlCommand = "UPDATE Activity INNER JOIN ConditionEnv ON Activity.ConditionEnv=ConditionEnv.id SET ConditionEnv.Senses=\"" + conditionSensesString + "\" WHERE Activity.id=" + activityId + ";";
+								myState.execute(sqlCommand);
 							} catch (Exception f) {
-								
+								f.printStackTrace();
 							}
 
 						} else { //activity solution didn't work
 							//create new activity that does the same sense prop change but with the current Env as the condition env
-							DatabaseHandler.uploadEnvToDatabase(envIn);
+							UploadConditionEnvToDB.exec(envIn);
+							DBObjectCountResults dbocr = new DBObjectCountResults();
+							String sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + s.dbId + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
+							try {
+								Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
+								Statement myState = myConnection.createStatement();
+								myState.execute(sqlCommand);
+							} catch (Exception f) {
+								f.printStackTrace();
+							}
+							
 						}
 					}		
 				}
@@ -146,7 +167,7 @@ public class ExecuteActivity {
 							Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 							Statement myState = myConnection.createStatement();
 							int conditionEnvDBId = rs.getInt("ConditionEnv");
-							String sqlCommand = "SELECT Senses FROM Env WHERE id=" + conditionEnvDBId + ";";
+							String sqlCommand = "SELECT Senses FROM ConditionEnv WHERE id=" + conditionEnvDBId + ";";
 							ResultSet rs2 = myState.executeQuery(sqlCommand);
 							rs2.next();
 							String senseIdString = rs2.getString("Senses");
@@ -159,7 +180,7 @@ public class ExecuteActivity {
 								}
 							}
 							inString = inString + ")";
-							sqlCommand = "SELECT SenseDefinition.Definition, Orientation.Height, Orientation.Width, Orientation.Rotation, Orientation.x, Orientation.y, Orientation.color FROM Sense INNER JOIN Orientation ON Sense.Orientation=Orientation.id INNER JOIN SenseDefinition ON Sense.SenseDefinition=SenseDefinition.id WHERE Sense.id IN" + inString + ";";
+							sqlCommand = "SELECT ConditionSenseDefinition.Definition, ConditionOrientation.Height, ConditionOrientation.Width, ConditionOrientation.Rotation, ConditionOrientation.x, ConditionOrientation.y, ConditionOrientation.color FROM ConditionSense INNER JOIN ConditionOrientation ON ConditionSense.ConditionOrientation=ConditionOrientation.id INNER JOIN ConditionSenseDefinition ON ConditionSense.ConditionSenseDefinition=ConditionSenseDefinition.id WHERE ConditionSense.id IN" + inString + ";";
 							ResultSet rs3 = myState.executeQuery(sqlCommand);
 							List<Sense> conditionEnvSenses = new ArrayList<Sense>();
 							while (true) {
@@ -174,7 +195,7 @@ public class ExecuteActivity {
 									Color color = createColorFromRange(rs3.getString("Orientation.color"));
 									newSense.orientation.color = color;
 									List<PixelOverallChange> pocs = new ArrayList<PixelOverallChange>();
-									String[] changeDefValues = rs3.getString("SenseDefinition.Definition").split(";");
+									String[] changeDefValues = rs3.getString("ConditionSenseDefinition.Definition").split(";");
 									for (int z = 0; z < changeDefValues.length; z++) {
 										pocs.add(new PixelOverallChange(changeDefValues[z]));
 									}
@@ -219,17 +240,24 @@ public class ExecuteActivity {
 								conditionSensesString = conditionSensesString + newConditionEnv.abstractEnv.senses.get(l).dbId + " ";
 							}
 							//replace ConditionEnv in db for this activity with the new ConditionEnv
-							DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
-							LocalDateTime localDate = LocalDateTime.now();
-							String timestamp = dtf.format(localDate);
-							sqlCommand = "UPDATE Activity INNER JOIN Env ON Activity.Env=Env.id SET Env.Senses=" + conditionSensesString + "Env.CpuUsage=" + newConditionEnv.rawEnv.currentCpuUsage + "Env.CreationDateTime=\"" + timestamp + "\" WHERE Activity.id=" + activityId + ";";
+							sqlCommand = "UPDATE Activity INNER JOIN ConditionEnv ON Activity.ConditionEnv=ConditionEnv.id SET ConditionEnv.Senses=\"" + conditionSensesString + "\" WHERE Activity.id=" + activityId + ";";
+							myState.execute(sqlCommand);
 						} catch (Exception f) {
 							f.printStackTrace();
 						}
 
 					} else { //activity solution didn't work
 						//create new activity that does the same sense prop change but with the current Env as the condition env
-						DatabaseHandler.uploadEnvToDatabase(envIn);
+						prevEnv = UploadConditionEnvToDB.exec(prevEnv);
+						DBObjectCountResults dbocr = new DBObjectCountResults();
+						String sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + s.dbId + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
+						try {
+							Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
+							Statement myState = myConnection.createStatement();
+							myState.execute(sqlCommand);
+						} catch (Exception f) {
+							f.printStackTrace();
+						}
 					}
 				}	
 				

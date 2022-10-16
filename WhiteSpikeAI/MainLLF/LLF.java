@@ -12,8 +12,10 @@ import ActivitySolverServiceMethods.SetUpActionQueueIfNecessary;
 import ActivitySolverServiceMethods.SetUpActivitiesToSolveQueueIfNecessary;
 import ActivitySolverServiceMethods.SetUpActivitiesToTryQueueIfNecessary;
 import ActivitySolverServiceMethods.GetSenseAssociatedWithActivity;
+import EnvAndDatabaseServiceMethods.CreateDeepCopyOfEnv;
 import EnvAndDatabaseServiceMethods.DatabaseHandler;
 import EnvAndDatabaseServiceMethods.UpdateEnv;
+import EnvAndDatabaseServiceMethods.UploadConditionEnvToDB;
 import EnvAndDatabaseServiceMethods.VisuallyWalkThroughEnv;
 import Structure.Env;
 import Structure.Sense;
@@ -35,6 +37,9 @@ public class LLF {
 			System.out.println("activities to try set up if necessary");
 			actionQueue = SetUpActionQueueIfNecessary.setup(actionQueue, activitiesToTryQueue);
 			System.out.println("action queue set up if necessary");
+			
+			Env conditionEnv = CreateDeepCopyOfEnv.exec(env);
+			
 			while (actionQueue.size() > 0) {
 				env = ExecuteActivity.execByDBId(env, actionQueue.get(0));
 				actionQueue.remove(0);
@@ -52,7 +57,10 @@ public class LLF {
 				try {
 					Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 					Statement myState = myConnection.createStatement();
-					String sqlCommand = "UPDATE Activity SET SubActivities=\"" + activitiesToTryQueue.get(0) + "\", SolvedStatus=1, numOfSolveAttempts=numOfSolveAttempts + 1 WHERE id=" + currentActivityToSolveID + ";";
+					
+					conditionEnv = UploadConditionEnvToDB.exec(conditionEnv);
+					
+					String sqlCommand = "UPDATE Activity SET ConditionEnv=" + conditionEnv.dbId + ", SubActivities=\"" + activitiesToTryQueue.get(0) + "\", SolvedStatus=1, numOfSolveAttempts=numOfSolveAttempts + 1 WHERE id=" + currentActivityToSolveID + ";";
 					myState.execute(sqlCommand);
 				} catch (Exception e) {
 					

@@ -82,7 +82,17 @@ public class DatabaseHandler {
 			myState.addBatch(sqlCommand);
 			sqlCommand = "CREATE TABLE IF NOT EXISTS Sense (id INT PRIMARY KEY AUTO_INCREMENT, Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, OrientationChange INT, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (OrientationChange) REFERENCES OrientationChange(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id));";
 			myState.addBatch(sqlCommand);
-			sqlCommand = "CREATE TABLE IF NOT EXISTS Activity (id INT PRIMARY KEY AUTO_INCREMENT, CoreActivity INT, ConditionEnv INT, AssociatedSense INT, PropertyId INT, SubActivities TEXT, SolvedStatus INT DEFAULT 0, numOfSolveAttempts INT DEFAULT 0, increaseOrDecreaseProp TEXT, CONSTRAINT FOREIGN KEY (ConditionEnv) REFERENCES Env(id), CONSTRAINT FOREIGN KEY (AssociatedSense) REFERENCES Sense(id));";
+			sqlCommand = "CREATE TABLE IF NOT EXISTS Activity (id INT PRIMARY KEY AUTO_INCREMENT, CoreActivity INT, ConditionEnv INT, AssociatedSense INT, PropertyId INT, SubActivities TEXT, SolvedStatus INT DEFAULT 0, numOfSolveAttempts INT DEFAULT 0, increaseOrDecreaseProp TEXT, CONSTRAINT FOREIGN KEY (AssociatedSense) REFERENCES Sense(id));";
+			myState.addBatch(sqlCommand);
+			sqlCommand = "CREATE TABLE IF NOT EXISTS ConditionSenseDefinition (id INT PRIMARY KEY AUTO_INCREMENT, Definition TEXT);";
+			myState.addBatch(sqlCommand);
+			sqlCommand = "CREATE TABLE IF NOT EXISTS ConditionOrientation (id INT PRIMARY KEY AUTO_INCREMENT, Height INT, Width INT, Rotation DOUBLE, x INT, y INT, color TEXT);";
+			myState.addBatch(sqlCommand);
+			sqlCommand = "CREATE TABLE IF NOT EXISTS ConditionOrientationChange (id INT PRIMARY KEY AUTO_INCREMENT, HeightChange INT, WidthChange INT, RotationChange DOUBLE, xChange INT, yChange INT, colorChange TEXT, defChange TEXT);";
+			myState.addBatch(sqlCommand);
+			sqlCommand = "CREATE TABLE IF NOT EXISTS ConditionEnv (id INT PRIMARY KEY AUTO_INCREMENT, Senses TEXT, CpuUsage DOUBLE, CreationDateTime DATETIME);";
+			myState.addBatch(sqlCommand);
+			sqlCommand = "CREATE TABLE IF NOT EXISTS ConditionSense (id INT PRIMARY KEY AUTO_INCREMENT, ConditionEnv INT NOT NULL, ConditionSenseDefinition INT NOT NULL, ConditionOrientation INT NOT NULL, ConditionOrientationChange INT, CONSTRAINT FOREIGN KEY (ConditionOrientation) REFERENCES ConditionOrientation(id), CONSTRAINT FOREIGN KEY (ConditionOrientationChange) REFERENCES OrientationChange(id), CONSTRAINT FOREIGN KEY (ConditionSenseDefinition) REFERENCES ConditionSenseDefinition(id), CONSTRAINT FOREIGN KEY (ConditionEnv) REFERENCES ConditionEnv(id));";
 			myState.addBatch(sqlCommand);
 			myState.executeBatch();
 			
@@ -117,7 +127,7 @@ public class DatabaseHandler {
 			String sqlCommand = "SELECT COUNT(*) AS total FROM information_schema.tables WHERE TABLE_SCHEMA = 'whitespikeai';";
 			ResultSet rs = myState.executeQuery(sqlCommand);
 			rs.next();
-			if (rs.getInt("total") == 6) {
+			if (rs.getInt("total") == 11) {
 				output = false;
 			}
 		} catch (Exception e) {
@@ -204,10 +214,11 @@ public class DatabaseHandler {
 				} catch (Exception e) {
 					
 				}
-				sqlCommand = "INSERT INTO OrientationChange (HeightChange, WidthChange, RotationChange, xChange, yChange, colorChange) VALUES (" + currentSense.orientationChanges.heightChange + ", " + currentSense.orientationChanges.widthChange + ", " + currentSense.orientationChanges.rotationChange + ", " + currentSense.orientationChanges.xChange + ", " + currentSense.orientationChanges.yChange + ", " + currentSense.orientationChanges.colorChange +");";
+				sqlCommand = "INSERT INTO OrientationChange (HeightChange, WidthChange, RotationChange, xChange, yChange, defChange, colorChange) VALUES (" + currentSense.orientationChanges.heightChange + ", " + currentSense.orientationChanges.widthChange + ", " + currentSense.orientationChanges.rotationChange + ", " + currentSense.orientationChanges.xChange + ", " + currentSense.orientationChanges.yChange + ", \"" + currentSense.orientationChanges.defChange + "\", \"" + currentSense.orientationChanges.colorChange +"\");";
 				myState.execute(sqlCommand);
-				PixelColorRange pcr = new PixelColorRange(currentSense.orientation.color);
+				
 				//Activity
+				PixelColorRange pcr = new PixelColorRange(currentSense.orientation.color);
 				sqlCommand = "SELECT Sense.id FROM Sense INNER JOIN Orientation ON SenseDefinition=" + matchingSenseDefId + " AND Orientation.id = Sense.Orientation" + " AND Orientation.Height=" + currentSense.orientation.height + " AND Orientation.Width=" + currentSense.orientation.width + " AND Orientation.Rotation=" + currentSense.orientation.rotation + " AND Orientation.color=\"" + pcr.color + "\" LIMIT 1;";
 				//SELECT Sense.id, Height FROM Sense LEFT JOIN Orientation ON Sense.Orientation = Orientation.Height AND Sense.SenseDefinition = 1;
 				ResultSet activityRS = myState.executeQuery(sqlCommand);				
@@ -384,7 +395,7 @@ public class DatabaseHandler {
 		try {
 			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
-			String sqlCommand = "SELECT CoreActivity, SubActivities, ConditionEnv FROM Activity WHERE id=" + idIn + ";";
+			String sqlCommand = "SELECT CoreActivity, SubActivities, ConditionEnv, PropertyId, increaseOrDecreaseProp FROM Activity WHERE id=" + idIn + ";";
 			output = myState.executeQuery(sqlCommand);
 		} catch (Exception e) {
 			
