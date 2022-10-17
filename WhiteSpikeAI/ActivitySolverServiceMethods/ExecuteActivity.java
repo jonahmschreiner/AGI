@@ -50,7 +50,7 @@ public class ExecuteActivity {
 				for (int i = 0; i < arrayOfSubActivityStrings.length; i++) {
 					String currStr = arrayOfSubActivityStrings[i];
 					int currActivityId = Integer.valueOf(currStr);
-					ExecuteActivity.execByDBId(envIn, currActivityId);
+					envIn = ExecuteActivity.execByDBId(envIn, currActivityId);
 					//insert activity-worked-checking and environment-closing here
 					List<Sense> prevEnvSenses = new ArrayList<Sense>();
 					prevEnvSenses.addAll(envIn.abstractEnv.senses);
@@ -187,12 +187,12 @@ public class ExecuteActivity {
 								try {
 									rs3.next();
 									Sense newSense = new Sense();
-									newSense.orientation.height = rs3.getInt("Orientation.Height");
-									newSense.orientation.width = rs3.getInt("Orientation.Width");
-									newSense.orientation.rotation = rs3.getInt("Orientation.Rotation");
-									newSense.orientation.position.x = rs3.getInt("Orientation.x");
-									newSense.orientation.position.y = rs3.getInt("Orientation.y");
-									Color color = createColorFromRange(rs3.getString("Orientation.color"));
+									newSense.orientation.height = rs3.getInt("ConditionOrientation.Height");
+									newSense.orientation.width = rs3.getInt("ConditionOrientation.Width");
+									newSense.orientation.rotation = rs3.getInt("ConditionOrientation.Rotation");
+									newSense.orientation.position.x = rs3.getInt("ConditionOrientation.x");
+									newSense.orientation.position.y = rs3.getInt("ConditionOrientation.y");
+									Color color = createColorFromRange(rs3.getString("ConditionOrientation.color"));
 									newSense.orientation.color = color;
 									List<PixelOverallChange> pocs = new ArrayList<PixelOverallChange>();
 									String[] changeDefValues = rs3.getString("ConditionSenseDefinition.Definition").split(";");
@@ -203,6 +203,7 @@ public class ExecuteActivity {
 									
 									conditionEnvSenses.add(newSense);
 								} catch (Exception g) {
+									g.printStackTrace();
 									break;
 								}
 							}

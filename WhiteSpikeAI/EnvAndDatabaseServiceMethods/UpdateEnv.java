@@ -13,6 +13,8 @@ import Structure.Sense;
 import EnvAndDatabaseServiceMethods.ChangedPixelsToBlobs;
 public class UpdateEnv {
 	public static Env update(Env envIn) {
+		envIn.abstractEnv.recentlyChangedOldSenses.clear();
+		envIn.abstractEnv.recentlyAddedSenses.clear();
 		Env newEnv = new Env(0);
 		newEnv.rawEnv = newEnv.senseRawEnv();
 		BufferedImage newImage = newEnv.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50);
@@ -38,6 +40,7 @@ public class UpdateEnv {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		VisualOutputOfSensesFromSensesAndImage.execute(envIn.abstractEnv.senses, envIn.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50), "output2");
 		
 		return envIn;
 	}

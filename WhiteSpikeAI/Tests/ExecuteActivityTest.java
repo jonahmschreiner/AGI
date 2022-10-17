@@ -5,7 +5,10 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 
 import ActivitySolverServiceMethods.ExecuteActivity;
+import EnvAndDatabaseServiceMethods.CreateDeepCopyOfEnv;
 import EnvAndDatabaseServiceMethods.DatabaseHandler;
+import EnvAndDatabaseServiceMethods.UpdateEnv;
+import EnvAndDatabaseServiceMethods.UploadConditionEnvToDB;
 import EnvAndDatabaseServiceMethods.Util;
 import MainLLF.Constants;
 import Structure.DBObjectCountResults;
@@ -19,12 +22,14 @@ public class ExecuteActivityTest {
 						
 		Env env = new Env();
 		DatabaseHandler.uploadEnvToDatabase(env);
-		
+		Env conditionEnv = CreateDeepCopyOfEnv.exec(env);
+		conditionEnv = UploadConditionEnvToDB.exec(conditionEnv);
+		env = UpdateEnv.update(env);
 		//49, 48
 		try {
 			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
-			String sqlCommand = "INSERT INTO Activity (ConditionEnv, CoreActivity, SubActivities, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + env.dbId + ", -1, \"48 49\", 1, 3, 1);";
+			String sqlCommand = "INSERT INTO Activity (ConditionEnv, CoreActivity, SubActivities, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + conditionEnv.dbId + ", -1, \"48 49\", 2, 3, 1);"; //goal: increase sense 1's x pos
 			myState.execute(sqlCommand);
 		} catch (Exception e) {
 			e.printStackTrace();

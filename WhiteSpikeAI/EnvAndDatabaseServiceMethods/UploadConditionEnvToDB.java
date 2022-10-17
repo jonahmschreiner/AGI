@@ -91,6 +91,10 @@ public class UploadConditionEnvToDB {
 				
 				
 				//Orientation Change
+				if (currentSense.orientationChanges.colorChange == null) {
+					currentSense.orientationChanges.colorChange = "null";
+				}
+				
 				sqlCommand = "SELECT * FROM ConditionOrientationChange WHERE HeightChange=" + currentSense.orientationChanges.heightChange + " AND WidthChange=" + currentSense.orientationChanges.widthChange + " AND RotationChange=" + currentSense.orientationChanges.rotationChange + " AND xChange=" + currentSense.orientationChanges.xChange + " AND yChange=" + currentSense.orientationChanges.yChange + " AND defChange=\"" + currentSense.orientationChanges.defChange + "\" AND colorChange=\"" + currentSense.orientationChanges.colorChange + "\";";
 				ResultSet indQueryOChangeRS = myState.executeQuery(sqlCommand);
 				indQueryOChangeRS.next();

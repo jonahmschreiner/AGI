@@ -22,7 +22,10 @@ public class SenseCombiner {
 		try {
 		Map<String, List<Sense>> sensesByColor = getSensesByColorRange(listIn);
 		Iterator<String> iter = sensesByColor.keySet().iterator();
-		
+		if (sensesByColor.size() < 1) {
+			System.out.println();
+			return sensesOut;
+		}
 		ExecutorService EXEC = Executors.newFixedThreadPool(sensesByColor.size());
 		List<SenseParallelCombiner> tasks = new ArrayList<SenseParallelCombiner>();
 		for (int i = 0; i < sensesByColor.size(); i++) {
