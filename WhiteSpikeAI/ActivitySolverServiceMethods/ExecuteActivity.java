@@ -203,7 +203,7 @@ public class ExecuteActivity {
 									
 									conditionEnvSenses.add(newSense);
 								} catch (Exception g) {
-									g.printStackTrace();
+
 									break;
 								}
 							}
