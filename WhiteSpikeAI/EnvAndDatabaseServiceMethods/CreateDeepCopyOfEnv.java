@@ -12,6 +12,7 @@ public class CreateDeepCopyOfEnv {
 		output.abstractEnv.senses.addAll(envIn.abstractEnv.senses);
 		output.rawEnv.currentCpuUsage = envIn.rawEnv.currentCpuUsage;
 		output.rawEnv.currentDisplay = envIn.rawEnv.currentDisplay;
+		output.rawEnv.mouseLocation = envIn.rawEnv.mouseLocation;
 		output.abstractEnv.recentlyAddedSenses = new ArrayList<Sense>();
 		output.abstractEnv.recentlyAddedSenses.addAll(envIn.abstractEnv.recentlyAddedSenses);
 		output.abstractEnv.recentlyChangedOldSenses = new ArrayList<Integer>();

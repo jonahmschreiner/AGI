@@ -51,7 +51,7 @@ public class LLF {
 			System.out.println("sense associated with activity gotten");
 			//check if activity was solved and clear ActivityToTryQueue and ActionQueue if so and update the solved's db entry
 			boolean solved = false;
-			if (CheckIfActivityWasSolved.execute(s, currentActivityToSolveID)) {
+			if (CheckIfActivityWasSolved.execute(s, currentActivityToSolveID, env)) {
 
 				//update the solved's db entry
 				try {

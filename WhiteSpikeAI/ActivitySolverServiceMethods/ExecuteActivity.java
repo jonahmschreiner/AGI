@@ -5,8 +5,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +59,7 @@ public class ExecuteActivity {
 					envIn = UpdateEnv.update(envIn);
 					if (currActivityId > Constants.numOfCoreActions) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
 						Sense s = GetSenseAssociatedWithActivity.execute(envIn, currActivityId);
-						if (CheckIfActivityWasSolved.execute(s, currActivityId)) { //activity solution worked
+						if (CheckIfActivityWasSolved.execute(s, currActivityId, envIn)) { //activity solution worked
 							//create and assign condition env that only contains elements that are common to existing condition env and the current env where it just worked
 							try {
 								Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
@@ -108,7 +106,25 @@ public class ExecuteActivity {
 								}
 								//for each sense in current Env, check to see if the current sense has the same values as any result in the condition env results and if so adds them to a condition env
 								Env newConditionEnv = new Env(0);
-								newConditionEnv.rawEnv.currentCpuUsage = envIn.rawEnv.currentCpuUsage;
+								//raw env closing
+								if (prevEnv.rawEnv.currentCpuUsage.compareTo(envIn.rawEnv.currentCpuUsage) == 0) {
+									newConditionEnv.rawEnv.currentCpuUsage = envIn.rawEnv.currentCpuUsage;
+								} else {
+									newConditionEnv.rawEnv.currentCpuUsage = -1.0;
+								}
+								
+								if (prevEnv.rawEnv.mouseLocation.x == envIn.rawEnv.mouseLocation.x) {
+									newConditionEnv.rawEnv.mouseLocation.x = envIn.rawEnv.mouseLocation.x;
+								} else {
+									newConditionEnv.rawEnv.mouseLocation.x = -1;
+								}
+								
+								if (prevEnv.rawEnv.mouseLocation.y == envIn.rawEnv.mouseLocation.y) {
+									newConditionEnv.rawEnv.mouseLocation.y = envIn.rawEnv.mouseLocation.y;
+								} else {
+									newConditionEnv.rawEnv.mouseLocation.y = -1;
+								}
+								
 								newConditionEnv.rawEnv.currentDisplay = envIn.rawEnv.currentDisplay;
 								currPrevEnv.abstractEnv.recentlyAddedSenses.clear();
 								currPrevEnv.abstractEnv.recentlyChangedOldSenses.clear();
@@ -118,7 +134,7 @@ public class ExecuteActivity {
 								currPrevEnv = UpdateSenses.update(conditionEnvSenses, currPrevEnv, false); 
 								
 								
-								//TODO recentlyChangedOldSenses should contain the indexes of the existing db conditionEnv senses that are present in this condition env
+								//recentlyChangedOldSenses should contain the indexes of the existing db conditionEnv senses that are present in this condition env
 								//loop through them and compare to currPrevEnv.abstractEnv.senses. any differences make that property irrelevant
 								
 								
@@ -192,7 +208,7 @@ public class ExecuteActivity {
 //									}
 //								}
 								
-								//create senses string TODO adjust this to handle the property closing down
+								//create senses string adjust this to handle the property closing down
 								
 								//
 								newConditionEnv = UploadConditionEnvToDB.exec(newConditionEnv);
@@ -230,7 +246,7 @@ public class ExecuteActivity {
 				//attempt to close down current activity's condition env
 				if (activityId > Constants.numOfCoreActions) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
 					Sense s = GetSenseAssociatedWithActivity.execute(envIn, activityId);
-					if (CheckIfActivityWasSolved.execute(s, activityId)) { //activity solution worked
+					if (CheckIfActivityWasSolved.execute(s, activityId, envIn)) { //activity solution worked
 						//create and assign condition env that only contains elements that are common to existing condition env and the current env where it just worked
 						try {
 							Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
@@ -284,6 +300,18 @@ public class ExecuteActivity {
 								newConditionEnv.rawEnv.currentCpuUsage = envIn.rawEnv.currentCpuUsage;
 							} else {
 								newConditionEnv.rawEnv.currentCpuUsage = -1.0;
+							}
+							
+							if (prevEnv.rawEnv.mouseLocation.x == envIn.rawEnv.mouseLocation.x) {
+								newConditionEnv.rawEnv.mouseLocation.x = envIn.rawEnv.mouseLocation.x;
+							} else {
+								newConditionEnv.rawEnv.mouseLocation.x = -1;
+							}
+							
+							if (prevEnv.rawEnv.mouseLocation.y == envIn.rawEnv.mouseLocation.y) {
+								newConditionEnv.rawEnv.mouseLocation.y = envIn.rawEnv.mouseLocation.y;
+							} else {
+								newConditionEnv.rawEnv.mouseLocation.y = -1;
 							}
 							
 							newConditionEnv.rawEnv.currentDisplay = envIn.rawEnv.currentDisplay;

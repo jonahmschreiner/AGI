@@ -1,5 +1,6 @@
 package Structure;
 
+import java.awt.MouseInfo;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
@@ -39,7 +40,7 @@ public class Env {
 		
 		public void senseEnv() {
 			//long rawEnvStart = System.currentTimeMillis();
-			this.rawEnv = senseRawEnv();
+			this.rawEnv = senseRawEnv(this);
 			//long rawEnvEnd = System.currentTimeMillis();
 			//System.out.println("Total Raw Env Creation Time: " + (rawEnvEnd-rawEnvStart));
 			
@@ -49,7 +50,7 @@ public class Env {
 			//System.out.println("Total Abstract Env Creation Time: " + (abstractEnvEnd-abstractEnvStart));
 		}
 		
-		public RawEnv senseRawEnv() {
+		public RawEnv senseRawEnv(Env envIn) {
 			RawEnv currentRawEnv = new RawEnv();
 			try {
 				currentRawEnv.currentDisplay = getScreenshot();
@@ -57,6 +58,22 @@ public class Env {
 				e.printStackTrace();
 			}
 			currentRawEnv.currentCpuUsage = util.getCurrentCpuUsage();
+			currentRawEnv.mouseLocation = MouseInfo.getPointerInfo().getLocation();
+			if (currentRawEnv.mouseLocation.x > envIn.rawEnv.mouseLocation.x) {
+				currentRawEnv.mouseXChange = 1;
+			} else if (currentRawEnv.mouseLocation.x < envIn.rawEnv.mouseLocation.x) {
+				currentRawEnv.mouseXChange = -1;
+			} else {
+				currentRawEnv.mouseXChange = 0;
+			}
+			
+			if (currentRawEnv.mouseLocation.y > envIn.rawEnv.mouseLocation.y) {
+				currentRawEnv.mouseYChange = 1;
+			} else if (currentRawEnv.mouseLocation.y < envIn.rawEnv.mouseLocation.y) {
+				currentRawEnv.mouseYChange = -1;
+			} else {
+				currentRawEnv.mouseYChange = 0;
+			}
 			this.rawEnv = currentRawEnv;
 			return currentRawEnv;
 		}

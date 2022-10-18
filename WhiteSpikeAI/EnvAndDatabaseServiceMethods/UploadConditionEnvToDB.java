@@ -45,7 +45,7 @@ public class UploadConditionEnvToDB {
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 			LocalDateTime localDate = LocalDateTime.now();
 			String timestamp = dtf.format(localDate);
-			String createEnvSQLCommand = "INSERT INTO ConditionEnv (CpuUsage, CreationDateTime, Senses) VALUES (" + conditionEnvIn.rawEnv.currentCpuUsage +  ", \"" + timestamp + "\", \"";
+			String createEnvSQLCommand = "INSERT INTO ConditionEnv (CpuUsage, MouseX, MouseY, CreationDateTime, Senses) VALUES (" + conditionEnvIn.rawEnv.currentCpuUsage + ", " + conditionEnvIn.rawEnv.mouseLocation.x + ", " + conditionEnvIn.rawEnv.mouseLocation.y +  ", \"" + timestamp + "\", \"";
 			int numOfSenseDefMatches = 0;
 			int numOfOrientationMatches = 0;
 			int numOfOrientationChangeMatches = 0;

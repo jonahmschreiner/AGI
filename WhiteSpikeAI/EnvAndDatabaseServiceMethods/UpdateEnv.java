@@ -16,7 +16,7 @@ public class UpdateEnv {
 		envIn.abstractEnv.recentlyChangedOldSenses.clear();
 		envIn.abstractEnv.recentlyAddedSenses.clear();
 		Env newEnv = new Env(0);
-		newEnv.rawEnv = newEnv.senseRawEnv();
+		newEnv.rawEnv = newEnv.senseRawEnv(envIn);
 		BufferedImage newImage = newEnv.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50);
 		BufferedImage oldImage = envIn.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50);
 		

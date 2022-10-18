@@ -76,11 +76,11 @@ public class GetSenseAssociatedWithActivity {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return output;
 	}
