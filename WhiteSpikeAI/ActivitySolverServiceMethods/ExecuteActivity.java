@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,6 +108,12 @@ public class ExecuteActivity {
 								//for each sense in current Env, check to see if the current sense has the same values as any result in the condition env results and if so adds them to a condition env
 								Env newConditionEnv = new Env(0);
 								//raw env closing
+								if (prevEnv.rawEnv.currentDateTime.equals(envIn.rawEnv.currentDateTime)) {
+									newConditionEnv.rawEnv.currentDateTime = envIn.rawEnv.currentDateTime;
+								} else {
+									newConditionEnv.rawEnv.currentDateTime = LocalDateTime.MIN;
+								}
+								
 								if (prevEnv.rawEnv.currentCpuUsage.compareTo(envIn.rawEnv.currentCpuUsage) == 0) {
 									newConditionEnv.rawEnv.currentCpuUsage = envIn.rawEnv.currentCpuUsage;
 								} else {
@@ -296,6 +303,12 @@ public class ExecuteActivity {
 							//for each sense in current Env, check to see if the current sense has the same values as any result in the condition env results and if so adds them to a condition env
 							Env newConditionEnv = new Env(0);
 							//raw env closing
+							if (prevEnv.rawEnv.currentDateTime.equals(envIn.rawEnv.currentDateTime)) {
+								newConditionEnv.rawEnv.currentDateTime = envIn.rawEnv.currentDateTime;
+							} else {
+								newConditionEnv.rawEnv.currentDateTime = LocalDateTime.MIN;
+							}
+							
 							if (prevEnv.rawEnv.currentCpuUsage.compareTo(envIn.rawEnv.currentCpuUsage) == 0) {
 								newConditionEnv.rawEnv.currentCpuUsage = envIn.rawEnv.currentCpuUsage;
 							} else {

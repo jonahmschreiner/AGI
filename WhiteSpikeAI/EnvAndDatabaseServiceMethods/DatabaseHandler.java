@@ -74,7 +74,7 @@ public class DatabaseHandler {
 			//create tables
 			String sqlCommand = "CREATE TABLE IF NOT EXISTS SenseDefinition (id INT PRIMARY KEY AUTO_INCREMENT, Definition TEXT);";
 			myState.addBatch(sqlCommand);
-			sqlCommand = "CREATE TABLE IF NOT EXISTS Env (id INT PRIMARY KEY AUTO_INCREMENT, Senses TEXT, CpuUsage DOUBLE, MouseX INT, MouseY INT, CreationDateTime DATETIME);";
+			sqlCommand = "CREATE TABLE IF NOT EXISTS Env (id INT PRIMARY KEY AUTO_INCREMENT, Senses TEXT, CurrentDateTime TEXT, CpuUsage DOUBLE, MouseX INT, MouseY INT, CreationDateTime DATETIME);";
 			myState.addBatch(sqlCommand);
 			sqlCommand = "CREATE TABLE IF NOT EXISTS Orientation (id INT PRIMARY KEY AUTO_INCREMENT, Height INT, Width INT, Rotation DOUBLE, x INT, y INT, color TEXT);";
 			myState.addBatch(sqlCommand);
@@ -90,7 +90,7 @@ public class DatabaseHandler {
 			myState.addBatch(sqlCommand);
 			sqlCommand = "CREATE TABLE IF NOT EXISTS ConditionOrientationChange (id INT PRIMARY KEY AUTO_INCREMENT, HeightChange INT, WidthChange INT, RotationChange DOUBLE, xChange INT, yChange INT, colorChange TEXT, defChange TEXT);";
 			myState.addBatch(sqlCommand);
-			sqlCommand = "CREATE TABLE IF NOT EXISTS ConditionEnv (id INT PRIMARY KEY AUTO_INCREMENT, Senses TEXT, CpuUsage DOUBLE, MouseX INT, MouseY INT, CreationDateTime DATETIME);";
+			sqlCommand = "CREATE TABLE IF NOT EXISTS ConditionEnv (id INT PRIMARY KEY AUTO_INCREMENT, Senses TEXT, CurrentDateTime TEXT, CpuUsage DOUBLE, MouseX INT, MouseY INT, CreationDateTime DATETIME);";
 			myState.addBatch(sqlCommand);
 			sqlCommand = "CREATE TABLE IF NOT EXISTS ConditionSense (id INT PRIMARY KEY AUTO_INCREMENT, ConditionEnv INT NOT NULL, ConditionSenseDefinition INT NOT NULL, ConditionOrientation INT NOT NULL, ConditionOrientationChange INT, CONSTRAINT FOREIGN KEY (ConditionOrientation) REFERENCES ConditionOrientation(id), CONSTRAINT FOREIGN KEY (ConditionOrientationChange) REFERENCES OrientationChange(id), CONSTRAINT FOREIGN KEY (ConditionSenseDefinition) REFERENCES ConditionSenseDefinition(id), CONSTRAINT FOREIGN KEY (ConditionEnv) REFERENCES ConditionEnv(id));";
 			myState.addBatch(sqlCommand);
@@ -171,7 +171,7 @@ public class DatabaseHandler {
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 			LocalDateTime localDate = LocalDateTime.now();
 			String timestamp = dtf.format(localDate);
-			String createEnvSQLCommand = "INSERT INTO Env (CpuUsage, MouseX, MouseY, CreationDateTime, Senses) VALUES (" + envIn.rawEnv.currentCpuUsage + ", " + envIn.rawEnv.mouseLocation.x + ", " + envIn.rawEnv.mouseLocation.y +  ", \"" + timestamp + "\", ";
+			String createEnvSQLCommand = "INSERT INTO Env (CurrentDateTime, CpuUsage, MouseX, MouseY, CreationDateTime, Senses) VALUES (\"" + envIn.rawEnv.currentDateTime.toString() + "\", " + envIn.rawEnv.currentCpuUsage + ", " + envIn.rawEnv.mouseLocation.x + ", " + envIn.rawEnv.mouseLocation.y +  ", \"" + timestamp + "\", ";
 			String EnvSenseListSerializedString = "\"";
 			//Env INT NOT NULL, SenseDefinition INT NOT NULL, Orientation INT NOT NULL, activitiesExtracted BOOLEAN, CONSTRAINT FOREIGN KEY (Orientation) REFERENCES Orientation(id), CONSTRAINT FOREIGN KEY (SenseDefinition) REFERENCES SenseDefinition(id), CONSTRAINT FOREIGN KEY (Env) REFERENCES Env(id)
 			int numOfSenseDefMatches = 0;

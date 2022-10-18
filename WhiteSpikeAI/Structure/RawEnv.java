@@ -2,11 +2,13 @@ package Structure;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.time.LocalDateTime;
 
 public class RawEnv {
 	public BufferedImage currentDisplay;
 	public Double currentCpuUsage;
 	public Point mouseLocation = new Point();
+	public LocalDateTime currentDateTime;
 	public int cpuUsageChange = 0;
 	public int mouseXChange = 0;
 	public int mouseYChange = 0;

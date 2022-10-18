@@ -6,6 +6,7 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.time.LocalDateTime;
 
 import javax.imageio.ImageIO;
 
@@ -52,6 +53,7 @@ public class Env {
 		
 		public RawEnv senseRawEnv(Env envIn) {
 			RawEnv currentRawEnv = new RawEnv();
+			currentRawEnv.currentDateTime = LocalDateTime.now();
 			try {
 				currentRawEnv.currentDisplay = getScreenshot();
 			} catch (Exception e) {
