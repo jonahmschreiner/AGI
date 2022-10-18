@@ -33,7 +33,7 @@ public class LLF {
 			System.out.println("new loop");
 			activitiesToSolveQueue = SetUpActivitiesToSolveQueueIfNecessary.setup(activitiesToSolveQueue);
 			System.out.println("activities to solve set up if necessary");
-			activitiesToTryQueue = SetUpActivitiesToTryQueueIfNecessary.setup(activitiesToTryQueue);
+			activitiesToTryQueue = SetUpActivitiesToTryQueueIfNecessary.setup(activitiesToTryQueue, activitiesToSolveQueue.get(0));
 			System.out.println("activities to try set up if necessary");
 			actionQueue = SetUpActionQueueIfNecessary.setup(actionQueue, activitiesToTryQueue);
 			System.out.println("action queue set up if necessary");
