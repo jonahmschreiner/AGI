@@ -34,7 +34,7 @@ public class UpdateEnv {
 		newishSenses = SenseCombiner.exec(newishSenses);
 		try {
 			envIn.rawEnv = newEnv.rawEnv;
-			envIn = UpdateSenses.update(newishSenses, envIn);
+			envIn = UpdateSenses.update(newishSenses, envIn, true);
 			envIn = RemoveOldSensesFromEnv.exec(newishSenses, envIn);
 			UploadOrientationChangesToDB.upload(envIn);
 		} catch (Exception e) {

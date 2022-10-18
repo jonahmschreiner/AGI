@@ -149,6 +149,7 @@ public class UploadConditionEnvToDB {
 					conditionEnvIn.abstractEnv.dbSenseList = conditionEnvIn.abstractEnv.dbSenseList + (firstConditionSenseId + i - numOfSenseMatches) + " ";
 				} else {
 					EnvSenseListSerializedString = EnvSenseListSerializedString + (senseFound) + " ";
+					currentSense.dbId = senseFound;//recently added (might break shit)
 					conditionEnvIn.abstractEnv.dbSenseList = conditionEnvIn.abstractEnv.dbSenseList + (senseFound) + " ";
 					numOfSenseMatches++;
 				}

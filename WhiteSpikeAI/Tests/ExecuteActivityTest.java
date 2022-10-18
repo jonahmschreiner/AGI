@@ -30,7 +30,7 @@ public class ExecuteActivityTest {
 			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			//sqlCommand is currently intentionally incorrect (tries to change x pos of background instead of sense 2)
-			String sqlCommand = "INSERT INTO Activity (ConditionEnv, CoreActivity, SubActivities, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + conditionEnv.dbId + ", -1, \"48 49\", 1, 3, 1);"; //goal: increase sense 1's x pos
+			String sqlCommand = "INSERT INTO Activity (ConditionEnv, CoreActivity, SubActivities, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + conditionEnv.dbId + ", -1, \"48 49\", 2, 3, 1);"; //goal: increase sense 1's x pos
 			myState.execute(sqlCommand);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -14,6 +14,7 @@ import EnvAndDatabaseServiceMethods.CreateDeepCopyOfEnv;
 import EnvAndDatabaseServiceMethods.DatabaseHandler;
 import EnvAndDatabaseServiceMethods.ExecuteCoreAction;
 import EnvAndDatabaseServiceMethods.UpdateEnv;
+import EnvAndDatabaseServiceMethods.UpdateSenses;
 import EnvAndDatabaseServiceMethods.UploadConditionEnvToDB;
 import MainLLF.Constants;
 import Structure.DBObjectCountResults;
@@ -50,10 +51,13 @@ public class ExecuteActivity {
 				for (int i = 0; i < arrayOfSubActivityStrings.length; i++) {
 					String currStr = arrayOfSubActivityStrings[i];
 					int currActivityId = Integer.valueOf(currStr);
+					Env currPrevEnv = new Env(0);
+					currPrevEnv.rawEnv.currentCpuUsage = envIn.rawEnv.currentCpuUsage;
+					currPrevEnv.rawEnv.currentDisplay = envIn.rawEnv.currentDisplay;
 					envIn = ExecuteActivity.execByDBId(envIn, currActivityId);
 					//insert activity-worked-checking and environment-closing here
-					List<Sense> prevEnvSenses = new ArrayList<Sense>();
-					prevEnvSenses.addAll(envIn.abstractEnv.senses);
+					//List<Sense> prevEnvSenses = new ArrayList<Sense>();
+					currPrevEnv.abstractEnv.senses.addAll(envIn.abstractEnv.senses);
 					envIn = UpdateEnv.update(envIn);
 					if (currActivityId > Constants.numOfCoreActions) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
 						Sense s = GetSenseAssociatedWithActivity.execute(envIn, currActivityId);
@@ -104,32 +108,97 @@ public class ExecuteActivity {
 								}
 								//for each sense in current Env, check to see if the current sense has the same values as any result in the condition env results and if so adds them to a condition env
 								Env newConditionEnv = new Env(0);
-								newConditionEnv.senseRawEnv();
-								for (int j = 0; j < prevEnvSenses.size(); j++) {
-									Sense currSense = prevEnvSenses.get(j);
-									for (int k = 0; k < conditionEnvSenses.size(); k++) {
-										Sense currConditionSense = conditionEnvSenses.get(k);
-										PixelColorRange currConSensepcr = new PixelColorRange(currConditionSense.orientation.color);
-										PixelColorRange currSensepcr = new PixelColorRange(currSense.orientation.color);
-										if (currConditionSense.definition.toString().equals(currSense.definition.toString())
-												&& currConditionSense.orientation.height == currSense.orientation.height
-												&& currConditionSense.orientation.width == currSense.orientation.width
-												&& currConditionSense.orientation.rotation == currSense.orientation.rotation
-												&& currConditionSense.orientation.position.x == currSense.orientation.position.x
-												&& currConditionSense.orientation.position.y == currSense.orientation.position.y
-												&& currConSensepcr.color.equals(currSensepcr.color)) {
-											newConditionEnv.abstractEnv.senses.add(currSense);
-											if (newConditionEnv.abstractEnv.senses.size() == conditionEnvSenses.size()) {
-												break;
-											}
+								newConditionEnv.rawEnv.currentCpuUsage = envIn.rawEnv.currentCpuUsage;
+								newConditionEnv.rawEnv.currentDisplay = envIn.rawEnv.currentDisplay;
+								currPrevEnv.abstractEnv.recentlyAddedSenses.clear();
+								currPrevEnv.abstractEnv.recentlyChangedOldSenses.clear();
+								List<Sense> currPrevEnvSensesList = new ArrayList<Sense>();
+								currPrevEnvSensesList.addAll(currPrevEnv.abstractEnv.senses);
+								int conditionEnvSensesSize = conditionEnvSenses.size();
+								currPrevEnv = UpdateSenses.update(conditionEnvSenses, currPrevEnv, false); 
+								
+								
+								//TODO recentlyChangedOldSenses should contain the indexes of the existing db conditionEnv senses that are present in this condition env
+								//loop through them and compare to currPrevEnv.abstractEnv.senses. any differences make that property irrelevant
+								
+								
+								for (int j = 0; j < currPrevEnv.abstractEnv.recentlyChangedOldSenses.size(); j++) {
+									int currIndex = currPrevEnv.abstractEnv.recentlyChangedOldSenses.get(j);
+									Sense currSense = currPrevEnv.abstractEnv.senses.get(currIndex);
+									Sense currPrevEnvSense = currPrevEnvSensesList.get(currIndex);
+									PixelColorRange currConSensepcr = new PixelColorRange(currPrevEnvSense.orientation.color);
+									PixelColorRange currSensepcr = null;
+									if (currSense.orientation.color != null) {
+										currSensepcr = new PixelColorRange(currSense.orientation.color);
+									}
+									if (currSense.definition.overallChangeDefString != null) {
+										if (!currPrevEnvSense.definition.toString().equals(currSense.definition.toString())){
+											currSense.definition.overallChangeDefString = null;
 										}
 									}
-									if (newConditionEnv.abstractEnv.senses.size() == conditionEnvSenses.size()) {
+									if (currPrevEnvSense.orientation.height != currSense.orientation.height) {
+										currSense.orientation.height = -1;	
+									}
+									if (currPrevEnvSense.orientation.width != currSense.orientation.width) {
+										currSense.orientation.width = -1;	
+									}
+									if (currPrevEnvSense.orientation.rotation != currSense.orientation.rotation) {
+										currSense.orientation.rotation = -999599;	
+									}
+									if (currPrevEnvSense.orientation.position.x != currSense.orientation.position.x) {
+										currSense.orientation.position.x = -1;	
+									}
+									if (currPrevEnvSense.orientation.position.y != currSense.orientation.position.y) {
+										currSense.orientation.position.y = -1;
+									}
+									if (currSense.orientation.color != null) {
+										if (!currConSensepcr.color.equals(currSensepcr.color)) {
+											currSense.orientation.color = null;
+										}
+									}
+									
+									newConditionEnv.abstractEnv.senses.add(currSense);
+									if (newConditionEnv.abstractEnv.senses.size() == conditionEnvSensesSize) {
 										break;
 									}
 								}
 								
-								//create senses string
+								
+								
+								
+								
+								
+//								for (int j = 0; j < currPrevEnv.abstractEnv.senses.size(); j++) {
+//									Sense currSense = currPrevEnv.abstractEnv.senses.get(j);
+//									for (int k = 0; k < conditionEnvSenses.size(); k++) {
+//										Sense currConditionSense = conditionEnvSenses.get(k);
+//										PixelColorRange currConSensepcr = new PixelColorRange(currConditionSense.orientation.color);
+//										PixelColorRange currSensepcr = new PixelColorRange(currSense.orientation.color);
+//										if (currConditionSense.definition.toString().equals(currSense.definition.toString())
+//												&& currConditionSense.orientation.height == currSense.orientation.height
+//												&& currConditionSense.orientation.width == currSense.orientation.width
+//												&& currConditionSense.orientation.rotation == currSense.orientation.rotation
+//												&& currConditionSense.orientation.position.x == currSense.orientation.position.x
+//												&& currConditionSense.orientation.position.y == currSense.orientation.position.y
+//												&& currConSensepcr.color.equals(currSensepcr.color)) {
+//											newConditionEnv.abstractEnv.senses.add(currSense);
+//											if (newConditionEnv.abstractEnv.senses.size() == conditionEnvSenses.size()) {
+//												break;
+//											}
+//										}
+//									}
+//									if (newConditionEnv.abstractEnv.senses.size() == conditionEnvSenses.size()) {
+//										break;
+//									}
+//								}
+								
+								//create senses string TODO adjust this to handle the property closing down
+								
+								//
+								newConditionEnv = UploadConditionEnvToDB.exec(newConditionEnv);
+								//
+								
+								
 								String conditionSensesString = "";
 								for (int l = 0; l < newConditionEnv.abstractEnv.senses.size(); l++) {
 									conditionSensesString = conditionSensesString + newConditionEnv.abstractEnv.senses.get(l).dbId + " ";
@@ -207,33 +276,99 @@ public class ExecuteActivity {
 									break;
 								}
 							}
+				
 							//for each sense in current Env, check to see if the current sense has the same values as any result in the condition env results and if so adds them to a condition env
 							Env newConditionEnv = new Env(0);
-							newConditionEnv.senseRawEnv();
+							//raw env closing
+							if (prevEnv.rawEnv.currentCpuUsage.compareTo(envIn.rawEnv.currentCpuUsage) == 0) {
+								newConditionEnv.rawEnv.currentCpuUsage = envIn.rawEnv.currentCpuUsage;
+							} else {
+								newConditionEnv.rawEnv.currentCpuUsage = -1.0;
+							}
+							
+							newConditionEnv.rawEnv.currentDisplay = envIn.rawEnv.currentDisplay;
+							
+							
+							//
+							prevEnv.abstractEnv.recentlyAddedSenses.clear();
+							prevEnv.abstractEnv.recentlyChangedOldSenses.clear();
+							List<Sense> prevEnvSensesList = new ArrayList<Sense>();
+							prevEnvSensesList.addAll(prevEnv.abstractEnv.senses);
+							int conditionEnvSensesSize = conditionEnvSenses.size();
+							prevEnv = UpdateSenses.update(conditionEnvSenses, prevEnv, false); 
 
-							for (int j = 0; j < prevEnvSenses2.size(); j++) {
-								Sense currSense = prevEnvSenses2.get(j);
-								for (int k = 0; k < conditionEnvSenses.size(); k++) {
-									Sense currConditionSense = conditionEnvSenses.get(k);
-									PixelColorRange currConSensepcr = new PixelColorRange(currConditionSense.orientation.color);
-									PixelColorRange currSensepcr = new PixelColorRange(currSense.orientation.color);
-									if (currConditionSense.definition.toString().equals(currSense.definition.toString())
-											&& currConditionSense.orientation.height == currSense.orientation.height
-											&& currConditionSense.orientation.width == currSense.orientation.width
-											&& currConditionSense.orientation.rotation == currSense.orientation.rotation
-											&& currConditionSense.orientation.position.x == currSense.orientation.position.x
-											&& currConditionSense.orientation.position.y == currSense.orientation.position.y
-											&& currConSensepcr.color.equals(currSensepcr.color)) {
-										newConditionEnv.abstractEnv.senses.add(currSense);
-										if (newConditionEnv.abstractEnv.senses.size() == conditionEnvSenses.size()) {
-											break;
-										}
+							
+							//abstract env closing
+							for (int j = 0; j < prevEnv.abstractEnv.recentlyChangedOldSenses.size(); j++) {
+								int currIndex = prevEnv.abstractEnv.recentlyChangedOldSenses.get(j);
+								Sense currSense = prevEnv.abstractEnv.senses.get(currIndex);
+								Sense prevEnvSense = prevEnvSensesList.get(currIndex);
+								PixelColorRange currConSensepcr = new PixelColorRange(prevEnvSense.orientation.color);
+								PixelColorRange currSensepcr = null;
+								if (currSense.orientation.color != null) {
+									currSensepcr = new PixelColorRange(currSense.orientation.color);
+								}
+								if (currSense.definition.overallChangeDefString != null) {
+									if (!prevEnvSense.definition.toString().equals(currSense.definition.toString())){
+										currSense.definition.overallChangeDefString = null;
 									}
 								}
-								if (newConditionEnv.abstractEnv.senses.size() == conditionEnvSenses.size()) {
+								if (prevEnvSense.orientation.height != currSense.orientation.height) {
+									currSense.orientation.height = -1;	
+								}
+								if (prevEnvSense.orientation.width != currSense.orientation.width) {
+									currSense.orientation.width = -1;	
+								}
+								if (prevEnvSense.orientation.rotation != currSense.orientation.rotation) {
+									currSense.orientation.rotation = -999599;	
+								}
+								if (prevEnvSense.orientation.position.x != currSense.orientation.position.x) {
+									currSense.orientation.position.x = -1;	
+								}
+								if (prevEnvSense.orientation.position.y != currSense.orientation.position.y) {
+									currSense.orientation.position.y = -1;
+								}
+								if (currSense.orientation.color != null) {
+									if (!currConSensepcr.color.equals(currSensepcr.color)) {
+										currSense.orientation.color = null;
+									}
+								}
+								
+								newConditionEnv.abstractEnv.senses.add(currSense);
+								if (newConditionEnv.abstractEnv.senses.size() == conditionEnvSensesSize) {
 									break;
 								}
 							}
+							
+							
+							//
+							newConditionEnv = UploadConditionEnvToDB.exec(newConditionEnv);
+							//
+							
+							
+//							for (int j = 0; j < prevEnvSenses2.size(); j++) {
+//								Sense currSense = prevEnvSenses2.get(j);
+//								for (int k = 0; k < conditionEnvSenses.size(); k++) {
+//									Sense currConditionSense = conditionEnvSenses.get(k);
+//									PixelColorRange currConSensepcr = new PixelColorRange(currConditionSense.orientation.color);
+//									PixelColorRange currSensepcr = new PixelColorRange(currSense.orientation.color);
+//									if (currConditionSense.definition.toString().equals(currSense.definition.toString())
+//											&& currConditionSense.orientation.height == currSense.orientation.height
+//											&& currConditionSense.orientation.width == currSense.orientation.width
+//											&& currConditionSense.orientation.rotation == currSense.orientation.rotation
+//											&& currConditionSense.orientation.position.x == currSense.orientation.position.x
+//											&& currConditionSense.orientation.position.y == currSense.orientation.position.y
+//											&& currConSensepcr.color.equals(currSensepcr.color)) {
+//										newConditionEnv.abstractEnv.senses.add(currSense);
+//										if (newConditionEnv.abstractEnv.senses.size() == conditionEnvSenses.size()) {
+//											break;
+//										}
+//									}
+//								}
+//								if (newConditionEnv.abstractEnv.senses.size() == conditionEnvSenses.size()) {
+//									break;
+//								}
+//							}
 							
 							//create senses string
 							String conditionSensesString = "";
@@ -241,7 +376,8 @@ public class ExecuteActivity {
 								conditionSensesString = conditionSensesString + newConditionEnv.abstractEnv.senses.get(l).dbId + " ";
 							}
 							//replace ConditionEnv in db for this activity with the new ConditionEnv
-							sqlCommand = "UPDATE Activity INNER JOIN ConditionEnv ON Activity.ConditionEnv=ConditionEnv.id SET ConditionEnv.Senses=\"" + conditionSensesString + "\" WHERE Activity.id=" + activityId + ";";
+							//sqlCommand = "UPDATE Activity INNER JOIN ConditionEnv ON Activity.ConditionEnv=ConditionEnv.id SET ConditionEnv.Senses=\"" + conditionSensesString + "\" WHERE Activity.id=" + activityId + ";";
+							sqlCommand = "UPDATE Activity SET ConditionEnv=" + newConditionEnv.dbId + " WHERE Activity.id= + " + activityId + ";";
 							myState.execute(sqlCommand);
 						} catch (Exception f) {
 							f.printStackTrace();

@@ -1,5 +1,5 @@
 package EnvAndDatabaseServiceMethods;
-
+//TODO fix non-perfect turns not being recorded as turns (apparently the previous fix didn't work)
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -183,17 +183,39 @@ public class OverallPixelChangesFromPixelChanges {
 					irregularTurnCode = 0;
 				}
 			}
+			if (overallPixelChanges.get(0).changeType.equals("Straight")) {
+				if (irregularTurnCode == 10 || irregularTurnCode == 11) {
+					overallPixelChanges.remove(overallPixelChanges.size() - 1);
+					overallPixelChanges.remove(overallPixelChanges.size() - 1);
+				}
+				if (irregularTurnCode == 10) {
+					PixelOverallChange newTurn = new PixelOverallChange("RightTurn");
+					overallPixelChanges.add(newTurn);
+				} else if (irregularTurnCode == 11) {
+					PixelOverallChange newTurn = new PixelOverallChange("LeftTurn");
+					overallPixelChanges.add(newTurn);
+				}	
+			} else {
+				overallPixelChanges.add(overallChange);
+			}
+			irregularTurnCode = 0;
+			
+			
 			
 			if (overallChange.changeType.equals("StartRightUpDiagonal")) {
 				irregularTurnCode = 1;
 			} else if (overallChange.changeType.equals("StartLeftUpDiagonal")) {
 				irregularTurnCode = -1;
 			}
-			overallPixelChanges.add(overallChange);
+			
 		}
-		
 		return overallPixelChanges;
 	}
+	
+	
+	
+	
+	
 	
 	private static HashMap<String, String> getHashMap(){
 		//none = 0, leftturn = 1, rightturn = 2, leftupdiagonal = 3, rightupdiagonal = 4, leftdowndiagonal = 5, rightdowndiagonal = 6. turnaround = 7

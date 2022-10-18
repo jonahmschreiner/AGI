@@ -45,7 +45,7 @@ public class UpdateSensesTest {
 		}
 		try {
 			newishSenses = SenseCombiner.exec(newishSenses);
-			Env outputEnv = UpdateSenses.update(newishSenses, env);
+			Env outputEnv = UpdateSenses.update(newishSenses, env, true);
 			outputEnv.rawEnv = newEnv.rawEnv;
 			outputEnv = RemoveOldSensesFromEnv.exec(newishSenses, outputEnv);
 			UploadOrientationChangesToDB.upload(outputEnv);
