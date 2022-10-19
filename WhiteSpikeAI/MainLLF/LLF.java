@@ -24,8 +24,11 @@ public class LLF {
 	public static void main(String[] args) {
 		
 		DatabaseHandler.doSetupIfNecessary();
+		System.out.println("db setup done");
 		Env env = new Env();
+		System.out.println("initial env created");
 		DatabaseHandler.uploadEnvToDatabase(env);
+		System.out.println("env uploaded to db");
 		List<Integer> activitiesToSolveQueue = new ArrayList<Integer>();
 		List<String> activitiesToTryQueue = new ArrayList<String>();
 		List<Integer> actionQueue = new ArrayList<Integer>();
@@ -39,10 +42,11 @@ public class LLF {
 			System.out.println("action queue set up if necessary");
 			
 			Env conditionEnv = CreateDeepCopyOfEnv.exec(env);
-			
+			System.out.println("deep copy of env created");
 			while (actionQueue.size() > 0) {
 				env = ExecuteActivity.execByDBId(env, actionQueue.get(0));
 				actionQueue.remove(0);
+				System.out.println("individual action executed");
 			}
 			System.out.println("actions executed");
 			//get sense obj that who is associated with the activity we are currently trying to solve

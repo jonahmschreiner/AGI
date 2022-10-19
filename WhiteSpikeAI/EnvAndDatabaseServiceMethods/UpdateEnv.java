@@ -17,8 +17,8 @@ public class UpdateEnv {
 		envIn.abstractEnv.recentlyAddedSenses.clear();
 		Env newEnv = new Env(0);
 		newEnv.rawEnv = newEnv.senseRawEnv(envIn);
-		BufferedImage newImage = newEnv.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50);
-		BufferedImage oldImage = envIn.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50);
+		BufferedImage newImage = newEnv.rawEnv.currentDisplay;//.getSubimage(200, 300, 50, 50);
+		BufferedImage oldImage = envIn.rawEnv.currentDisplay;//.getSubimage(200, 300, 50, 50);
 		
 		List<junctionList> changedPixelsByThread = ChangedPixelsFromOldEnv.find(newImage, oldImage);
 		List<Blob> newBlobs = ChangedPixelsToBlobs.exec(changedPixelsByThread, newImage);
@@ -40,7 +40,7 @@ public class UpdateEnv {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		VisualOutputOfSensesFromSensesAndImage.execute(envIn.abstractEnv.senses, envIn.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50), "output2");
+		//VisualOutputOfSensesFromSensesAndImage.execute(envIn.abstractEnv.senses, envIn.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50), "output2");
 		
 		return envIn;
 	}
