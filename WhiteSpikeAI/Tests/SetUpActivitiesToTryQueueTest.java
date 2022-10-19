@@ -21,13 +21,19 @@ public class SetUpActivitiesToTryQueueTest {
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "UPDATE Activity SET SolvedStatus=1 WHERE id=487;";
 			myState.execute(sqlCommand);
+			sqlCommand = "UPDATE Activity SET SolvedStatus=1 WHERE id=486;";
+			myState.execute(sqlCommand);
+			sqlCommand = "UPDATE Activity SET SolvedStatus=1 WHERE id=485;";
+			myState.execute(sqlCommand);
+			sqlCommand = "UPDATE Activity SET SolvedStatus=1 WHERE id=469;";
+			myState.execute(sqlCommand);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		List<String> input = new ArrayList<String>();
 		input = SetUpActivitiesToTryQueueIfNecessary.setup(input, 488);
-		System.out.println("Should be one: " + input.size());
+		System.out.println("Should be four: " + input.size());
 		
 		List<String> input2 = new ArrayList<String>();
 		input2.add("testNotSizeZero");
