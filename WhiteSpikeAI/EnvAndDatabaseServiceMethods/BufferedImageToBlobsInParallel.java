@@ -163,8 +163,8 @@ public class BufferedImageToBlobsInParallel {
 			
 			List<Sense> sensesToPrint = new ArrayList<Sense>();
 			for (int i = 0; i < outputBlobs.size(); i++) {
-				Sense sense = BlobToSense.getSense(outputBlobs.get(i));
-				sensesToPrint.add(sense);
+				//Sense sense = BlobToSense.getSense(outputBlobs.get(i));
+				//sensesToPrint.add(sense);
 			}
 			VisualOutputOfSensesFromSensesAndImage.execute(sensesToPrint, this.testImage, "combinerThread" + this.iValue);
 

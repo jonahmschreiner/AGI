@@ -26,7 +26,7 @@ public class RawEnvToAbstractEnv {
 		
 		
 		for (int i = 0; i < rawBlobs.size(); i++) {
-			Sense currentSense = BlobToSense.getSense(rawBlobs.get(i));
+			Sense currentSense = BlobToSense.getSense(rawBlobs.get(i), rawEnvIn.currentDisplay);
 			//if (currentSense.orientation.height > 1 && currentSense.orientation.width > 1) {
 				//if (currentSense.orientation.height > 3 || currentSense.orientation.width > 3) {
 					senses.add(currentSense);

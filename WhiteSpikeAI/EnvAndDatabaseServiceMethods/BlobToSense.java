@@ -2,6 +2,7 @@ package EnvAndDatabaseServiceMethods;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +16,9 @@ import Structure.SenseDefinition;
 
 public class BlobToSense {
 	//pass blob in with only pixels variable filled out (can have more but they'll be overrided)
-	public static Sense getSense(Blob blobIn) {
+	public static Sense getSense(Blob blobIn, BufferedImage imageIn) {
 		//blob to edge
-		Blob blob = BlobEdgeFromBlob.getEdge(blobIn);
+		Blob blob = BlobEdgeFromBlob.getEdge(blobIn, imageIn);
 		if (blob.edgePixels.contains(new Pixel(new Point(10000, 0)))) {
 			System.out.println();
 		}

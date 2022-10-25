@@ -1,6 +1,8 @@
 package EnvAndDatabaseServiceMethods;
 
+import java.awt.Color;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +13,7 @@ import Structure.Pixel;
 
 public class BlobEdgeFromBlob {
 
-	public static Blob getEdge(Blob blobIn){
+	public static Blob getEdge(Blob blobIn, BufferedImage imageIn){
 		MinAndMaxes m = getMinAndMaxes(blobIn.pixels);
 		blobIn.minAndMaxes = m;
 		List<Pixel> leftEdge = new ArrayList<Pixel>();
@@ -27,10 +29,12 @@ public class BlobEdgeFromBlob {
 				Pixel currentPixel = new Pixel(new Point(j, i));
 				if (blobIn.pixels.contains(currentPixel)) {
 					if (currentPixel.position.x < furthestLeftPixel.position.x) {
+						currentPixel.color = new Color(imageIn.getRGB(j, i));
 						furthestLeftPixel = currentPixel;
 					}
 					
 					if (currentPixel.position.x > furthestRightPixel.position.x) {
+						currentPixel.color = new Color(imageIn.getRGB(j, i));
 						furthestRightPixel = currentPixel;
 					}
 				}
@@ -73,7 +77,7 @@ public class BlobEdgeFromBlob {
 		return blobIn;
 	}
 	
-	private static MinAndMaxes getMinAndMaxes(List<Pixel> pixelsIn) {
+	public static MinAndMaxes getMinAndMaxes(List<Pixel> pixelsIn) {
 		MinAndMaxes m = new MinAndMaxes();
 		int numOfPixels = pixelsIn.size();
 		for (int i = 0; i < numOfPixels; i++) {
@@ -83,6 +87,7 @@ public class BlobEdgeFromBlob {
 			m.averageRValue = m.averageRValue + currentPixel.color.getRed();
 			m.averageGValue = m.averageGValue + currentPixel.color.getGreen();
 			m.averageBValue = m.averageBValue + currentPixel.color.getBlue();
+
 			if (currentPixel.position.x > m.maxX) {
 				m.maxX = currentPixel.position.x;
 			}
@@ -104,7 +109,7 @@ public class BlobEdgeFromBlob {
 		return m;
 	}	
 	
-	private static List<Pixel> mergeEdges(List<Pixel> leftEdge, List<Pixel> rightEdge, List<Pixel> topEdge, List<Pixel> bottomEdge){
+	public static List<Pixel> mergeEdges(List<Pixel> leftEdge, List<Pixel> rightEdge, List<Pixel> topEdge, List<Pixel> bottomEdge){
 		Collections.reverse(leftEdge);
 		Collections.reverse(bottomEdge);
 		List<Pixel> mergedList = new ArrayList<Pixel>();
