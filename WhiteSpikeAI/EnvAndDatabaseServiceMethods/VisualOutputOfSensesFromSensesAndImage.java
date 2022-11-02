@@ -3,6 +3,8 @@ package EnvAndDatabaseServiceMethods;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.util.List;
 
@@ -11,7 +13,14 @@ import javax.imageio.ImageIO;
 import Structure.Sense;
 
 public class VisualOutputOfSensesFromSensesAndImage {
-	public static void execute(List<Sense> sensesIn, BufferedImage imageIn, String imageNameIn) {
+	public static void execute(List<Sense> sensesIn, BufferedImage image1In, String imageNameIn) {
+		//create deep copy of buffered image
+		ColorModel cm = image1In.getColorModel();
+		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		WritableRaster raster = image1In.copyData(null);
+		BufferedImage imageIn = new BufferedImage(cm, raster, isAlphaPremultiplied, null).getSubimage(0, 100, 1680, 700);
+		
+		//
 		for (int i = 0; i < sensesIn.size(); i++) {
 			Sense currentSense = sensesIn.get(i);
 			Point startingPoint = currentSense.orientation.boundingBox.MinXMinY.position;

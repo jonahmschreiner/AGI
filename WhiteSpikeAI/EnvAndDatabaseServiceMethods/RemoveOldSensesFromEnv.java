@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -39,10 +40,37 @@ public class RemoveOldSensesFromEnv {
 			for (int i = 0; i < sensesCopied.size(); i++) {
 				Sense currSense = sensesCopied.get(i);
 				List<Sense> overlappingSenses = getOverlappingSenses(newSensesIn, currSense);
+				
+				//TODO Potentially remove this stuff and change the containsAll if below it to all pixels in current Sense blob rather than the new list
+				List<Sense> possibleInstance = new ArrayList<Sense>();
+				List<Pixel> currSenseBlobPixelsCopy = new ArrayList<Pixel>();
+				currSenseBlobPixelsCopy.addAll(currSense.blob.pixels);
+				for (int o = 0; o < overlappingSenses.size(); o++) {
+					Sense currOvSense2 = overlappingSenses.get(o);
+					//if (doTheListsHaveSharedPixels(currOvSense2.blob.pixels, currSense.blob.pixels)) {
+						//possibleInstance.add(currOvSense2);
+						currOvSense2.sharedPixels = removeNonSharedPixels(currOvSense2.blob.pixels, currSense.blob.pixels);
+					//}
+				}
+				
+
+				Sense biggestPossibleInstance = new Sense();
+				
+				for (int p = 0; p < possibleInstance.size(); p++) {
+					Sense currPossibleInstance = possibleInstance.get(p);
+					if (currPossibleInstance.sharedPixels.size() > biggestPossibleInstance.sharedPixels.size()){
+						biggestPossibleInstance = currPossibleInstance;
+					} else {
+						currSenseBlobPixelsCopy.removeAll(currPossibleInstance.sharedPixels);
+					}
+				}
+				
+				//
+				
 				boolean flag2 = true;
 				for (int l = 0; l < overlappingSenses.size(); l++) {
 					Sense currOvSense2 = overlappingSenses.get(l);
-					if (currOvSense2.blob.pixels.containsAll(currSense.blob.pixels) && !currOvSense2.blob.pixels.equals(currSense.blob.pixels)) {	
+					if (currOvSense2.blob.pixels.containsAll(currSenseBlobPixelsCopy) && !currOvSense2.blob.pixels.equals(currSense.blob.pixels)) {	
 						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currOvSense2.dbId, oldEnvIn);
 						UpdateSenseToBeSenseIn.update(currSense, currOvSense2, oldEnvIn);
 						oldEnvIn.abstractEnv.senses.remove(currSense);
@@ -50,12 +78,12 @@ public class RemoveOldSensesFromEnv {
 					}
 				}
 				
-				
+				//if no sense contains it (if the sense actually doesn't exist anymore) could potentially be removed
 				if (overlappingSenses.size() > 0 && !newSensesIn.contains(currSense) && flag2) {
 					boolean flag = false;
 					for (int j = 0; j < currSense.blob.pixels.size(); j++) {
 						Pixel currPixel = currSense.blob.pixels.get(j);
-						Color checkRGB = new Color (oldEnvIn.rawEnv.currentDisplay.getRGB(currPixel.position.x, currPixel.position.y));//.getSubimage(200, 300, 50, 50).getRGB(currPixel.position.x, currPixel.position.y));
+						Color checkRGB = new Color (oldEnvIn.rawEnv.currentDisplay.getSubimage(0, 100, 1680, 700).getRGB(currPixel.position.x, currPixel.position.y));
 						PixelColorRange currPixelPCR = new PixelColorRange(currPixel.color);
 						PixelColorRange checkRGBPCR = new PixelColorRange(checkRGB);
 						if (!currPixelPCR.color.equals(checkRGBPCR.color)) {
@@ -82,6 +110,33 @@ public class RemoveOldSensesFromEnv {
 		}
 		
 		return oldEnvIn;
+	}
+	
+	public static List<Pixel> removeNonSharedPixels (List<Pixel> list1, List<Pixel> list2){
+		List<Pixel> output = new ArrayList<Pixel>();
+		for (int i = 0; i < list2.size(); i++) {
+			Pixel currPixel = list2.get(i);
+			if (list1.contains(currPixel)) {
+				output.add(currPixel);
+			}
+			if (output.size() == list1.size()) {
+				break;
+			}
+		}
+		
+		return output;
+	}
+	
+	public static boolean doTheListsHaveSharedPixels (List<Pixel> list1, List<Pixel> list2) {
+		boolean output = false;
+		for (int i = 0; i < list2.size(); i++) {
+			Pixel currPixel = list2.get(i);
+			if (list1.contains(currPixel)) {
+				output = true;
+				break;
+			}
+		}
+		return output;
 	}
 	
 	public static void removeSenseFromAbstractEnvDBSenseListInJavaAndDB (int dbIdIn, Env envIn) {

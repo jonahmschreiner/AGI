@@ -53,7 +53,7 @@ public class UpdateSenses {
 			}
 		}
 		
-		//connect new senses to potential matches from old env
+		//connect new senses to potential matches from old env TODO
 		for (int i = 0; i < oldEnvIn.abstractEnv.senses.size(); i++) {
 			Sense currSense = oldEnvIn.abstractEnv.senses.get(i);
 			String currDef = currSense.definition.toString();
@@ -64,6 +64,16 @@ public class UpdateSenses {
 					ComparisonClass cc = currPMSense.comparisonClass;
 					int csbooScore = ComparisonScoreBasedOnOrientation.get(currPMSense.orientation, currSense.orientation);
 					if (csbooScore > 0) {
+						cc.comparisons.put(csbooScore, currSense);
+					}	
+				}
+			} else {
+				List<Sense> potentialMatches = addCompleteSenseMapToList(sensesBySenseDef);
+				for (int j = 0; j < potentialMatches.size(); j++) {
+					Sense currPMSense = potentialMatches.get(j);
+					ComparisonClass cc = currPMSense.comparisonClass;
+					int csbooScore = ComparisonScoreBasedOnOrientation.get(currPMSense.orientation, currSense.orientation);
+					if (csbooScore > 50) {
 						cc.comparisons.put(csbooScore, currSense);
 					}	
 				}
@@ -289,6 +299,16 @@ public class UpdateSenses {
 		Statement readdChecksState = myConnection.createStatement();
 		readdChecksState.execute(readdForeignKeyChecksCommand);
 		return oldEnvIn;
+	}
+	
+	public static List<Sense> addCompleteSenseMapToList(Map<String, List<Sense>> mapIn){
+		List<Sense> output = new ArrayList<Sense>();
+		Iterator<String> mapIter = mapIn.keySet().iterator();
+		while (mapIter.hasNext()) {
+			List<Sense> currList = mapIn.get(mapIter.next());
+			output.addAll(currList);
+		}
+		return output;
 	}
 	
 	public static OrientationChanges extractOrientationChanges(Orientation newSenseOrIn, Orientation oldSenseOrIn) {

@@ -8,9 +8,9 @@ public class PixelColorRange {
 	public PixelColorRange(Color colorIn) {
 		float hsb[] = new float[3];
 		Color.RGBtoHSB(colorIn.getRed(), colorIn.getGreen(), colorIn.getBlue(), hsb);
-		if (hsb[1] < 0.05 && hsb[2] > 0.75) {
+		if (hsb[1] < 0.05 && hsb[2] > 0.6) {
 			this.color = "White";
-		} else if (hsb[1] < 0.05 && hsb[2] > 0.3) {
+		} else if (hsb[1] < 0.05 && hsb[2] > 0.15) {
 			this.color = "Grey";
 		} else if (hsb[1] < 0.05) {
 			this.color = "Black";
@@ -63,5 +63,11 @@ public class PixelColorRange {
 		} else {
 			return false;
 		}
+	}
+	
+	public static void main (String[] args) {
+		Color c = new Color(187, 187, 187);
+		PixelColorRange pcr = new PixelColorRange(c);
+		
 	}
 }

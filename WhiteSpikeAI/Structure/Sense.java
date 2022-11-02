@@ -7,7 +7,7 @@ import java.util.Set;
 
 import EnvAndDatabaseServiceMethods.UpdateSenses.ComparisonClass;
 
-public class Sense {
+public class Sense implements Comparable<Sense>{
 	public List<Sense> components = new ArrayList<Sense>();
 	public Orientation orientation = new Orientation();
 	public OrientationChanges orientationChanges = new OrientationChanges();
@@ -15,6 +15,7 @@ public class Sense {
 	public ComparisonClass comparisonClass = new ComparisonClass();
 	public int dbId;
 	public Blob blob;
+	public List<Pixel> sharedPixels = new ArrayList<Pixel>();
 	
 	public Sense () {}
 	
@@ -39,5 +40,10 @@ public class Sense {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public int compareTo(Sense o) {
+		return this.sharedPixels.size() - o.sharedPixels.size();
 	}
 }
