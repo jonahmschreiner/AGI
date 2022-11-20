@@ -1,6 +1,9 @@
 package ActivitySolverServiceMethods;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -22,11 +25,17 @@ import Structure.PixelColorRange;
 import Structure.PixelOverallChange;
 import Structure.Sense;
 public class ExecuteActivity {
-	public static Env execByDBId(Env envIn, int activityId) {
+	public static Env execByDBId(Env envIn, int activityId) throws IOException {
+		File logFile = new File("/home/agi/Downloads/log.txt");
+		FileWriter fw = new FileWriter(logFile);
 		Env prevEnv = CreateDeepCopyOfEnv.exec(envIn);
+		fw.write(" EXECACT: CreateDeepCopyOfEnv Finished;");
+		fw.flush();
 		List<Sense> prevEnvSenses2 = new ArrayList<Sense>();
 		prevEnvSenses2.addAll(envIn.abstractEnv.senses);
 		ResultSet rs = DatabaseHandler.getActivityForExecution(activityId);
+		fw.write(" EXECACT: Activity Gotten For Execution;");
+		fw.flush();
 		int propId = -1;
 		int increaseOrDecreaseProp = -1;
 		int coreActivityToExecute = -1;
@@ -42,8 +51,12 @@ public class ExecuteActivity {
 			if (coreActivityToExecute == -1) {
 				throw new Exception();
 			}
+			fw.write(" EXECACT: Core Activity Found;");
+			fw.flush();
 			ExecuteCoreAction.exec(coreActivityToExecute);
 		} catch (Exception e) {
+			fw.write(" EXECACT: Activity with subactivities found;");
+			fw.flush();
 			try {
 				String listOfSubActivities = rs.getString("SubActivities");
 				String[] arrayOfSubActivityStrings = listOfSubActivities.split(" ");
@@ -54,14 +67,21 @@ public class ExecuteActivity {
 					currPrevEnv.rawEnv.currentCpuUsage = envIn.rawEnv.currentCpuUsage;
 					currPrevEnv.rawEnv.currentDisplay = envIn.rawEnv.currentDisplay;
 					envIn = ExecuteActivity.execByDBId(envIn, currActivityId);
+					fw.write(" EXECACT: Execution of a subactivity finished;");
+					fw.flush();
 					//insert activity-worked-checking and environment-closing here
 					//List<Sense> prevEnvSenses = new ArrayList<Sense>();
 					currPrevEnv.abstractEnv.senses.addAll(envIn.abstractEnv.senses);
 					envIn = UpdateEnv.update(envIn);
+					fw.write(" EXECACT: Updating Env after Sub-Activity Execution Finished;");
+					fw.flush();
 					if (currActivityId > Constants.numOfCoreActions) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
+						fw.write(" EXECACT: Executed Sub-Activity is not a core action;");
+						fw.flush();
 						Sense s = GetSenseAssociatedWithActivity.execute(envIn, currActivityId);
 						if (CheckIfActivityWasSolved.execute(s, currActivityId, envIn)) { //activity solution worked
 							//create and assign condition env that only contains elements that are common to existing condition env and the current env where it just worked
+							fw.write(" EXECACT: Sub-Activity Worked Correctly;");
 							try {
 								Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 								Statement myState = myConnection.createStatement();
@@ -105,6 +125,8 @@ public class ExecuteActivity {
 										break;
 									}
 								}
+								fw.write(" EXECACT: Re-creating condition env from db finished;");
+								fw.flush();
 								//for each sense in current Env, check to see if the current sense has the same values as any result in the condition env results and if so adds them to a condition env
 								Env newConditionEnv = new Env(0);
 								//raw env closing
@@ -160,7 +182,7 @@ public class ExecuteActivity {
 										}
 									}
 									if (currPrevEnvSense.orientation.height != currSense.orientation.height) {
-										currSense.orientation.height = -1;	
+										currSense.orientation.height = -1;
 									}
 									if (currPrevEnvSense.orientation.width != currSense.orientation.width) {
 										currSense.orientation.width = -1;	
@@ -220,8 +242,8 @@ public class ExecuteActivity {
 								//
 								newConditionEnv = UploadConditionEnvToDB.exec(newConditionEnv);
 								//
-								
-								
+								fw.write(" EXECACT: narrowed-down condition env uploading to db finished;");
+								fw.flush();
 								String conditionSensesString = "";
 								for (int l = 0; l < newConditionEnv.abstractEnv.senses.size(); l++) {
 									conditionSensesString = conditionSensesString + newConditionEnv.abstractEnv.senses.get(l).dbId + " ";
@@ -235,7 +257,11 @@ public class ExecuteActivity {
 
 						} else { //activity solution didn't work
 							//create new activity that does the same sense prop change but with the current Env as the condition env
-							UploadConditionEnvToDB.exec(envIn);
+							fw.write(" EXECACT: Sub-Activity Did Not Work Correctly;");
+							fw.flush();
+							UploadConditionEnvToDB.exec(currPrevEnv);
+							fw.write(" EXECACT: Condition Env Uploading To DB Finished;");
+							fw.flush();
 							DBObjectCountResults dbocr = new DBObjectCountResults();
 							String sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + s.dbId + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
 							try {
@@ -249,11 +275,16 @@ public class ExecuteActivity {
 						}
 					}		
 				}
-				
+				fw.write(" EXECACT: Sub-Activity Execution Finished. Evaluating and Closing Down Condition Env of Top-Level Action;");
+				fw.flush();
 				//attempt to close down current activity's condition env
 				if (activityId > Constants.numOfCoreActions) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
+					fw.write(" EXECACT: Top Activity was not a Core Action;");
+					fw.flush();
 					Sense s = GetSenseAssociatedWithActivity.execute(envIn, activityId);
 					if (CheckIfActivityWasSolved.execute(s, activityId, envIn)) { //activity solution worked
+						fw.write(" EXECACT: Top Activity Worked Correctly, narrowing down condition env;");
+						fw.flush();
 						//create and assign condition env that only contains elements that are common to existing condition env and the current env where it just worked
 						try {
 							Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
@@ -425,6 +456,8 @@ public class ExecuteActivity {
 						}
 
 					} else { //activity solution didn't work
+						fw.write(" EXECACT: Top Activity Didn't Work, creating new activity with this condition env;");
+						fw.flush();
 						//create new activity that does the same sense prop change but with the current Env as the condition env
 						prevEnv = UploadConditionEnvToDB.exec(prevEnv);
 						DBObjectCountResults dbocr = new DBObjectCountResults();
