@@ -43,55 +43,55 @@ public class LLF {
 		fw.flush();
 		Env env = new Env();
 		System.out.println("initial env created");
-		fw.write(" initial env created;");
+		fw.append(" initial env created;");
 		fw.flush();
 		DatabaseHandler.uploadEnvToDatabase(env);
 		System.out.println("env uploaded to db");
-		fw.write(" env uploaded to db;");
+		fw.append(" env uploaded to db;");
 		fw.flush();
 		List<Integer> activitiesToSolveQueue = new ArrayList<Integer>();
 		List<String> activitiesToTryQueue = new ArrayList<String>();
 		List<Integer> actionQueue = new ArrayList<Integer>();
 		while (true) {
 			System.out.println("new loop");
-			fw.write(" start of new life loop iteration;");
+			fw.append(" start of new life loop iteration;");
 			fw.flush();
 			activitiesToSolveQueue = SetUpActivitiesToSolveQueueIfNecessary.setup(activitiesToSolveQueue);
 			System.out.println("activities to solve set up if necessary");
-			fw.write(" activities to solve queue set up (count: " + activitiesToSolveQueue.size() + ");");
+			fw.append(" activities to solve queue set up (count: " + activitiesToSolveQueue.size() + ");");
 			fw.flush();
 			activitiesToTryQueue = SetUpActivitiesToTryQueueIfNecessary.setup(activitiesToTryQueue, activitiesToSolveQueue.get(0));
 			System.out.println("activities to try set up if necessary");
-			fw.write(" activities to try queue set up (count: " + activitiesToTryQueue.size() + ");");
+			fw.append(" activities to try queue set up (count: " + activitiesToTryQueue.size() + ");");
 			fw.flush();
 			actionQueue = SetUpActionQueueIfNecessary.setup(actionQueue, activitiesToTryQueue);
 			System.out.println("action queue set up if necessary");
-			fw.write(" action queue set up (count: " + actionQueue.size() + ");");
+			fw.append(" action queue set up (count: " + actionQueue.size() + ");");
 			fw.flush();
 			Env conditionEnv = CreateDeepCopyOfEnv.exec(env);
 			System.out.println("deep copy of env created");
-			fw.write(" deep copy of env created;");
+			fw.append(" deep copy of env created;");
 			fw.flush();
 			while (actionQueue.size() > 0) {
 				env = ExecuteActivity.execByDBId(env, actionQueue.get(0));
 				actionQueue.remove(0);
 				System.out.println("individual action executed");
-				fw.write(" individual action finished executing from actionQueue;");
+				fw.append(" individual action finished executing from actionQueue;");
 				fw.flush();
 			}
 			System.out.println("actions executed");
-			fw.write(" action queue finished executing;");
+			fw.append(" action queue finished executing;");
 			fw.flush();
 			//get sense obj that who is associated with the activity we are currently trying to solve
 			int currentActivityToSolveID = activitiesToSolveQueue.get(0);
 			Sense s = GetSenseAssociatedWithActivity.execute(env, currentActivityToSolveID);
 			System.out.println("sense associated with activity gotten");
-			fw.write(" sense associated with activity gotten;");
+			fw.append(" sense associated with activity gotten;");
 			fw.flush();
 			//check if activity was solved and clear ActivityToTryQueue and ActionQueue if so and update the solved's db entry
 			boolean solved = false;
 			if (CheckIfActivityWasSolved.execute(s, currentActivityToSolveID, env)) {
-				fw.write(" activity " + currentActivityToSolveID + " was solved;");
+				fw.append(" activity " + currentActivityToSolveID + " was solved;");
 				fw.flush();
 				//update the solved's db entry
 				try {
@@ -111,7 +111,7 @@ public class LLF {
 				activitiesToSolveQueue.remove(0);
 			}		
 			if (!solved) {
-				fw.write(" activity " + currentActivityToSolveID + " was not solved;");
+				fw.append(" activity " + currentActivityToSolveID + " was not solved;");
 				fw.flush();
 				activitiesToTryQueue.remove(0);
 				if (activitiesToTryQueue.size() == 0) {
