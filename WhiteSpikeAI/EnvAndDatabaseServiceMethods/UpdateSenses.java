@@ -32,9 +32,8 @@ public class UpdateSenses {
 	}
 	
 	
-	public static Env update(List<Sense> sensesIn, Env oldEnvIn, boolean updateDatabase) throws SQLException {
+	public static Env update(List<Sense> sensesIn, Env oldEnvIn, boolean updateDatabase, Connection myConnection) throws SQLException {
 		//start database connection for later
-		Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 		Statement myState = myConnection.createStatement();
 		String removeForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=0;";
 		Statement removeChecksState = myConnection.createStatement();
@@ -224,7 +223,7 @@ public class UpdateSenses {
 							myState.execute(sqlCommand);
 							sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, OrientationChange) VALUES (" + totalNumberOfEnvs + ", " + senseDefId + ", " + orientationCount + ", " + orientationChangesCount + ");";
 							myState.execute(sqlCommand);
-							DBObjectCountResults dbocr = new DBObjectCountResults();
+							DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
 							currentSense.dbId = dbocr.senseCount;
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -291,7 +290,7 @@ public class UpdateSenses {
 				String timestamp = dtf.format(localDate);
 				String createEnvSQLCommand = "INSERT INTO Env (CpuUsage, CreationDateTime, Senses) VALUES (" + oldEnvIn.rawEnv.currentCpuUsage +  ", \"" + timestamp + "\", \"" + oldEnvIn.abstractEnv.dbSenseList + "\");";
 				myState.execute(createEnvSQLCommand);
-				DBObjectCountResults dbocr = new DBObjectCountResults();
+				DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
 				oldEnvIn.dbId = dbocr.envCount;
 			}
 		}

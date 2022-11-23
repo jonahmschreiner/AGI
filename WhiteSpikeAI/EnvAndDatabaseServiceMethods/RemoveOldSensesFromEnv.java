@@ -27,12 +27,11 @@ import EnvAndDatabaseServiceMethods.UpdateSenses;
 import MainLLF.Constants;
 
 public class RemoveOldSensesFromEnv {
-	public static Env exec(List<Sense> newSensesIn, Env oldEnvIn){
+	public static Env exec(List<Sense> newSensesIn, Env oldEnvIn, Connection myConnection){
 		
 		try {
 			List<Sense> sensesCopied = new ArrayList<Sense>();
 			sensesCopied.addAll(oldEnvIn.abstractEnv.senses);
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String removeForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=0;";
 			Statement removeChecksState = myConnection.createStatement();
@@ -71,8 +70,8 @@ public class RemoveOldSensesFromEnv {
 				for (int l = 0; l < overlappingSenses.size(); l++) {
 					Sense currOvSense2 = overlappingSenses.get(l);
 					if (currOvSense2.blob.pixels.containsAll(currSenseBlobPixelsCopy) && !currOvSense2.blob.pixels.equals(currSense.blob.pixels)) {	
-						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currOvSense2.dbId, oldEnvIn);
-						UpdateSenseToBeSenseIn.update(currSense, currOvSense2, oldEnvIn);
+						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currOvSense2.dbId, oldEnvIn, myConnection);
+						UpdateSenseToBeSenseIn.update(currSense, currOvSense2, oldEnvIn, myConnection);
 						oldEnvIn.abstractEnv.senses.remove(currSense);
 						flag2 = false;
 					}
@@ -92,14 +91,14 @@ public class RemoveOldSensesFromEnv {
 						}
 					}				
 					if (flag) {
-						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currSense.dbId, oldEnvIn);
+						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currSense.dbId, oldEnvIn, myConnection);
 						oldEnvIn.abstractEnv.senses.remove(currSense);
 					} else {
 						
 					}
 				}
 			}
-			DBObjectCountResults dbocr = new DBObjectCountResults();
+			DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
 			String updateEnvSQLCommand = "UPDATE Env SET Senses=\"" + oldEnvIn.abstractEnv.dbSenseList + "\" WHERE id=" + dbocr.envCount + ";";
 			myState.execute(updateEnvSQLCommand);
 			String readdForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=1;";
@@ -139,7 +138,7 @@ public class RemoveOldSensesFromEnv {
 		return output;
 	}
 	
-	public static void removeSenseFromAbstractEnvDBSenseListInJavaAndDB (int dbIdIn, Env envIn) {
+	public static void removeSenseFromAbstractEnvDBSenseListInJavaAndDB (int dbIdIn, Env envIn, Connection myConnection) {
 		//remove from java env db sense list
 		String[] array = envIn.abstractEnv.dbSenseList.split(" ");
 		List<String> strList = Arrays.asList(array);
@@ -153,7 +152,6 @@ public class RemoveOldSensesFromEnv {
 		
 		//update env sense list in db
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "UPDATE Env SET Senses=\"" + envIn.abstractEnv.dbSenseList + "\" WHERE id=" + envIn.dbId + ";";
 			myState.execute(sqlCommand);

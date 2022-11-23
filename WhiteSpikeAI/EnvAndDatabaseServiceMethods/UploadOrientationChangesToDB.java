@@ -11,9 +11,8 @@ import Structure.PixelColorRange;
 import Structure.Sense;
 
 public class UploadOrientationChangesToDB {
-	public static void upload(Env envIn) {
+	public static void upload(Env envIn, Connection myConnection) {
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			for (int i = 0; i < envIn.abstractEnv.senses.size(); i++) {
 				Sense currSense = envIn.abstractEnv.senses.get(i);

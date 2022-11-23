@@ -14,9 +14,8 @@ import Structure.PixelColorRange;
 import Structure.Sense;
 
 public class UploadConditionEnvToDB {
-	public static Env exec(Env conditionEnvIn) {
+	public static Env exec(Env conditionEnvIn, Connection myConnection) {
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "SELECT COUNT(*) AS total FROM ConditionEnv;";
 			ResultSet rs = myState.executeQuery(sqlCommand);
@@ -141,7 +140,7 @@ public class UploadConditionEnvToDB {
 				if (senseFound == -1) {
 					sqlCommand = "INSERT INTO ConditionSense (ConditionEnv, ConditionSenseDefinition, ConditionOrientation, ConditionOrientationChange) VALUES (" + conditionEnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ", " + matchingOChangeId + ");";
 					myState.execute(sqlCommand);
-					DBObjectCountResults dbocr = new DBObjectCountResults();
+					DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
 					currentSense.dbId = dbocr.conditionSenseCount;
 					//myState.addBatch(sqlCommand);
 					
@@ -158,7 +157,7 @@ public class UploadConditionEnvToDB {
 			
 			createEnvSQLCommand = createEnvSQLCommand + EnvSenseListSerializedString + "\");";
 			myState.execute(createEnvSQLCommand);
-			DBObjectCountResults dbocr = new DBObjectCountResults();
+			DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
 			conditionEnvIn.dbId = dbocr.conditionEnvCount;
 			
 			

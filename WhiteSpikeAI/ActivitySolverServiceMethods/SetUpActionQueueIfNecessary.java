@@ -10,14 +10,14 @@ import java.util.List;
 import MainLLF.Constants;
 
 public class SetUpActionQueueIfNecessary {
-	public static List<Integer> setup (List<Integer> actionQueueIn, List<String> activitiesToTryQueueIn){
+	public static List<Integer> setup (List<Integer> actionQueueIn, List<String> activitiesToTryQueueIn, Connection myConnection){
 		if (actionQueueIn.size() == 0) {
 			List<Integer> output = new ArrayList<Integer>();
 			String newActivityToPullInString = activitiesToTryQueueIn.get(0);
 			String[] natpisArray = newActivityToPullInString.split(" ");
 			for (int i = 0; i < natpisArray.length; i++) {
 				int newActivityToPullInId =  Integer.valueOf(natpisArray[i]);
-				output.addAll(extractCoreActionListFromActivity(newActivityToPullInId));
+				output.addAll(extractCoreActionListFromActivity(newActivityToPullInId, myConnection));
 			}
 			
 			return output;
@@ -25,10 +25,9 @@ public class SetUpActionQueueIfNecessary {
 		return actionQueueIn;
 	}
 	
-	public static List<Integer> extractCoreActionListFromActivity (int activityIdIn) {
+	public static List<Integer> extractCoreActionListFromActivity (int activityIdIn, Connection myConnection) {
 		List<Integer> output = new ArrayList<Integer>();
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "SELECT CoreActivity, SubActivities FROM Activity WHERE id=" + activityIdIn + ";";
 			ResultSet rs = myState.executeQuery(sqlCommand);
@@ -44,7 +43,7 @@ public class SetUpActionQueueIfNecessary {
 				String subActivityString = rs.getString("SubActivities");
 				String[] subActivityArray = subActivityString.split(" ");
 				for (int i = 0; i < subActivityArray.length; i++) {
-					output.addAll(extractCoreActionListFromActivity(Integer.valueOf(subActivityArray[i])));
+					output.addAll(extractCoreActionListFromActivity(Integer.valueOf(subActivityArray[i]), myConnection));
 				}
 			}
 		} catch (Exception e) {

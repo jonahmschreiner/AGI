@@ -1,7 +1,6 @@
 package ActivitySolverServiceMethods;
 
 import java.awt.Color;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
@@ -25,15 +24,13 @@ import Structure.PixelColorRange;
 import Structure.PixelOverallChange;
 import Structure.Sense;
 public class ExecuteActivity {
-	public static Env execByDBId(Env envIn, int activityId) throws IOException {
-		File logFile = new File("/home/agi/Downloads/log.txt");
-		FileWriter fw = new FileWriter(logFile);
+	public static Env execByDBId(Env envIn, int activityId, FileWriter fw, Connection myConnection) throws IOException {
 		Env prevEnv = CreateDeepCopyOfEnv.exec(envIn);
 		fw.append(" EXECACT: CreateDeepCopyOfEnv Finished\n");
 		fw.flush();
 		List<Sense> prevEnvSenses2 = new ArrayList<Sense>();
 		prevEnvSenses2.addAll(envIn.abstractEnv.senses);
-		ResultSet rs = DatabaseHandler.getActivityForExecution(activityId);
+		ResultSet rs = DatabaseHandler.getActivityForExecution(activityId, myConnection);
 		fw.append(" EXECACT: Activity Gotten For Execution\n");
 		fw.flush();
 		int propId = -1;
@@ -66,24 +63,23 @@ public class ExecuteActivity {
 					Env currPrevEnv = new Env(0);
 					currPrevEnv.rawEnv.currentCpuUsage = envIn.rawEnv.currentCpuUsage;
 					currPrevEnv.rawEnv.currentDisplay = envIn.rawEnv.currentDisplay;
-					envIn = ExecuteActivity.execByDBId(envIn, currActivityId);
+					envIn = ExecuteActivity.execByDBId(envIn, currActivityId, fw, myConnection);
 					fw.append(" EXECACT: Execution of a subactivity finished\n");
 					fw.flush();
 					//insert activity-worked-checking and environment-closing here
 					//List<Sense> prevEnvSenses = new ArrayList<Sense>();
 					currPrevEnv.abstractEnv.senses.addAll(envIn.abstractEnv.senses);
-					envIn = UpdateEnv.update(envIn);
+					envIn = UpdateEnv.update(envIn, myConnection);
 					fw.append(" EXECACT: Updating Env after Sub-Activity Execution Finished\n");
 					fw.flush();
 					if (currActivityId > Constants.numOfCoreActions) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
 						fw.append(" EXECACT: Executed Sub-Activity is not a core action\n");
 						fw.flush();
-						Sense s = GetSenseAssociatedWithActivity.execute(envIn, currActivityId);
-						if (CheckIfActivityWasSolved.execute(s, currActivityId, envIn)) { //activity solution worked
+						Sense s = GetSenseAssociatedWithActivity.execute(envIn, currActivityId, myConnection);
+						if (CheckIfActivityWasSolved.execute(s, currActivityId, envIn, myConnection)) { //activity solution worked
 							//create and assign condition env that only contains elements that are common to existing condition env and the current env where it just worked
 							fw.append(" EXECACT: Sub-Activity Worked Correctly\n");
 							try {
-								Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 								Statement myState = myConnection.createStatement();
 								int conditionEnvDBId = rs.getInt("ConditionEnv");
 								String sqlCommand = "SELECT Senses FROM ConditionEnv WHERE id=" + conditionEnvDBId + ";";
@@ -160,7 +156,7 @@ public class ExecuteActivity {
 								List<Sense> currPrevEnvSensesList = new ArrayList<Sense>();
 								currPrevEnvSensesList.addAll(currPrevEnv.abstractEnv.senses);
 								int conditionEnvSensesSize = conditionEnvSenses.size();
-								currPrevEnv = UpdateSenses.update(conditionEnvSenses, currPrevEnv, false); 
+								currPrevEnv = UpdateSenses.update(conditionEnvSenses, currPrevEnv, false, myConnection); 
 								
 								
 								//recentlyChangedOldSenses should contain the indexes of the existing db conditionEnv senses that are present in this condition env
@@ -240,7 +236,7 @@ public class ExecuteActivity {
 								//create senses string adjust this to handle the property closing down
 								
 								//
-								newConditionEnv = UploadConditionEnvToDB.exec(newConditionEnv);
+								newConditionEnv = UploadConditionEnvToDB.exec(newConditionEnv, myConnection);
 								//
 								fw.append(" EXECACT: narrowed-down condition env uploading to db finished\n");
 								fw.flush();
@@ -259,13 +255,12 @@ public class ExecuteActivity {
 							//create new activity that does the same sense prop change but with the current Env as the condition env
 							fw.append(" EXECACT: Sub-Activity Did Not Work Correctly\n");
 							fw.flush();
-							UploadConditionEnvToDB.exec(currPrevEnv);
+							UploadConditionEnvToDB.exec(currPrevEnv, myConnection);
 							fw.append(" EXECACT: Condition Env Uploading To DB Finished\n");
 							fw.flush();
-							DBObjectCountResults dbocr = new DBObjectCountResults();
+							DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
 							String sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + s.dbId + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
 							try {
-								Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 								Statement myState = myConnection.createStatement();
 								myState.execute(sqlCommand);
 							} catch (Exception f) {
@@ -281,13 +276,12 @@ public class ExecuteActivity {
 				if (activityId > Constants.numOfCoreActions) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
 					fw.append(" EXECACT: Top Activity was not a Core Action;");
 					fw.flush();
-					Sense s = GetSenseAssociatedWithActivity.execute(envIn, activityId);
-					if (CheckIfActivityWasSolved.execute(s, activityId, envIn)) { //activity solution worked
+					Sense s = GetSenseAssociatedWithActivity.execute(envIn, activityId, myConnection);
+					if (CheckIfActivityWasSolved.execute(s, activityId, envIn, myConnection)) { //activity solution worked
 						fw.append(" EXECACT: Top Activity Worked Correctly, narrowing down condition env\n");
 						fw.flush();
 						//create and assign condition env that only contains elements that are common to existing condition env and the current env where it just worked
 						try {
-							Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 							Statement myState = myConnection.createStatement();
 							int conditionEnvDBId = rs.getInt("ConditionEnv");
 							String sqlCommand = "SELECT Senses FROM ConditionEnv WHERE id=" + conditionEnvDBId + ";";
@@ -367,7 +361,7 @@ public class ExecuteActivity {
 							List<Sense> prevEnvSensesList = new ArrayList<Sense>();
 							prevEnvSensesList.addAll(prevEnv.abstractEnv.senses);
 							int conditionEnvSensesSize = conditionEnvSenses.size();
-							prevEnv = UpdateSenses.update(conditionEnvSenses, prevEnv, false); 
+							prevEnv = UpdateSenses.update(conditionEnvSenses, prevEnv, false, myConnection); 
 
 							
 							//abstract env closing
@@ -414,7 +408,7 @@ public class ExecuteActivity {
 							
 							
 							//
-							newConditionEnv = UploadConditionEnvToDB.exec(newConditionEnv);
+							newConditionEnv = UploadConditionEnvToDB.exec(newConditionEnv, myConnection);
 							//
 							
 							
@@ -459,11 +453,10 @@ public class ExecuteActivity {
 						fw.append(" EXECACT: Top Activity Didn't Work, creating new activity with this condition env\n");
 						fw.flush();
 						//create new activity that does the same sense prop change but with the current Env as the condition env
-						prevEnv = UploadConditionEnvToDB.exec(prevEnv);
-						DBObjectCountResults dbocr = new DBObjectCountResults();
+						prevEnv = UploadConditionEnvToDB.exec(prevEnv, myConnection);
+						DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
 						String sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + s.dbId + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
 						try {
-							Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 							Statement myState = myConnection.createStatement();
 							myState.execute(sqlCommand);
 						} catch (Exception f) {

@@ -30,18 +30,6 @@ public class DatabaseHandler {
 	
 	public static void main(String[] args) {
 		setUpDatabase();
-//		try {
-//			Connection myConnection = DriverManager.getConnection(url, user, password);
-//			Statement myState = myConnection.createStatement();
-//			String sqlCommand = "select * from whitespikeai.TABLENAME";
-//			ResultSet rs = myState.executeQuery(sqlCommand);
-//			while (rs.next()) {
-//				System.out.println(rs.getString("COLUMNLABEL"));
-//			}
-//		} catch (Exception e) {
-//			
-//		}
-		
 	}
 	
 	public static void doSetupIfNecessary() {
@@ -59,7 +47,7 @@ public class DatabaseHandler {
 //			Runtime run = Runtime.getRuntime();
 //			String command = "";
 //			run.exec(command);
-			Connection createDBConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/", Constants.user, Constants.password);
+			Connection createDBConnection = DriverManager.getConnection(Constants.homeurl, Constants.user, Constants.password);
 			Statement createDBState = createDBConnection.createStatement();
 			String createCommand = "CREATE DATABASE whitespikeai;";
 			createDBState.execute(createCommand);
@@ -151,9 +139,8 @@ public class DatabaseHandler {
 	}
 	
 	
-	public static void uploadEnvToDatabase(Env envIn) {
+	public static void uploadEnvToDatabase(Env envIn, Connection myConnection) {
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			Statement indQueryStatement = myConnection.createStatement();
 			String indQueryCommand = "";
@@ -262,7 +249,7 @@ public class DatabaseHandler {
 								try {
 									rs3.next();
 									int conditionEnvId = rs3.getInt("ConditionEnv");
-									if (!checkIfConditionEnvIsContainedInEnv(conditionEnvId, envIn)) {
+									if (!checkIfConditionEnvIsContainedInEnv(conditionEnvId, envIn, myConnection)) {
 										throwError = true;
 									}
 								} catch (Exception e) {
@@ -371,7 +358,7 @@ public class DatabaseHandler {
 				if (senseFound == -1) {
 					sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, OrientationChange) VALUES (" + EnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ", " + orChangeId + ");";
 					myState.execute(sqlCommand);
-					DBObjectCountResults dbocr = new DBObjectCountResults();
+					DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
 					currentSense.dbId = dbocr.senseCount;
 					//myState.addBatch(sqlCommand);
 					
@@ -387,7 +374,7 @@ public class DatabaseHandler {
 			}
 			createEnvSQLCommand = createEnvSQLCommand + EnvSenseListSerializedString + "\");";
 			myState.execute(createEnvSQLCommand);
-			DBObjectCountResults dbocr = new DBObjectCountResults();
+			DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
 			envIn.dbId = dbocr.envCount;
 			//myState.addBatch(createEnvSQLCommand);
 			//myState.executeBatch();
@@ -404,10 +391,9 @@ public class DatabaseHandler {
 		}
 	}
 	
-	public static ResultSet getActivityForExecution(int idIn) {
+	public static ResultSet getActivityForExecution(int idIn, Connection myConnection) {
 		ResultSet output = null;
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "SELECT CoreActivity, SubActivities, ConditionEnv, PropertyId, increaseOrDecreaseProp FROM Activity WHERE id=" + idIn + ";";
 			output = myState.executeQuery(sqlCommand);
@@ -418,9 +404,8 @@ public class DatabaseHandler {
 	}
 	
 	
-	public static boolean checkIfConditionEnvIsContainedInEnvUsingIds(int conditionEnvId, int envId) { //assumes all senses in db are unique
+	public static boolean checkIfConditionEnvIsContainedInEnvUsingIds(int conditionEnvId, int envId, Connection myConnection) { //assumes all senses in db are unique
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "SELECT Senses FROM Env WHERE id=" + conditionEnvId + ";";
 			ResultSet rs = myState.executeQuery(sqlCommand);
@@ -447,9 +432,8 @@ public class DatabaseHandler {
 		return false;
 	}
 	
-	public static boolean checkIfConditionEnvIsContainedInEnv(int conditionEnvId, Env env) {
+	public static boolean checkIfConditionEnvIsContainedInEnv(int conditionEnvId, Env env, Connection myConnection) {
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "SELECT Senses FROM Env WHERE id=" + conditionEnvId + ";";
 			ResultSet rs = myState.executeQuery(sqlCommand);
@@ -457,7 +441,7 @@ public class DatabaseHandler {
 				rs.next();
 				String conditionEnvSenseString = rs.getString("Senses");
 				String[] conditionEnvSenseArray = conditionEnvSenseString.split(" ");
-				return env.abstractEnv.senses.containsAll(createSenseListFromIdList(conditionEnvSenseArray));
+				return env.abstractEnv.senses.containsAll(createSenseListFromIdList(conditionEnvSenseArray, myConnection));
 			} catch (Exception e) {
 				
 			}
@@ -467,10 +451,9 @@ public class DatabaseHandler {
 		return false;
 	}
 	
-	public static List<Sense> createSenseListFromIdList(String[] senseIds){
+	public static List<Sense> createSenseListFromIdList(String[] senseIds, Connection myConnection){
 		List<Sense> output = new ArrayList<Sense>();
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			for (int i = 0; i < senseIds.length; i++) {
 				Sense newSense = new Sense();

@@ -10,7 +10,7 @@ import Structure.Env;
 import Structure.Sense;
 
 public class CheckIfActivityWasSolved {
-	public static boolean execute(Sense senseIn, int ActivityDBIdIn, Env envIn) {
+	public static boolean execute(Sense senseIn, int ActivityDBIdIn, Env envIn, Connection myConnection) {
 		boolean output = false;
 		//get propId and increaseOrDecreaseValues from DB for this activity id
 		int senseId = -999999;
@@ -18,7 +18,6 @@ public class CheckIfActivityWasSolved {
 		int increaseOrDecreaseProp = -999;
 		String increaseOrDecreasePropAsString = null;
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "SELECT AssociatedSense, PropertyId, increaseOrDecreaseProp FROM Activity WHERE id=" + ActivityDBIdIn + ";";
 			ResultSet rs = myState.executeQuery(sqlCommand);

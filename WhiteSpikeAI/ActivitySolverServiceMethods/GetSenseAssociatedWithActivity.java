@@ -12,13 +12,12 @@ import Structure.PixelColorRange;
 import Structure.Sense;
 
 public class GetSenseAssociatedWithActivity {
-	public static Sense execute(Env envIn, int ActivityDBIdIn) {
+	public static Sense execute(Env envIn, int ActivityDBIdIn, Connection myConnection) {
 		Sense output = null;
 		//db Activity.AssociatedSense.SenseDef && .Orientation are same
 		
 		//get SenseDef and orientation of AssociatedSense of the activity id passed in
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "SELECT SenseDefinition.Definition, Orientation.Height, Orientation.Width, Orientation.Rotation, Orientation.x, Orientation.y, Orientation.color FROM Activity INNER JOIN Sense ON Activity.AssociatedSense=Sense.id INNER JOIN SenseDefinition ON Sense.SenseDefinition=SenseDefinition.id INNER JOIN Orientation ON Sense.Orientation=Orientation.id WHERE Activity.id=" + ActivityDBIdIn + ";";
 			ResultSet rs = myState.executeQuery(sqlCommand);

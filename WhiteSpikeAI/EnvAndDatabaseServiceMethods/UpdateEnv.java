@@ -1,6 +1,7 @@
 package EnvAndDatabaseServiceMethods;
 
 import java.awt.image.BufferedImage;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import Structure.Pixel;
 import Structure.Sense;
 import EnvAndDatabaseServiceMethods.ChangedPixelsToBlobs;
 public class UpdateEnv {
-	public static Env update(Env envIn) {
+	public static Env update(Env envIn, Connection myConnection) {
 		envIn.abstractEnv.recentlyChangedOldSenses.clear();
 		envIn.abstractEnv.recentlyAddedSenses.clear();
 		Env newEnv = new Env(0);
@@ -36,25 +37,16 @@ public class UpdateEnv {
 		//VisualOutputOfSensesFromSensesAndImage.execute(newishSenses, newEnv.rawEnv.currentDisplay, "newishSensesAfterCombining");
 		try {
 			envIn.rawEnv = newEnv.rawEnv;
-			envIn = UpdateSenses.update(newishSenses, envIn, true);
+			envIn = UpdateSenses.update(newishSenses, envIn, true, myConnection);
 			//VisualOutputOfSensesFromSensesAndImage.execute(envIn.abstractEnv.senses, newEnv.rawEnv.currentDisplay, "EnvSensesAfterUpdateSenses");
-			envIn = RemoveOldSensesFromEnv.exec(newishSenses, envIn);
+			envIn = RemoveOldSensesFromEnv.exec(newishSenses, envIn, myConnection);
 			//VisualOutputOfSensesFromSensesAndImage.execute(envIn.abstractEnv.senses, newEnv.rawEnv.currentDisplay, "EnvSensesAfterRemoveOldSenses");
-			UploadOrientationChangesToDB.upload(envIn);
+			UploadOrientationChangesToDB.upload(envIn, myConnection);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		//VisualOutputOfSensesFromSensesAndImage.execute(envIn.abstractEnv.senses, envIn.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50), "output2");
 		
 		return envIn;
-	}
-	
-	public static void main(String[] args) throws InterruptedException {
-		DatabaseHandler.main(null);
-		Env env = new Env();
-		DatabaseHandler.uploadEnvToDatabase(env);
-		Thread.sleep(2000);
-		env = update(env);
-		System.out.println();
 	}
 }

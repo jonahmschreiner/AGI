@@ -20,9 +20,8 @@ public class DBObjectCountResults {
 	public int conditionOrientationCount = -1;
 	public int conditionEnvCount = -1;
 	
-	public DBObjectCountResults () {
+	public DBObjectCountResults (Connection myConnection) {
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "SELECT COUNT(*) as total FROM Sense";
 			ResultSet rs = myState.executeQuery(sqlCommand);

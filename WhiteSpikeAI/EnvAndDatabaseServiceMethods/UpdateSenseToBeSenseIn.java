@@ -11,10 +11,9 @@ import Structure.PixelColorRange;
 import Structure.Sense;
 
 public class UpdateSenseToBeSenseIn {
-	public static void update (Sense senseToBeUpdated, Sense senseIn, Env envIn) {
+	public static void update (Sense senseToBeUpdated, Sense senseIn, Env envIn, Connection myConnection) {
 		senseIn.orientationChanges = UpdateSenses.extractOrientationChanges(senseIn.orientation, senseToBeUpdated.orientation);
 		try {
-			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
 			String sqlCommand = "SELECT * FROM Sense WHERE id=" + senseToBeUpdated.dbId + ";";
 			senseIn.dbId = senseToBeUpdated.dbId;
