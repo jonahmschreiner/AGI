@@ -1,5 +1,6 @@
 package ActivitySolverServiceMethods;
 
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -10,9 +11,20 @@ import java.util.List;
 import MainLLF.Constants;
 
 public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it only does this once and adds newly-solved activities as they are solved
-	public static List<String> setup (List<String> queueIn, int activityIdIn, Connection myConnection){
-		if (queueIn.size() == 0) {
-			
+	public static List<String> setup (List<String> queueIn, int activityIdIn, Connection myConnection, FileWriter fw){
+		try {
+			fw.append("Set up activities to try queueIn size: " + queueIn.size() + "\n");
+			fw.flush();
+		} catch (Exception e) {
+			try {
+				fw.append("queueIn error: " + e.getMessage() + "\n");
+				fw.flush();
+			} catch(Exception f) {
+				
+			}
+		}
+
+		if (queueIn.size() == 0 || queueIn == null) {
 			//exact matches (SenseDef, Orientation, PropId, increaseOrDecrease all match)
 			List<Integer> allExactIndis = new ArrayList<Integer>();
 			String definition = null;
@@ -52,9 +64,18 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 						break;
 					}
 				}
-				queueIn.addAll(combosFromIndis(allExactIndis, 1));
+				List<String> testList = combosFromIndis(allExactIndis, 1);
+				fw.append("Exact Match Size: " + allExactIndis.size() + "\n");
+				fw.flush();
+				queueIn.addAll(testList);
 			} catch (Exception e) {
 				e.printStackTrace();
+				try {
+					fw.append("-2 error: " + e.getMessage() + "\n");
+					fw.flush();
+				} catch (Exception f) {
+					
+				}
 			}
 			
 			
@@ -75,9 +96,18 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 						break;
 					}
 				}
-				queueIn.addAll(combosFromIndis(allSenseIndis, 1));
+				List<String> testList = combosFromIndis(allSenseIndis, 1);
+				fw.append("Sense Match Size: " + allSenseIndis.size() + "\n");
+				fw.flush();
+				queueIn.addAll(testList);
 			} catch (Exception e) {
 				e.printStackTrace();
+				try {
+					fw.append("-1 error: " + e.getMessage() + "\n");
+					fw.flush();
+				} catch (Exception f) {
+					
+				}
 			}
 			
 			
@@ -100,9 +130,18 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 						break;
 					}
 				}
-				queueIn.addAll(combosFromIndis(allLocationIndis, 1));
+				List<String> testList = combosFromIndis(allLocationIndis, 1);
+				fw.append("Location Match Size: " + allLocationIndis.size() + "\n");
+				fw.flush();
+				queueIn.addAll(testList);
 			} catch (Exception e) {
 				e.printStackTrace();
+				try {
+					fw.append("0 error: " + e.getMessage() + "\n");
+					fw.flush();
+				} catch (Exception f) {
+					
+				}
 			}
 			
 			//end result matches (PropId, increaseOrDecrease all match)
@@ -124,9 +163,18 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 						break;
 					}
 				}
-				queueIn.addAll(combosFromIndis(allResultIndis, 1));
+				List<String> testList = combosFromIndis(allResultIndis, 1);
+				fw.append("End Result Match Size: " + allResultIndis.size() + "\n");
+				fw.flush();
+				queueIn.addAll(testList);
 			} catch (Exception e) {
 				e.printStackTrace();
+				try {
+					fw.append("1 error: " + e.getMessage() + "\n");
+					fw.flush();
+				} catch (Exception f) {
+					
+				}
 			}
 			
 			
@@ -156,10 +204,35 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 						break;
 					}
 				}
-				queueIn.addAll(combosFromIndis(allIndis, 0)); //need this to go back to 1 at some point (see comment at top of class)
+				
+				if (definition != null) {
+					sqlCommand = "SELECT id FROM Activity WHERE AssociatedSense IS NULL;";
+				}
+				
+				ResultSet rs2 = myState.executeQuery(sqlCommand);
+				//individual activities
+				while (true) {
+					try {
+						rs2.next();
+						int currId = rs2.getInt("id");
+						queueIn.add(String.valueOf(currId));
+						allIndis.add(currId);
+					} catch (Exception e) {
+						break;
+					}
+				}
+				List<String> testList = combosFromIndis(allIndis, 0);
+				fw.append("Everything Size: " + allIndis.size() + "\n");
+				fw.flush();
+				queueIn.addAll(testList); //need this to go back to 1 at some point (see comment at top of class)
 
 			} catch (Exception e) {
-				
+				try {
+					fw.append("2 error: " + e.getMessage() + "\n");
+					fw.flush();
+				} catch (Exception f) {
+					
+				}
 			}
 		}
 		return queueIn;

@@ -861,30 +861,6 @@ public class ExecuteCoreAction {
 			util.pressControlShiftF12();
 		} else if (coreActionIndex == 429) {
 			util.pressControlAltEscape();
-		} else if (coreActionIndex == 430) {
-			util.pressControlAltF1();
-		} else if (coreActionIndex == 431) {
-			util.pressControlAltF2();
-		} else if (coreActionIndex == 432) {
-			util.pressControlAltF3();
-		} else if (coreActionIndex == 433) {
-			util.pressControlAltF4();
-		} else if (coreActionIndex == 434) {
-			util.pressControlAltF5();
-		} else if (coreActionIndex == 435) {
-			util.pressControlAltF6();
-		} else if (coreActionIndex == 436) {
-			util.pressControlAltF7();
-		} else if (coreActionIndex == 437) {
-			util.pressControlAltF8();
-		} else if (coreActionIndex == 438) {
-			util.pressControlAltF9();
-		} else if (coreActionIndex == 439) {
-			util.pressControlAltF10();
-		} else if (coreActionIndex == 440) {
-			util.pressControlAltF11();
-		} else if (coreActionIndex == 441) {
-			util.pressControlAltF12();
-		}	
+		}
 	}
 }

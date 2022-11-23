@@ -67,7 +67,7 @@ public class LLF {
 			System.out.println("activities to solve set up if necessary");
 			fw.append(" activities to solve queue set up (count: " + activitiesToSolveQueue.size() + ")\n");
 			fw.flush();
-			activitiesToTryQueue = SetUpActivitiesToTryQueueIfNecessary.setup(activitiesToTryQueue, activitiesToSolveQueue.get(0), myConnection);
+			activitiesToTryQueue = SetUpActivitiesToTryQueueIfNecessary.setup(activitiesToTryQueue, activitiesToSolveQueue.get(0), myConnection, fw);
 			System.out.println("activities to try set up if necessary");
 			fw.append(" activities to try queue set up (count: " + activitiesToTryQueue.size() + ")\n");
 			fw.flush();
@@ -145,6 +145,8 @@ public class LLF {
 				fw.append("Stack: " + ste[i].toString() + "\n");
 				fw.flush();
 			}
+			fw.append("Stack: " + e.getMessage() + "\n");
+			fw.flush();
 			
 		}
 		fw.append("end\n");
