@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
@@ -50,7 +49,7 @@ public class ExecuteActivity {
 			}
 			fw.append(" EXECACT: Core Activity Found\n");
 			fw.flush();
-			ExecuteCoreAction.exec(coreActivityToExecute);
+			ExecuteCoreAction.exec(coreActivityToExecute, fw);
 		} catch (Exception e) {
 			fw.append(" EXECACT: Activity with subactivities found\n");
 			fw.flush();

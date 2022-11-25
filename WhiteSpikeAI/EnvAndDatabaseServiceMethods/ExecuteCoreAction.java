@@ -1,8 +1,17 @@
 package EnvAndDatabaseServiceMethods;
 
+import java.io.FileWriter;
+
 public class ExecuteCoreAction {
-	public static void exec(int coreActionIndex) {
+	public static void exec(int coreActionIndex, FileWriter fw) {
 		Util util = new Util();
+		try {
+			fw.append("Core Action Index: " + coreActionIndex + "\n");
+			fw.flush();
+		} catch (Exception e) {
+			
+		}
+		
 		if (coreActionIndex == 1) {
 			util.moveMouseLeft();
 		} else if (coreActionIndex == 2) {
@@ -861,6 +870,11 @@ public class ExecuteCoreAction {
 			util.pressControlShiftF12();
 		} else if (coreActionIndex == 429) {
 			util.pressControlAltEscape();
+		}
+		try {
+			Thread.sleep(40);
+		} catch (Exception e) {
+			
 		}
 	}
 }
