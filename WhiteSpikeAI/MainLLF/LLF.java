@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import EnvAndDatabaseServiceMethods.CreateDeepCopyOfEnv;
 import EnvAndDatabaseServiceMethods.DatabaseHandler;
 import EnvAndDatabaseServiceMethods.UpdateEnv;
 import EnvAndDatabaseServiceMethods.UploadConditionEnvToDB;
+import EnvAndDatabaseServiceMethods.VisualOutputOfSensesFromSensesAndImage;
 import EnvAndDatabaseServiceMethods.VisuallyWalkThroughEnv;
 import Structure.Env;
 import Structure.Sense;
@@ -43,6 +45,7 @@ public class LLF {
 		fw.append(ldt.toString() + "\n-------\n");
 		DatabaseHandler.doSetupIfNecessary();
 		Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
+		Statement myStatement = myConnection.createStatement();
 		System.out.println("db setup done");
 		fw.append(" db setup done\n");
 		fw.flush();
@@ -57,9 +60,10 @@ public class LLF {
 		List<Integer> activitiesToSolveQueue = new ArrayList<Integer>();
 		List<String> activitiesToTryQueue = new ArrayList<String>();
 		List<Integer> actionQueue = new ArrayList<Integer>();
-		
+		VisualOutputOfSensesFromSensesAndImage.execute(env.abstractEnv.senses, env.rawEnv.currentDisplay, "test env ss");
 		try {
-		while (true) {
+			boolean continueLooping = true;
+		while (continueLooping) {
 			System.out.println("new loop");
 			fw.append(" start of new life loop iteration\n");
 			fw.flush();
@@ -137,6 +141,14 @@ public class LLF {
 					fw.append(e.getMessage() + "\n");
 					fw.flush();
 				}
+			}
+			ResultSet rs = myStatement.executeQuery("SELECT * FROM Activity WHERE SolvedStatus=0 LIMIT 1;");
+			try {
+				rs.next();
+				@SuppressWarnings("unused")
+				String id = rs.getString("id");
+			} catch (Exception e) {
+				continueLooping = false;
 			}
 		}
 		} catch (Exception e) {

@@ -18,7 +18,7 @@ public class VisualOutputOfSensesFromSensesAndImage {
 		ColorModel cm = image1In.getColorModel();
 		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
 		WritableRaster raster = image1In.copyData(null);
-		BufferedImage imageIn = new BufferedImage(cm, raster, isAlphaPremultiplied, null).getSubimage(0, 100, 1680, 700);
+		BufferedImage imageIn = new BufferedImage(cm, raster, isAlphaPremultiplied, null).getSubimage(604, 270, 470, 400);
 		
 		//
 		for (int i = 0; i < sensesIn.size(); i++) {

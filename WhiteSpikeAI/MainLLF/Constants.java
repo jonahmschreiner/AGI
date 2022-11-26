@@ -8,5 +8,5 @@ public class Constants {
 	static final public int threadHeight = 10;
 	static final public int initialSenseComparisonScore = 200;
 	static final public int SenseComparisonColorMatchBonus = 100;
-	static final public int numOfCoreActions = 429;
+	static final public int numOfCoreActions = 6; //was 429 when using everything
 }

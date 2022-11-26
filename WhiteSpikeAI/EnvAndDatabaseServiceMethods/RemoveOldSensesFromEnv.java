@@ -82,7 +82,7 @@ public class RemoveOldSensesFromEnv {
 					boolean flag = false;
 					for (int j = 0; j < currSense.blob.pixels.size(); j++) {
 						Pixel currPixel = currSense.blob.pixels.get(j);
-						Color checkRGB = new Color (oldEnvIn.rawEnv.currentDisplay.getSubimage(0, 100, 1680, 700).getRGB(currPixel.position.x, currPixel.position.y));
+						Color checkRGB = new Color (oldEnvIn.rawEnv.currentDisplay.getSubimage(700, 300, 300, 300).getRGB(currPixel.position.x, currPixel.position.y));
 						PixelColorRange currPixelPCR = new PixelColorRange(currPixel.color);
 						PixelColorRange checkRGBPCR = new PixelColorRange(checkRGB);
 						if (!currPixelPCR.color.equals(checkRGBPCR.color)) {
