@@ -60,11 +60,24 @@ public class LLF {
 		List<Integer> activitiesToSolveQueue = new ArrayList<Integer>();
 		List<String> activitiesToTryQueue = new ArrayList<String>();
 		List<Integer> actionQueue = new ArrayList<Integer>();
-		VisualOutputOfSensesFromSensesAndImage.execute(env.abstractEnv.senses, env.rawEnv.currentDisplay, "test env ss");
+		
+		//for testing
+		int testCount = 0;
+		//
 		try {
 			boolean continueLooping = true;
 		while (continueLooping) {
+			//for testing
+//			testCount++;
+//			
+//			if (testCount == 31) {
+//				System.out.println("");
+//			}
+			//
+			
+			
 			System.out.println("new loop");
+			fw.append("\n\n.....................\n\n");
 			fw.append(" start of new life loop iteration\n");
 			fw.flush();
 			activitiesToSolveQueue = SetUpActivitiesToSolveQueueIfNecessary.setup(activitiesToSolveQueue, fw, myConnection);
@@ -83,6 +96,20 @@ public class LLF {
 			System.out.println("deep copy of env created");
 			fw.append(" deep copy of env created\n");
 			fw.flush();
+			boolean coreActionIsTopAction;
+			if (actionQueue.get(0) <= Constants.numOfCoreActions) {
+				if (actionQueue.size() > 1) {
+					if (actionQueue.get(1) <= Constants.numOfCoreActions) {
+						coreActionIsTopAction = true;
+					} else {
+						coreActionIsTopAction = false;
+					}
+				} else {
+					coreActionIsTopAction = true;
+				}
+			} else {
+				coreActionIsTopAction = false;
+			}
 			while (actionQueue.size() > 0) {
 				env = ExecuteActivity.execByDBId(env, actionQueue.get(0), fw, myConnection);
 				actionQueue.remove(0);
@@ -90,6 +117,10 @@ public class LLF {
 				fw.append(" individual action finished executing from actionQueue\n");
 				fw.flush();
 			}
+			if (coreActionIsTopAction) {
+				env = UpdateEnv.update(env, myConnection);
+			}
+			
 			System.out.println("actions executed");
 			fw.append(" action queue finished executing\n");
 			fw.flush();

@@ -190,6 +190,8 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 					sqlCommand = "SELECT id FROM Activity WHERE SolvedStatus=1 ORDER BY id ASC;";
 				} else {
 					sqlCommand = "SELECT Activity.id FROM Activity WHERE SolvedStatus=1 AND (PropertyId !=" + propId + " OR Activity.increaseOrDecreaseProp !=" + increaseOrDecrease + ") ORDER BY Activity.id ASC;";
+					fw.append("went here. PropertyId is " + propId + ". IncreaseOrDecrease value is " + increaseOrDecrease + ".");
+					fw.flush();
 				}
 				
 				ResultSet rs = myState.executeQuery(sqlCommand);
@@ -207,7 +209,7 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 				
 				if (definition != null) {
 					sqlCommand = "SELECT id FROM Activity WHERE AssociatedSense IS NULL;";
-				}
+				
 				
 				ResultSet rs2 = myState.executeQuery(sqlCommand);
 				//individual activities
@@ -220,6 +222,7 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 					} catch (Exception e) {
 						break;
 					}
+				}
 				}
 				List<String> testList = combosFromIndis(allIndis, 0);
 				fw.append("Everything Size: " + allIndis.size() + "\n");

@@ -37,7 +37,6 @@ public class SetUpActionQueueIfNecessary {
 				if (caId == -1) {
 					throw new Exception();
 				}
-				caId++;
 				output.add(caId);
 			} catch (Exception e) { //if the activity is a higher level activity
 				String subActivityString = rs.getString("SubActivities");

@@ -49,7 +49,7 @@ public class ExecuteActivity {
 			}
 			fw.append(" EXECACT: Core Activity Found\n");
 			fw.flush();
-			ExecuteCoreAction.exec(coreActivityToExecute, fw);
+			ExecuteCoreAction.exec(coreActivityToExecute, fw, envIn.rawEnv); //TODO remove the envIn.rawEnv when done testing
 		} catch (Exception e) {
 			fw.append(" EXECACT: Activity with subactivities found\n");
 			fw.flush();

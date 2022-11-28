@@ -1,5 +1,6 @@
 package EnvAndDatabaseServiceMethods;
 
+import java.awt.MouseInfo;
 import java.io.FileWriter;
 
 import Structure.RawEnv;
@@ -13,28 +14,149 @@ public class ExecuteCoreAction {
 		} catch (Exception e) {
 			
 		}
-
+		if (coreActionIndex == 0) {
+			System.out.println("I sense there was a fuck up");
+		}
 		if (coreActionIndex == 1) {
 			if (rawEnvIn.mouseLocation.x > 604) { //TODO remove these when going back to normal env
+				//for testing
+				try {
+					fw.append("X POS BEFORE Core Action 1 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("Y POS BEFORE Core Action 1 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
+					fw.flush();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				//
+				
+				
 				util.moveMouseLeft();
+				try {
+					Thread.sleep(20);
+				} catch (Exception e) {
+					
+				}
+				
+				
+				//for testing
+				try {
+					fw.append("X POS AFTER Core Action 1 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("Y POS AFTER Core Action 1 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
+					fw.flush();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				//
 			}
 			
 		} else if (coreActionIndex == 2) {
 			if (rawEnvIn.mouseLocation.x < 1004) { //TODO remove
+				//for testing
+				try {
+					fw.append("X POS BEFORE Core Action 2 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("Y POS BEFORE Core Action 2 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
+					fw.flush();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				//
+				
+				
 				util.moveMouseRight();
+				try {
+					Thread.sleep(20);
+				} catch (Exception e) {
+					
+				}
+				
+				
+				//for testing
+				try {
+					fw.append("X POS AFTER Core Action 2 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("Y POS AFTER Core Action 2 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
+					fw.flush();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				//
 			}
 		} else if (coreActionIndex == 3) {
 			if (rawEnvIn.mouseLocation.y < 670) { //TODO remove
+				//for testing
+				try {
+					fw.append("X POS BEFORE Core Action 3 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("Y POS BEFORE Core Action 3 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
+					fw.flush();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				//
 				util.moveMouseDown();
+				try {
+					Thread.sleep(20);
+				} catch (Exception e) {
+					
+				}
+				//for testing
+				try {
+					fw.append("X POS AFTER Core Action 3 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("Y POS AFTER Core Action 3 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
+					fw.flush();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				//
 			}
 		} else if (coreActionIndex == 4) {
 			if (rawEnvIn.mouseLocation.x > 270) { //TODO remove
+				//for testing
+				try {
+					fw.append("X POS BEFORE Core Action 4 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("Y POS BEFORE Core Action 4 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
+					fw.flush();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				//
 				util.moveMouseUp();
+				try {
+					Thread.sleep(20);
+				} catch (Exception e) {
+					
+				}
+				//for testing
+				try {
+					fw.append("X POS AFTER Core Action 4 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("Y POS AFTER Core Action 4 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
+					fw.flush();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				//
 			}
 		} else if (coreActionIndex == 5) {
 			util.leftMousePress();
+			try {
+				Thread.sleep(20);
+			} catch (Exception e) {
+				
+			}
+			
 		} else if (coreActionIndex == 6) {
 			util.leftMouseRelease();
+			try {
+				Thread.sleep(20);
+			} catch (Exception e) {
+				
+			}
 		} //else if (coreActionIndex == 7) {
 //			util.rightMousePress();
 //		} else if (coreActionIndex == 8) {

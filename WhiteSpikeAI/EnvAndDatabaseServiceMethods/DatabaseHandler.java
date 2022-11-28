@@ -86,16 +86,16 @@ public class DatabaseHandler {
 			
 			//insert core action activities
 			Statement CAActivityInsertState = myConnection.createStatement();
-			for (int i = 0; i < Constants.numOfCoreActions; i++) {
+			for (int i = 1; i < Constants.numOfCoreActions + 1; i++) {
 				sqlCommand = "INSERT INTO Activity (CoreActivity, SolvedStatus, numOfSolveAttempts) VALUES (" + i + ", 1, NULL);";
 				CAActivityInsertState.addBatch(sqlCommand);
 			}
 			
 			//insert rawEnv activities
-			sqlCommand = "INSERT INTO Activity (AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-2, 0, 1);"; //cpuUsage increase
-			CAActivityInsertState.addBatch(sqlCommand);
-			sqlCommand = "INSERT INTO Activity (AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-2, 0, -1);";//cpuUsage decrease
-			CAActivityInsertState.addBatch(sqlCommand);
+//			sqlCommand = "INSERT INTO Activity (AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-2, 0, 1);"; //cpuUsage increase
+//			CAActivityInsertState.addBatch(sqlCommand);
+//			sqlCommand = "INSERT INTO Activity (AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-2, 0, -1);";//cpuUsage decrease
+//			CAActivityInsertState.addBatch(sqlCommand);
 			sqlCommand = "INSERT INTO Activity (AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-3, 0, 1);";//mouseX increase
 			CAActivityInsertState.addBatch(sqlCommand);
 			sqlCommand = "INSERT INTO Activity (AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-3, 0, -1);";//mouseX decrease
