@@ -13,6 +13,7 @@ import java.util.List;
 import EnvAndDatabaseServiceMethods.CreateDeepCopyOfEnv;
 import EnvAndDatabaseServiceMethods.DatabaseHandler;
 import EnvAndDatabaseServiceMethods.ExecuteCoreAction;
+import EnvAndDatabaseServiceMethods.UpdateConditionEnvInDBToBeThisEnv;
 import EnvAndDatabaseServiceMethods.UpdateEnv;
 import EnvAndDatabaseServiceMethods.UpdateSenses;
 import EnvAndDatabaseServiceMethods.UploadConditionEnvToDB;
@@ -235,17 +236,19 @@ public class ExecuteActivity {
 								
 								//create senses string adjust this to handle the property closing down
 								
-								//
-								newConditionEnv = UploadConditionEnvToDB.exec(newConditionEnv, myConnection);
+								//TODO instead of uploading a new one, update the old one??
+								newConditionEnv = UpdateConditionEnvInDBToBeThisEnv.update(newConditionEnv, currActivityId, myConnection, fw);
 								//
 								fw.append(" EXECACT: narrowed-down condition env uploading to db finished\n");
 								fw.flush();
-								String conditionSensesString = "";
-								for (int l = 0; l < newConditionEnv.abstractEnv.senses.size(); l++) {
-									conditionSensesString = conditionSensesString + newConditionEnv.abstractEnv.senses.get(l).dbId + " ";
-								}
+//								String conditionSensesString = "";
+//								for (int l = 0; l < newConditionEnv.abstractEnv.senses.size(); l++) {
+//									conditionSensesString = conditionSensesString + newConditionEnv.abstractEnv.senses.get(l).dbId + " ";
+//								}
 								//replace ConditionEnv in db for this activity with the new ConditionEnv
-								sqlCommand = "UPDATE Activity INNER JOIN ConditionEnv ON Activity.ConditionEnv=ConditionEnv.id SET ConditionEnv.Senses=\"" + conditionSensesString + "\" WHERE Activity.id=" + activityId + ";";
+								sqlCommand = "UPDATE Activity SET ConditionEnv=" + newConditionEnv.dbId + "WHERE Activity.id=" + activityId + ";";
+								fw.append("SQL3: " + sqlCommand + "\n");
+								fw.flush();
 								myState.execute(sqlCommand);
 							} catch (Exception f) {
 								f.printStackTrace();
@@ -289,7 +292,8 @@ public class ExecuteActivity {
 							String sqlCommand = "SELECT Senses FROM ConditionEnv WHERE id=" + conditionEnvDBId + ";";
 							ResultSet rs2 = myState.executeQuery(sqlCommand);
 							rs2.next();
-							String senseIdString = rs2.getString("Senses");
+							String senseIdString = "";
+							senseIdString = rs2.getString("Senses");
 							String[] senseIdStringArray = senseIdString.split(" ");
 							String inString = "(";
 							for (int i = 0; i < senseIdStringArray.length; i++) {
@@ -326,7 +330,8 @@ public class ExecuteActivity {
 									break;
 								}
 							}
-				
+							fw.append("made it here pos 1");
+							fw.flush();
 							//for each sense in current Env, check to see if the current sense has the same values as any result in the condition env results and if so adds them to a condition env
 							Env newConditionEnv = new Env(0);
 							//raw env closing
@@ -365,7 +370,8 @@ public class ExecuteActivity {
 							int conditionEnvSensesSize = conditionEnvSenses.size();
 							prevEnv = UpdateSenses.update(conditionEnvSenses, prevEnv, false, myConnection); 
 
-							
+							fw.append("made it here pos 2");
+							fw.flush();
 							//abstract env closing
 							for (int j = 0; j < prevEnv.abstractEnv.recentlyChangedOldSenses.size(); j++) {
 								int currIndex = prevEnv.abstractEnv.recentlyChangedOldSenses.get(j);
@@ -408,11 +414,13 @@ public class ExecuteActivity {
 								}
 							}
 							
-							
+							fw.append("made it here pos 3");
+							fw.flush();
 							//
-							newConditionEnv = UploadConditionEnvToDB.exec(newConditionEnv, myConnection);
+							newConditionEnv = UpdateConditionEnvInDBToBeThisEnv.update(newConditionEnv, activityId, myConnection, fw);
 							//
-							
+							fw.append("dbId after Update Con Env: " + newConditionEnv.dbId + "\n");
+							fw.flush();
 							
 //							for (int j = 0; j < prevEnvSenses2.size(); j++) {
 //								Sense currSense = prevEnvSenses2.get(j);
@@ -439,16 +447,20 @@ public class ExecuteActivity {
 //							}
 							
 							//create senses string
-							String conditionSensesString = "";
-							for (int l = 0; l < newConditionEnv.abstractEnv.senses.size(); l++) {
-								conditionSensesString = conditionSensesString + newConditionEnv.abstractEnv.senses.get(l).dbId + " ";
-							}
+//							String conditionSensesString = "";
+//							for (int l = 0; l < newConditionEnv.abstractEnv.senses.size(); l++) {
+//								conditionSensesString = conditionSensesString + newConditionEnv.abstractEnv.senses.get(l).dbId + " ";
+//							}
 							//replace ConditionEnv in db for this activity with the new ConditionEnv
 							//sqlCommand = "UPDATE Activity INNER JOIN ConditionEnv ON Activity.ConditionEnv=ConditionEnv.id SET ConditionEnv.Senses=\"" + conditionSensesString + "\" WHERE Activity.id=" + activityId + ";";
-							sqlCommand = "UPDATE Activity SET ConditionEnv=" + newConditionEnv.dbId + " WHERE Activity.id= + " + activityId + ";";
+							sqlCommand = "UPDATE Activity SET ConditionEnv=" + newConditionEnv.dbId + " WHERE Activity.id=" + activityId + ";";
+							fw.append("SQL2: " + sqlCommand + "\n");
+							fw.flush();
 							myState.execute(sqlCommand);
 						} catch (Exception f) {
 							f.printStackTrace();
+							fw.append("ERRRRRRORRRR regarding Activity " + activityId + ": " + f.getMessage());
+							fw.flush();
 						}
 
 					} else { //activity solution didn't work
