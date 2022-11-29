@@ -21,7 +21,7 @@ public class ExecuteCoreAction {
 			if (rawEnvIn.mouseLocation.x > 604) { //TODO remove these when going back to normal env
 				//for testing
 				try {
-					fw.append("X POS BEFORE Core Action 1 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("X POS BEFORE Core Action 1 " + MouseInfo.getPointerInfo().getLocation().x + " ");
 					fw.append("Y POS BEFORE Core Action 1 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
 					fw.flush();
 				} catch (Exception e) {
@@ -41,7 +41,7 @@ public class ExecuteCoreAction {
 				
 				//for testing
 				try {
-					fw.append("X POS AFTER Core Action 1 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("X POS AFTER Core Action 1 " + MouseInfo.getPointerInfo().getLocation().x + " ");
 					fw.append("Y POS AFTER Core Action 1 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
 					fw.flush();
 				} catch (Exception e) {
@@ -55,7 +55,7 @@ public class ExecuteCoreAction {
 			if (rawEnvIn.mouseLocation.x < 1004) { //TODO remove
 				//for testing
 				try {
-					fw.append("X POS BEFORE Core Action 2 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("X POS BEFORE Core Action 2 " + MouseInfo.getPointerInfo().getLocation().x + " ");
 					fw.append("Y POS BEFORE Core Action 2 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
 					fw.flush();
 				} catch (Exception e) {
@@ -75,7 +75,7 @@ public class ExecuteCoreAction {
 				
 				//for testing
 				try {
-					fw.append("X POS AFTER Core Action 2 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("X POS AFTER Core Action 2 " + MouseInfo.getPointerInfo().getLocation().x + " ");
 					fw.append("Y POS AFTER Core Action 2 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
 					fw.flush();
 				} catch (Exception e) {
@@ -88,7 +88,7 @@ public class ExecuteCoreAction {
 			if (rawEnvIn.mouseLocation.y < 670) { //TODO remove
 				//for testing
 				try {
-					fw.append("X POS BEFORE Core Action 3 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("X POS BEFORE Core Action 3 " + MouseInfo.getPointerInfo().getLocation().x + " ");
 					fw.append("Y POS BEFORE Core Action 3 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
 					fw.flush();
 				} catch (Exception e) {
@@ -104,7 +104,7 @@ public class ExecuteCoreAction {
 				}
 				//for testing
 				try {
-					fw.append("X POS AFTER Core Action 3 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("X POS AFTER Core Action 3 " + MouseInfo.getPointerInfo().getLocation().x + " ");
 					fw.append("Y POS AFTER Core Action 3 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
 					fw.flush();
 				} catch (Exception e) {
@@ -117,7 +117,7 @@ public class ExecuteCoreAction {
 			if (rawEnvIn.mouseLocation.x > 270) { //TODO remove
 				//for testing
 				try {
-					fw.append("X POS BEFORE Core Action 4 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("X POS BEFORE Core Action 4 " + MouseInfo.getPointerInfo().getLocation().x + " ");
 					fw.append("Y POS BEFORE Core Action 4 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
 					fw.flush();
 				} catch (Exception e) {
@@ -133,7 +133,7 @@ public class ExecuteCoreAction {
 				}
 				//for testing
 				try {
-					fw.append("X POS AFTER Core Action 4 " + MouseInfo.getPointerInfo().getLocation().x);
+					fw.append("X POS AFTER Core Action 4 " + MouseInfo.getPointerInfo().getLocation().x + " ");
 					fw.append("Y POS AFTER Core Action 4 " + MouseInfo.getPointerInfo().getLocation().y + "\n");
 					fw.flush();
 				} catch (Exception e) {

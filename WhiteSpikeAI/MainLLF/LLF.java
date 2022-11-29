@@ -85,6 +85,14 @@ public class LLF {
 			fw.append(" activities to solve queue set up (count: " + activitiesToSolveQueue.size() + ")\n");
 			fw.flush();
 			activitiesToTryQueue = SetUpActivitiesToTryQueueIfNecessary.setup(activitiesToTryQueue, activitiesToSolveQueue.get(0), myConnection, fw);
+			//for testing
+			if (activitiesToSolveQueue.get(0) == 11) {
+				testCount++;
+			}
+			if (testCount > 0) {
+				System.out.println();
+			}
+			//
 			System.out.println("activities to try set up if necessary");
 			fw.append(" activities to try queue set up (count: " + activitiesToTryQueue.size() + ")\n");
 			fw.flush();

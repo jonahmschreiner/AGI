@@ -86,7 +86,7 @@ public class DatabaseHandler {
 			
 			//insert core action activities
 			Statement CAActivityInsertState = myConnection.createStatement();
-			for (int i = 1; i < Constants.numOfCoreActions + 1; i++) {
+			for (int i = 1; i < Constants.numOfCoreActions; i++) {
 				sqlCommand = "INSERT INTO Activity (CoreActivity, SolvedStatus, numOfSolveAttempts) VALUES (" + i + ", 1, NULL);";
 				CAActivityInsertState.addBatch(sqlCommand);
 			}

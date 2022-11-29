@@ -150,7 +150,7 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 			try {
 				Statement myState = myConnection.createStatement();
 			
-				String sqlCommand = "SELECT Activity.id FROM Activity INNER JOIN Sense ON Activity.AssociatedSense=Sense.id INNER JOIN SenseDefinition ON Sense.SenseDefinition=SenseDefinition.id AND SenseDefinition.Definition != \"" + definition + "\" AND Activity.SolvedStatus=1 INNER JOIN Orientation ON Sense.Orientation=Orientation.id AND (Orientation.Height != " + height + " OR Orientation.Width != " + width + " OR Orientation.Rotation != " + rotation + " OR Orientation.x != " + x + " OR Orientation.y != " + y + " OR Orientation.color != \"" + color + "\") AND Activity.PropertyId=" + propId + " AND Activity.increaseOrDecreaseProp=" + increaseOrDecrease + " ORDER BY Activity.id ASC;";
+				String sqlCommand = "SELECT Activity.id FROM Activity WHERE Activity.SolvedStatus=1 AND Activity.PropertyId=" + propId + " AND Activity.increaseOrDecreaseProp=" + increaseOrDecrease + " ORDER BY Activity.id ASC;";
 				ResultSet rs = myState.executeQuery(sqlCommand);
 				//individual activities
 				while (true) {
