@@ -86,7 +86,7 @@ public class DatabaseHandler {
 			
 			//insert core action activities
 			Statement CAActivityInsertState = myConnection.createStatement();
-			for (int i = 1; i < Constants.numOfCoreActions; i++) {
+			for (int i = 1; i < Constants.numOfCoreActions + 1; i++) {
 				sqlCommand = "INSERT INTO Activity (CoreActivity, SolvedStatus, numOfSolveAttempts) VALUES (" + i + ", 1, NULL);";
 				CAActivityInsertState.addBatch(sqlCommand);
 			}
@@ -96,13 +96,13 @@ public class DatabaseHandler {
 //			CAActivityInsertState.addBatch(sqlCommand);
 //			sqlCommand = "INSERT INTO Activity (AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-2, 0, -1);";//cpuUsage decrease
 //			CAActivityInsertState.addBatch(sqlCommand);
-			sqlCommand = "INSERT INTO Activity (AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-3, 0, 1);";//mouseX increase
+			sqlCommand = "INSERT INTO Activity (CoreActivity, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-1, -3, 0, 1);";//mouseX increase
 			CAActivityInsertState.addBatch(sqlCommand);
-			sqlCommand = "INSERT INTO Activity (AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-3, 0, -1);";//mouseX decrease
+			sqlCommand = "INSERT INTO Activity (CoreActivity, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-1, -3, 0, -1);";//mouseX decrease
 			CAActivityInsertState.addBatch(sqlCommand);
-			sqlCommand = "INSERT INTO Activity (AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-4, 0, 1);";//mouseY increase
+			sqlCommand = "INSERT INTO Activity (CoreActivity, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-1, -4, 0, 1);";//mouseY increase
 			CAActivityInsertState.addBatch(sqlCommand);
-			sqlCommand = "INSERT INTO Activity (AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-4, 0, -1);";//mouseY decrease
+			sqlCommand = "INSERT INTO Activity (CoreActivity, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (-1, -4, 0, -1);";//mouseY decrease
 			CAActivityInsertState.addBatch(sqlCommand);
 			CAActivityInsertState.executeBatch();
 		} catch (Exception e) {

@@ -224,7 +224,7 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 					}
 				}
 				}
-				List<String> testList = combosFromIndis(allIndis, 0);
+				List<String> testList = combosFromIndis(allIndis, 1);
 				fw.append("Everything Size: " + allIndis.size() + "\n");
 				fw.flush();
 				queueIn.addAll(testList); //need this to go back to 1 at some point (see comment at top of class)
@@ -243,20 +243,20 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 	
 	public static List<String> combosFromIndis (List<Integer> indisIn, int numOfComboLayers){
 		List<String> output = new ArrayList<String>(); //TODO uncomment this. only doing this for testing atm
-//		for (int i = 0; i < indisIn.size(); i++) {
-//			int currIndi = indisIn.get(i);
-//			if (numOfComboLayers > 0) {
-//				for (int j = 0; j < indisIn.size(); j++) {
-//					int current = indisIn.get(j);
-//					if (currIndi != current) {
-//						String str = currIndi + " " + current;
-//						output.add(str);
-//					}
-//					
-//				}
-//			}
-//
-//		}
+		for (int i = 0; i < indisIn.size(); i++) {
+			int currIndi = indisIn.get(i);
+			if (numOfComboLayers > 0) {
+				for (int j = 0; j < indisIn.size(); j++) {
+					int current = indisIn.get(j);
+					if (currIndi != current) {
+						String str = currIndi + " " + current;
+						output.add(str);
+					}
+					
+				}
+			}
+
+		}
 		
 		
 		return output;

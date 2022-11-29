@@ -78,6 +78,7 @@ public class ExecuteActivity {
 						if (CheckIfActivityWasSolved.execute(s, currActivityId, envIn, myConnection)) { //activity solution worked
 							//create and assign condition env that only contains elements that are common to existing condition env and the current env where it just worked
 							fw.append(" EXECACT: Sub-Activity Worked Correctly\n");
+							fw.flush();
 							try {
 								Statement myState = myConnection.createStatement();
 								int conditionEnvDBId = rs.getInt("ConditionEnv");
@@ -258,6 +259,8 @@ public class ExecuteActivity {
 							fw.append(" EXECACT: Condition Env Uploading To DB Finished\n");
 							fw.flush();
 							DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
+							fw.append("Condition Env Id of New Activity: " + dbocr.conditionEnvCount + ". New Activity Id: " + (dbocr.activityCount + 1));
+							fw.flush();
 							String sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + s.dbId + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
 							try {
 								Statement myState = myConnection.createStatement();
@@ -467,6 +470,8 @@ public class ExecuteActivity {
 				
 				
 			} catch (Exception f) {
+				fw.append("ERROR HERE FOR EXECUTION OF ACTIVITY " + activityId + ": " + f.getMessage());
+				fw.flush();
 				f.printStackTrace();
 			}		
 		}

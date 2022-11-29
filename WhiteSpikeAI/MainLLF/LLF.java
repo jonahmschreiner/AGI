@@ -68,12 +68,13 @@ public class LLF {
 			boolean continueLooping = true;
 		while (continueLooping) {
 			//for testing
-//			testCount++;
-//			
-//			if (testCount == 31) {
-//				System.out.println("");
-//			}
-			//
+			testCount++;
+			
+			if (testCount == 51) {
+				System.out.println("");
+				break;
+			}
+			
 			
 			
 			System.out.println("new loop");
@@ -85,14 +86,6 @@ public class LLF {
 			fw.append(" activities to solve queue set up (count: " + activitiesToSolveQueue.size() + ")\n");
 			fw.flush();
 			activitiesToTryQueue = SetUpActivitiesToTryQueueIfNecessary.setup(activitiesToTryQueue, activitiesToSolveQueue.get(0), myConnection, fw);
-			//for testing
-			if (activitiesToSolveQueue.get(0) == 11) {
-				testCount++;
-			}
-			if (testCount > 0) {
-				System.out.println();
-			}
-			//
 			System.out.println("activities to try set up if necessary");
 			fw.append(" activities to try queue set up (count: " + activitiesToTryQueue.size() + ")\n");
 			fw.flush();
@@ -120,10 +113,10 @@ public class LLF {
 			}
 			while (actionQueue.size() > 0) {
 				env = ExecuteActivity.execByDBId(env, actionQueue.get(0), fw, myConnection);
-				actionQueue.remove(0);
 				System.out.println("individual action executed");
-				fw.append(" individual action finished executing from actionQueue\n");
+				fw.append(" individual action " + actionQueue.get(0) + " finished executing from actionQueue\n");
 				fw.flush();
+				actionQueue.remove(0);
 			}
 			if (coreActionIsTopAction) {
 				env = UpdateEnv.update(env, myConnection);

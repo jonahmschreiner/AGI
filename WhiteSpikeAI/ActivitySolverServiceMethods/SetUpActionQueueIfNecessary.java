@@ -17,7 +17,8 @@ public class SetUpActionQueueIfNecessary {
 			String[] natpisArray = newActivityToPullInString.split(" ");
 			for (int i = 0; i < natpisArray.length; i++) {
 				int newActivityToPullInId =  Integer.valueOf(natpisArray[i]);
-				output.addAll(extractCoreActionListFromActivity(newActivityToPullInId, myConnection));
+				//output.addAll(extractCoreActionListFromActivity(newActivityToPullInId, myConnection));
+				output.add(newActivityToPullInId);
 			}
 			
 			return output;
@@ -46,7 +47,7 @@ public class SetUpActionQueueIfNecessary {
 				}
 			}
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 		
 		return output;
