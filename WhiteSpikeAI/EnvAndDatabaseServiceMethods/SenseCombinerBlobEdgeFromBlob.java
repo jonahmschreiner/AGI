@@ -11,14 +11,14 @@ import Structure.Pixel;
 
 public class SenseCombinerBlobEdgeFromBlob {
 	public static Blob getEdge(Blob blobIn){
-		MinAndMaxes m = BlobEdgeFromBlob.getMinAndMaxes(blobIn.edgePixels);
+		MinAndMaxes m = BlobEdgeFromBlob.getMinAndMaxes(blobIn.edgePixels, 2); //changed this to blobIn.pixels to fix color identification issue where edges being a different color made the whole sense not that color
 		blobIn.minAndMaxes = m;
 		List<Pixel> leftEdge = new ArrayList<Pixel>();
 		List<Pixel> rightEdge = new ArrayList<Pixel>();
 		List<Pixel> topEdge = new ArrayList<Pixel>();
 		List<Pixel> bottomEdge = new ArrayList<Pixel>();
 		
-		for (int i = m.minY; i < m.maxY + 1; i++) {//TODO pixel of position (10000, 0) getting through (think minAndMaxes is fucked up)
+		for (int i = m.minY; i < m.maxY + 1; i++) {
 			Pixel furthestLeftPixel = new Pixel(new Point(10000, 0));
 			Pixel furthestRightPixel = new Pixel(new Point(-1, 0));
 			

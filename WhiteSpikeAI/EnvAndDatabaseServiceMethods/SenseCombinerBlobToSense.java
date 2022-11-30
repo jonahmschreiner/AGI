@@ -40,7 +40,24 @@ public class SenseCombinerBlobToSense {
 			orientation.width = (blob.minAndMaxes.maxX - blob.minAndMaxes.minX) + 1;
 			orientation.size = orientation.height * orientation.width;
 			orientation.rotation = blob.minAndMaxes.slope;
-			orientation.color = new Color(blob.minAndMaxes.averageRValue, blob.minAndMaxes.averageGValue, blob.minAndMaxes.averageBValue);
+			
+			double r = 0;
+			double g = 0;
+			double b = 0;
+			for (int i = 0; i < blob.prevColors.size(); i++) {
+				Color currPrevColor = blob.prevColors.get(i);
+				r = r + currPrevColor.getRed();
+				g = g + currPrevColor.getGreen();
+				b = b + currPrevColor.getBlue();
+			}
+			int prevColorSize = blob.prevColors.size();
+			r = r/prevColorSize;
+			g = g/prevColorSize;
+			b = b/prevColorSize;
+			int R = (int) Math.round(r);
+			int G = (int) Math.round(g);
+			int B = (int) Math.round(b);
+			orientation.color = new Color(R, G, B);
 			//orientation.position = new Point(blob.minAndMaxes.averageXValue, blob.minAndMaxes.averageYValue);
 			orientation.position = new Point(blob.minAndMaxes.minX + ((blob.minAndMaxes.maxX - blob.minAndMaxes.minX) / 2), blob.minAndMaxes.minY + ((blob.minAndMaxes.maxY - blob.minAndMaxes.minY) / 2));
 			sense.orientation = orientation;

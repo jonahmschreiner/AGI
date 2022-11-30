@@ -1,7 +1,11 @@
 package EnvAndDatabaseServiceMethods;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
@@ -17,8 +21,21 @@ public class VisualOutputOfSensesFromSensesAndImage {
 		//create deep copy of buffered image
 		ColorModel cm = image1In.getColorModel();
 		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		
+		//for testing
+		Rectangle rec = new Rectangle(
+			      Toolkit.getDefaultToolkit().getScreenSize());
+			    Robot robot;
+				try {
+					robot = new Robot();
+					image1In = robot.createScreenCapture(rec);
+				} catch (AWTException e1) {
+
+				}
+			     
+		//
 		WritableRaster raster = image1In.copyData(null);
-		BufferedImage imageIn = new BufferedImage(cm, raster, isAlphaPremultiplied, null).getSubimage(604, 270, 470, 400);
+		BufferedImage imageIn = new BufferedImage(cm, raster, isAlphaPremultiplied, null).getSubimage(605, 271, 468, 398);
 		
 		//
 		for (int i = 0; i < sensesIn.size(); i++) {

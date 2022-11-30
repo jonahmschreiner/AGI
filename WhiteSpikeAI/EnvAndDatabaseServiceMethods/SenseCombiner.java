@@ -1,6 +1,5 @@
 package EnvAndDatabaseServiceMethods;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -121,7 +120,7 @@ public class SenseCombiner {
 					continueFlag = false;
 					prevSize = output.size();
 					output = exec2(output, this.existingSenseInput);
-					if (this.exec2DidSomethingFlag) {//TODO this conditional may be fixed
+					if (this.exec2DidSomethingFlag) {
 						continueFlag = true;
 						this.exec2DidSomethingFlag = false;
 					}
@@ -141,6 +140,7 @@ public class SenseCombiner {
 					Sense currSense = sensesIn.get(i);
 					outputBlob.pixels.addAll(currSense.blob.pixels);
 					outputBlob.edgePixels.addAll(currSense.blob.edgePixels);
+					outputBlob.prevColors.add(currSense.orientation.color);
 					BoundingBox currSenseBox = currSense.orientation.boundingBox;
 					for (int j = 0; j < sensesIn.size(); j++) {
 						if (!usedSenses.contains(j) && j != i) {
@@ -170,6 +170,7 @@ public class SenseCombiner {
 							if ((yTouching && xWithinRange) || (xTouching && yWithinRange)) {
 								outputBlob.pixels.addAll(currCompSense.blob.pixels);
 								outputBlob.edgePixels.addAll(currCompSense.blob.edgePixels);
+								outputBlob.prevColors.add(currCompSense.orientation.color);
 								usedSenses.add(j);
 							}
 						}

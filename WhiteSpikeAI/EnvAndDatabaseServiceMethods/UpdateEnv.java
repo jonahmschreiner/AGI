@@ -18,8 +18,8 @@ public class UpdateEnv {
 		envIn.abstractEnv.recentlyAddedSenses.clear();
 		Env newEnv = new Env(0);
 		newEnv.rawEnv = newEnv.senseRawEnv(envIn);
-		BufferedImage newImage = newEnv.rawEnv.currentDisplay.getSubimage(604, 270, 470, 400);
-		BufferedImage oldImage = envIn.rawEnv.currentDisplay.getSubimage(604, 270, 470, 400);
+		BufferedImage newImage = newEnv.rawEnv.currentDisplay.getSubimage(605, 271, 468, 398);
+		BufferedImage oldImage = envIn.rawEnv.currentDisplay.getSubimage(605, 271, 468, 398);
 		
 		List<junctionList> changedPixelsByThread = ChangedPixelsFromOldEnv.find(newImage, oldImage);
 		List<Blob> newBlobs = ChangedPixelsToBlobs.exec(changedPixelsByThread, newImage);

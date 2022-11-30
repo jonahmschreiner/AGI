@@ -1,6 +1,8 @@
 package MainLLF;
 
 import java.awt.Frame;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,6 +26,7 @@ import EnvAndDatabaseServiceMethods.CreateDeepCopyOfEnv;
 import EnvAndDatabaseServiceMethods.DatabaseHandler;
 import EnvAndDatabaseServiceMethods.UpdateEnv;
 import EnvAndDatabaseServiceMethods.UploadConditionEnvToDB;
+import EnvAndDatabaseServiceMethods.Util;
 import EnvAndDatabaseServiceMethods.VisualOutputOfSensesFromSensesAndImage;
 import EnvAndDatabaseServiceMethods.VisuallyWalkThroughEnv;
 import Structure.Env;
@@ -70,11 +73,22 @@ public class LLF {
 			//for testing
 			testCount++;
 			
-			if (testCount == 51) {
+			if (testCount == 5) {
+				Point testPoint = MouseInfo.getPointerInfo().getLocation();
 				System.out.println("");
-				break;
+				try {
+					Thread.sleep(4000);
+					Util util = new Util();
+					util.moveMouseToCoordinates(testPoint.x, testPoint.y);
+				} catch (Exception e) {
+					
+				}
 			}
 			
+			if (testCount == 51) {
+				System.out.println();
+			}
+			//
 			
 			
 			System.out.println("new loop");

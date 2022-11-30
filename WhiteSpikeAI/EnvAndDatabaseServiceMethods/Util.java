@@ -88,6 +88,11 @@ public class Util {
 		}
 	}
 			
+	//move mouse to coordinates (not an AGI core action atm)
+	public void moveMouseToCoordinates(int x, int y) {
+		command = "xdotool mousemove " + x + " " + y;
+		runCommand();
+	}
 	
 	//move mouse left
 	public void moveMouseLeft() {

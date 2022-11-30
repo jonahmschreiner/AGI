@@ -16,9 +16,9 @@ import Structure.SenseDefinition;
 
 public class BlobToSense {
 	//pass blob in with only pixels variable filled out (can have more but they'll be overrided)
-	public static Sense getSense(Blob blobIn, BufferedImage imageIn) {
+	public static Sense getSense(Blob blobIn, BufferedImage imageIn, int countIn) {//TODO remove countIn (it is only for testing)
 		//blob to edge
-		Blob blob = BlobEdgeFromBlob.getEdge(blobIn, imageIn);
+		Blob blob = BlobEdgeFromBlob.getEdge(blobIn, imageIn, countIn);
 		if (blob.edgePixels.contains(new Pixel(new Point(10000, 0)))) {
 			System.out.println();
 		}

@@ -1,5 +1,6 @@
 package Structure;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ public class Blob {
 	public List<Pixel> pixels = new ArrayList<Pixel>();
 	public List<Pixel> edgePixels = new ArrayList<Pixel>();
 	public MinAndMaxes minAndMaxes = new MinAndMaxes();
+	public List<Color> prevColors = new ArrayList<Color>();
 	public Blob() {}
 	
 	@Override

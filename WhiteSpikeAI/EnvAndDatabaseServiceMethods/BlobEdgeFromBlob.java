@@ -13,8 +13,8 @@ import Structure.Pixel;
 
 public class BlobEdgeFromBlob {
 
-	public static Blob getEdge(Blob blobIn, BufferedImage imageIn){
-		MinAndMaxes m = getMinAndMaxes(blobIn.pixels);
+	public static Blob getEdge(Blob blobIn, BufferedImage imageIn, int countIn){
+		MinAndMaxes m = getMinAndMaxes(blobIn.pixels, countIn);
 		blobIn.minAndMaxes = m;
 		List<Pixel> leftEdge = new ArrayList<Pixel>();
 		List<Pixel> rightEdge = new ArrayList<Pixel>();
@@ -77,13 +77,18 @@ public class BlobEdgeFromBlob {
 		return blobIn;
 	}
 	
-	public static MinAndMaxes getMinAndMaxes(List<Pixel> pixelsIn) {
+	public static MinAndMaxes getMinAndMaxes(List<Pixel> pixelsIn, int countIn) {
 		MinAndMaxes m = new MinAndMaxes();
 		int numOfPixels = pixelsIn.size();
 		for (int i = 0; i < numOfPixels; i++) {
 			Pixel currentPixel = pixelsIn.get(i);
 			m.averageXValue = m.averageXValue + currentPixel.position.x;
 			m.averageYValue = m.averageYValue + currentPixel.position.y;
+			//for testing
+			if (countIn == 1 && currentPixel.color.getRed() > 0) {
+				System.out.println("");
+			}
+			//
 			m.averageRValue = m.averageRValue + currentPixel.color.getRed();
 			m.averageGValue = m.averageGValue + currentPixel.color.getGreen();
 			m.averageBValue = m.averageBValue + currentPixel.color.getBlue();
@@ -189,29 +194,29 @@ public class BlobEdgeFromBlob {
 	
 	
 	//for testing
-	public static void main(String[] args) {
-		Pixel pixel1 = new Pixel(new Point(100, 100));
-		Pixel pixel2 = new Pixel(new Point(101, 100));
-		Pixel pixel3 = new Pixel(new Point(102, 100));
-		Pixel pixel4 = new Pixel(new Point(102, 99));
-		Pixel pixel5 = new Pixel(new Point(102, 98));
-		Pixel pixel6 = new Pixel(new Point(101, 98));
-		Pixel pixel7 = new Pixel(new Point(100, 98));
-		Pixel pixel8 = new Pixel(new Point(100, 99));
-		Pixel pixel9 = new Pixel(new Point(101, 99));
-		List<Pixel> pixelsToAddToBlob = new ArrayList<Pixel>();
-		pixelsToAddToBlob.add(pixel1);
-		pixelsToAddToBlob.add(pixel2);
-		pixelsToAddToBlob.add(pixel3);
-		pixelsToAddToBlob.add(pixel4);
-		pixelsToAddToBlob.add(pixel5);
-		pixelsToAddToBlob.add(pixel6);
-		pixelsToAddToBlob.add(pixel7);
-		pixelsToAddToBlob.add(pixel8);
-		pixelsToAddToBlob.add(pixel9);
-		Blob blob = new Blob();
-		blob.pixels = pixelsToAddToBlob;
-		Blob edge = BlobEdgeFromBlob.getEdge(blob);
-		System.out.println("");
-	}
+//	public static void main(String[] args) {
+//		Pixel pixel1 = new Pixel(new Point(100, 100));
+//		Pixel pixel2 = new Pixel(new Point(101, 100));
+//		Pixel pixel3 = new Pixel(new Point(102, 100));
+//		Pixel pixel4 = new Pixel(new Point(102, 99));
+//		Pixel pixel5 = new Pixel(new Point(102, 98));
+//		Pixel pixel6 = new Pixel(new Point(101, 98));
+//		Pixel pixel7 = new Pixel(new Point(100, 98));
+//		Pixel pixel8 = new Pixel(new Point(100, 99));
+//		Pixel pixel9 = new Pixel(new Point(101, 99));
+//		List<Pixel> pixelsToAddToBlob = new ArrayList<Pixel>();
+//		pixelsToAddToBlob.add(pixel1);
+//		pixelsToAddToBlob.add(pixel2);
+//		pixelsToAddToBlob.add(pixel3);
+//		pixelsToAddToBlob.add(pixel4);
+//		pixelsToAddToBlob.add(pixel5);
+//		pixelsToAddToBlob.add(pixel6);
+//		pixelsToAddToBlob.add(pixel7);
+//		pixelsToAddToBlob.add(pixel8);
+//		pixelsToAddToBlob.add(pixel9);
+//		Blob blob = new Blob();
+//		blob.pixels = pixelsToAddToBlob;
+//		Blob edge = BlobEdgeFromBlob.getEdge(blob);
+//		System.out.println("");
+//	}
 }

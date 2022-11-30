@@ -10,7 +10,7 @@ public class RawEnvToAbstractEnv {
 	public static AbstractEnv extract(RawEnv rawEnvIn) {
 		
 		//Visual Abstract Senses
-		BufferedImage imageToExtractFrom = rawEnvIn.currentDisplay.getSubimage(604, 270, 470, 400);
+		BufferedImage imageToExtractFrom = rawEnvIn.currentDisplay.getSubimage(605, 271, 468, 398);
 		//Lowest-Complexity Visual Abstract Senses				//remove subimage when actually running .getSubimage(600, 400, 200, 200)
 		
 		long blobStart = System.currentTimeMillis();
@@ -26,14 +26,13 @@ public class RawEnvToAbstractEnv {
 		
 		
 		for (int i = 0; i < rawBlobs.size(); i++) {
-			Sense currentSense = BlobToSense.getSense(rawBlobs.get(i), rawEnvIn.currentDisplay);
+			Sense currentSense = BlobToSense.getSense(rawBlobs.get(i), rawEnvIn.currentDisplay, i);
 			//if (currentSense.orientation.height > 1 && currentSense.orientation.width > 1) {
 				//if (currentSense.orientation.height > 3 || currentSense.orientation.width > 3) {
 					senses.add(currentSense);
 				//}		
 			//}			
 		}
-		
 		senses = SenseCombiner.exec(senses, null);
 		//long baseSenseEnd = System.currentTimeMillis();
 		//System.out.println("Total Raw Sense Creation Time: " + (baseSenseEnd-baseSenseStart));

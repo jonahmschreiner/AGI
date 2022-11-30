@@ -72,7 +72,7 @@ public class ExecuteActivity {
 					envIn = UpdateEnv.update(envIn, myConnection);
 					fw.append(" EXECACT: Updating Env after Sub-Activity Execution Finished\n");
 					fw.flush();
-					if (currActivityId > Constants.numOfCoreActions) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
+					if (currActivityId > (Constants.numOfCoreActions + Constants.numOfRawPropActivities)) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
 						fw.append(" EXECACT: Executed Sub-Activity is not a core action\n");
 						fw.flush();
 						Sense s = GetSenseAssociatedWithActivity.execute(envIn, currActivityId, myConnection);
@@ -264,7 +264,14 @@ public class ExecuteActivity {
 							DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
 							fw.append("Condition Env Id of New Activity: " + dbocr.conditionEnvCount + ". New Activity Id: " + (dbocr.activityCount + 1));
 							fw.flush();
-							String sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + s.dbId + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
+							String sqlCommand = "";
+							try {
+								sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + s.dbId + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
+							} catch (Exception h) {
+								fw.append("fuck this error: " + h.getMessage() + "\n");
+								fw.append("sql for this error is: " + sqlCommand + "\n");
+								fw.flush();
+							}
 							try {
 								Statement myState = myConnection.createStatement();
 								myState.execute(sqlCommand);
