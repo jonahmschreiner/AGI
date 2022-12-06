@@ -12,6 +12,7 @@ public class RawEnv {
 	public int cpuUsageChange = 0;
 	public int mouseXChange = 0;
 	public int mouseYChange = 0;
+	public RawEnv() {}
 	@Override
 	public boolean equals(Object o) {
 		if (o == this){

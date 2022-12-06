@@ -23,6 +23,7 @@ import Structure.DBObjectCountResults;
 import Structure.Env;
 import Structure.PixelColorRange;
 import Structure.PixelOverallChange;
+import Structure.RawEnv;
 import Structure.Sense;
 public class ExecuteActivity {
 	public static Env execByDBId(Env envIn, int activityId, FileWriter fw, Connection myConnection) throws IOException {
@@ -73,10 +74,7 @@ public class ExecuteActivity {
 					envIn = UpdateEnv.update(envIn, myConnection);
 					fw.append(" EXECACT: Updating Env after Sub-Activity Execution Finished\n");
 					fw.flush();
-					//PUT BREAKPOINT HERE
-					
-					
-					
+
 					if (currActivityId > (Constants.numOfCoreActions + Constants.numOfRawPropActivities)) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
 						fw.append(" EXECACT: Executed Sub-Activity is not a core action\n");
 						fw.flush();
@@ -127,31 +125,46 @@ public class ExecuteActivity {
 										break;
 									}
 								}
+								double existingConEnvCpuUsage = 0;
+								LocalDateTime existingConEnvLDT = LocalDateTime.MAX;
+								int existingConEnvMouseX = -5;
+								int existingConEnvMouseY = -5;
+								try {
+									sqlCommand = "SELECT CurrentDateTime, CpuUsage, MouseX, MouseY FROM ConditionEnv WHERE id=" + conditionEnvDBId + ";";
+									ResultSet rs5 = myState.executeQuery(sqlCommand);
+									rs5.next();
+									existingConEnvCpuUsage = rs5.getDouble("CpuUsage");
+									existingConEnvLDT = LocalDateTime.parse(rs5.getString("CurrentDateTime"));
+									existingConEnvMouseX = rs5.getInt("MouseX");
+									existingConEnvMouseY = rs5.getInt("MouseY");
+								} catch (Exception f) {
+									f.printStackTrace();
+								}
 								fw.append(" EXECACT: Re-creating condition env from db finished\n");
 								fw.flush();
 								//for each sense in current Env, check to see if the current sense has the same values as any result in the condition env results and if so adds them to a condition env
 								Env newConditionEnv = new Env(0);
 								//raw env closing
-								if (prevEnv.rawEnv.currentDateTime.equals(envIn.rawEnv.currentDateTime)) {
-									newConditionEnv.rawEnv.currentDateTime = envIn.rawEnv.currentDateTime;
+								if (prevEnv.rawEnv.currentDateTime.equals(existingConEnvLDT)) {
+									newConditionEnv.rawEnv.currentDateTime = existingConEnvLDT;
 								} else {
 									newConditionEnv.rawEnv.currentDateTime = LocalDateTime.MIN;
 								}
 								
-								if (prevEnv.rawEnv.currentCpuUsage.compareTo(envIn.rawEnv.currentCpuUsage) == 0) {
-									newConditionEnv.rawEnv.currentCpuUsage = envIn.rawEnv.currentCpuUsage;
+								if (prevEnv.rawEnv.currentCpuUsage.compareTo(existingConEnvCpuUsage) == 0) {
+									newConditionEnv.rawEnv.currentCpuUsage = existingConEnvCpuUsage;
 								} else {
 									newConditionEnv.rawEnv.currentCpuUsage = -1.0;
 								}
 								
-								if (prevEnv.rawEnv.mouseLocation.x == envIn.rawEnv.mouseLocation.x) {
-									newConditionEnv.rawEnv.mouseLocation.x = envIn.rawEnv.mouseLocation.x;
+								if (prevEnv.rawEnv.mouseLocation.x == existingConEnvMouseX) {
+									newConditionEnv.rawEnv.mouseLocation.x = existingConEnvMouseX;
 								} else {
 									newConditionEnv.rawEnv.mouseLocation.x = -1;
 								}
 								
-								if (prevEnv.rawEnv.mouseLocation.y == envIn.rawEnv.mouseLocation.y) {
-									newConditionEnv.rawEnv.mouseLocation.y = envIn.rawEnv.mouseLocation.y;
+								if (prevEnv.rawEnv.mouseLocation.y == existingConEnvMouseY) {
+									newConditionEnv.rawEnv.mouseLocation.y = existingConEnvMouseY;
 								} else {
 									newConditionEnv.rawEnv.mouseLocation.y = -1;
 								}
