@@ -37,9 +37,11 @@ public class UpdateEnv {
 		//VisualOutputOfSensesFromSensesAndImage.execute(newishSenses, newEnv.rawEnv.currentDisplay, "newishSensesAfterCombining");
 		try {
 			envIn.rawEnv = newEnv.rawEnv;
+			List<Sense> newishSensesCopy = new ArrayList<Sense>();
+			newishSensesCopy.addAll(newishSenses);
 			envIn = UpdateSenses.update(newishSenses, envIn, true, myConnection);
 			//VisualOutputOfSensesFromSensesAndImage.execute(envIn.abstractEnv.senses, newEnv.rawEnv.currentDisplay, "EnvSensesAfterUpdateSenses");
-			envIn = RemoveOldSensesFromEnv.exec(newishSenses, envIn, myConnection);
+			envIn = RemoveOldSensesFromEnv.exec(newishSensesCopy, envIn, myConnection, true);
 			//VisualOutputOfSensesFromSensesAndImage.execute(envIn.abstractEnv.senses, newEnv.rawEnv.currentDisplay, "EnvSensesAfterRemoveOldSenses");
 			UploadOrientationChangesToDB.upload(envIn, myConnection);
 		} catch (Exception e) {

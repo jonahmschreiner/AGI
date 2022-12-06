@@ -13,8 +13,8 @@ import Structure.Pixel;
 
 public class BlobEdgeFromBlob {
 
-	public static Blob getEdge(Blob blobIn, BufferedImage imageIn, int countIn){
-		MinAndMaxes m = getMinAndMaxes(blobIn.pixels, countIn);
+	public static Blob getEdge(Blob blobIn, BufferedImage imageIn){
+		MinAndMaxes m = getMinAndMaxes(blobIn.pixels);
 		blobIn.minAndMaxes = m;
 		List<Pixel> leftEdge = new ArrayList<Pixel>();
 		List<Pixel> rightEdge = new ArrayList<Pixel>();
@@ -77,18 +77,13 @@ public class BlobEdgeFromBlob {
 		return blobIn;
 	}
 	
-	public static MinAndMaxes getMinAndMaxes(List<Pixel> pixelsIn, int countIn) {
+	public static MinAndMaxes getMinAndMaxes(List<Pixel> pixelsIn) {
 		MinAndMaxes m = new MinAndMaxes();
 		int numOfPixels = pixelsIn.size();
 		for (int i = 0; i < numOfPixels; i++) {
 			Pixel currentPixel = pixelsIn.get(i);
 			m.averageXValue = m.averageXValue + currentPixel.position.x;
 			m.averageYValue = m.averageYValue + currentPixel.position.y;
-			//for testing
-			if (countIn == 1 && currentPixel.color.getRed() > 0) {
-				System.out.println("");
-			}
-			//
 			m.averageRValue = m.averageRValue + currentPixel.color.getRed();
 			m.averageGValue = m.averageGValue + currentPixel.color.getGreen();
 			m.averageBValue = m.averageBValue + currentPixel.color.getBlue();

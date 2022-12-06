@@ -27,7 +27,7 @@ import EnvAndDatabaseServiceMethods.UpdateSenses;
 import MainLLF.Constants;
 
 public class RemoveOldSensesFromEnv {
-	public static Env exec(List<Sense> newSensesIn, Env oldEnvIn, Connection myConnection){
+	public static Env exec(List<Sense> newSensesIn, Env oldEnvIn, Connection myConnection, boolean updateDB){
 		
 		try {
 			List<Sense> sensesCopied = new ArrayList<Sense>();
@@ -35,21 +35,30 @@ public class RemoveOldSensesFromEnv {
 			Statement myState = myConnection.createStatement();
 			String removeForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=0;";
 			Statement removeChecksState = myConnection.createStatement();
-			removeChecksState.execute(removeForeignKeyChecksCommand);
+			if (updateDB) {
+				removeChecksState.execute(removeForeignKeyChecksCommand);
+			}
+			
 			for (int i = 0; i < sensesCopied.size(); i++) {
 				Sense currSense = sensesCopied.get(i);
 				List<Sense> overlappingSenses = getOverlappingSenses(newSensesIn, currSense);
 				
-				//TODO Potentially remove this stuff and change the containsAll if below it to all pixels in current Sense blob rather than the new list
+				
 				List<Sense> possibleInstance = new ArrayList<Sense>();
 				List<Pixel> currSenseBlobPixelsCopy = new ArrayList<Pixel>();
 				currSenseBlobPixelsCopy.addAll(currSense.blob.pixels);
 				for (int o = 0; o < overlappingSenses.size(); o++) {
+					
 					Sense currOvSense2 = overlappingSenses.get(o);
 					//if (doTheListsHaveSharedPixels(currOvSense2.blob.pixels, currSense.blob.pixels)) {
 						//possibleInstance.add(currOvSense2);
-						currOvSense2.sharedPixels = removeNonSharedPixels(currOvSense2.blob.pixels, currSense.blob.pixels);
+						//currOvSense2.sharedPixels = removeNonSharedPixels(currOvSense2.blob.pixels, currSense.blob.pixels);
 					//}
+						//possibleInstance.add(currOvSense2);
+					if (!currOvSense2.equals(currSense)) {
+						currOvSense2.sharedPixels = removeNonSharedPixels(currOvSense2.blob.pixels, currSense.blob.pixels);
+						possibleInstance.add(currOvSense2);
+					}
 				}
 				
 
@@ -69,11 +78,13 @@ public class RemoveOldSensesFromEnv {
 				boolean flag2 = true;
 				for (int l = 0; l < overlappingSenses.size(); l++) {
 					Sense currOvSense2 = overlappingSenses.get(l);
-					if (currOvSense2.blob.pixels.containsAll(currSenseBlobPixelsCopy) && !currOvSense2.blob.pixels.equals(currSense.blob.pixels)) {	
-						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currOvSense2.dbId, oldEnvIn, myConnection);
-						UpdateSenseToBeSenseIn.update(currSense, currOvSense2, oldEnvIn, myConnection);
-						oldEnvIn.abstractEnv.senses.remove(currSense);
-						flag2 = false;
+					if (currOvSense2.blob.pixels != currSense.blob.pixels) {
+						if (currOvSense2.blob.pixels.containsAll(currSenseBlobPixelsCopy)) {	
+							removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currOvSense2.dbId, oldEnvIn, myConnection, updateDB);
+							UpdateSenseToBeSenseIn.update(currSense, currOvSense2, oldEnvIn, myConnection);
+							oldEnvIn.abstractEnv.senses.remove(currSense);
+							flag2 = false;
+						}
 					}
 				}
 				
@@ -91,19 +102,21 @@ public class RemoveOldSensesFromEnv {
 						}
 					}				
 					if (flag) {
-						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currSense.dbId, oldEnvIn, myConnection);
+						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currSense.dbId, oldEnvIn, myConnection, updateDB);
 						oldEnvIn.abstractEnv.senses.remove(currSense);
 					} else {
 						
 					}
 				}
 			}
-			DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
-			String updateEnvSQLCommand = "UPDATE Env SET Senses=\"" + oldEnvIn.abstractEnv.dbSenseList + "\" WHERE id=" + dbocr.envCount + ";";
-			myState.execute(updateEnvSQLCommand);
-			String readdForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=1;";
-			Statement readdChecksState = myConnection.createStatement();
-			readdChecksState.execute(readdForeignKeyChecksCommand);
+			if (updateDB) {
+				DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
+				String updateEnvSQLCommand = "UPDATE Env SET Senses=\"" + oldEnvIn.abstractEnv.dbSenseList + "\" WHERE id=" + dbocr.envCount + ";";
+				myState.execute(updateEnvSQLCommand);
+				String readdForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=1;";
+				Statement readdChecksState = myConnection.createStatement();
+				readdChecksState.execute(readdForeignKeyChecksCommand);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -112,6 +125,9 @@ public class RemoveOldSensesFromEnv {
 	}
 	
 	public static List<Pixel> removeNonSharedPixels (List<Pixel> list1, List<Pixel> list2){
+		if (list1 == list2) {
+			return list1;
+		}
 		List<Pixel> output = new ArrayList<Pixel>();
 		for (int i = 0; i < list2.size(); i++) {
 			Pixel currPixel = list2.get(i);
@@ -138,7 +154,7 @@ public class RemoveOldSensesFromEnv {
 		return output;
 	}
 	
-	public static void removeSenseFromAbstractEnvDBSenseListInJavaAndDB (int dbIdIn, Env envIn, Connection myConnection) {
+	public static void removeSenseFromAbstractEnvDBSenseListInJavaAndDB (int dbIdIn, Env envIn, Connection myConnection, boolean updateDB) {
 		//remove from java env db sense list
 		String[] array = envIn.abstractEnv.dbSenseList.split(" ");
 		List<String> strList = Arrays.asList(array);
@@ -151,12 +167,14 @@ public class RemoveOldSensesFromEnv {
 		envIn.abstractEnv.dbSenseList = composite;
 		
 		//update env sense list in db
-		try {
-			Statement myState = myConnection.createStatement();
-			String sqlCommand = "UPDATE Env SET Senses=\"" + envIn.abstractEnv.dbSenseList + "\" WHERE id=" + envIn.dbId + ";";
-			myState.execute(sqlCommand);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (updateDB) {
+			try {
+				Statement myState = myConnection.createStatement();
+				String sqlCommand = "UPDATE Env SET Senses=\"" + envIn.abstractEnv.dbSenseList + "\" WHERE id=" + envIn.dbId + ";";
+				myState.execute(sqlCommand);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -173,7 +191,7 @@ public class RemoveOldSensesFromEnv {
 			ImageIO.write(bi, "jpg", outputFile);
 			ImageIO.write(imageIn, "jpg", outputFile2);
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 		
 		//
@@ -227,6 +245,7 @@ public class RemoveOldSensesFromEnv {
 						
 					} catch (Exception e) {
 						//that pixel doesn't exist (trying a pixel with a negative x or y value when doing an edge pixel)
+						e.printStackTrace();
 					}
 				}
 				blobPixelToCheckQueue.remove(0);

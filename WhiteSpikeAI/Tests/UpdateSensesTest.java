@@ -1,6 +1,8 @@
 package Tests;
 
 import java.awt.image.BufferedImage;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,10 +12,12 @@ import EnvAndDatabaseServiceMethods.ChangedPixelsToBlobs;
 import EnvAndDatabaseServiceMethods.DatabaseHandler;
 import EnvAndDatabaseServiceMethods.RemoveOldSensesFromEnv;
 import EnvAndDatabaseServiceMethods.SenseCombiner;
+import EnvAndDatabaseServiceMethods.UpdateEnv;
 import EnvAndDatabaseServiceMethods.UpdateSenses;
 import EnvAndDatabaseServiceMethods.UploadOrientationChangesToDB;
 import EnvAndDatabaseServiceMethods.VisualOutputOfSensesFromSensesAndImage;
 import EnvAndDatabaseServiceMethods.ChangedPixelsFromOldEnv.junctionList;
+import MainLLF.Constants;
 import Structure.Blob;
 import Structure.Env;
 import Structure.Pixel;
@@ -23,37 +27,18 @@ public class UpdateSensesTest {
 	public static void main(String[] args) {
 		//Reset DB
 		DatabaseHandler.main(null);
-		
-		Env env = new Env();
-		DatabaseHandler.uploadEnvToDatabase(env);
-		
-		Env newEnv = new Env(0);
-		newEnv.rawEnv = newEnv.senseRawEnv();
-		BufferedImage newImage = newEnv.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50);
-		BufferedImage oldImage = env.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50);
-		
-		List<junctionList> changedPixelsByThread = ChangedPixelsFromOldEnv.find(newImage, oldImage);
-		List<Blob> newBlobs = ChangedPixelsToBlobs.exec(changedPixelsByThread, newImage);
-		List<Sense> newishSenses = new ArrayList<Sense>();
-		for (int i = 0; i < newBlobs.size(); i++) {
-			Sense currentSense = BlobToSense.getSense(newBlobs.get(i));
-			//if (currentSense.orientation.height > 1 && currentSense.orientation.width > 1) {
-				//if (currentSense.orientation.height > 3 || currentSense.orientation.width > 3) {
-					newishSenses.add(currentSense);
-				//}		
-			//}		
-		}
 		try {
-			newishSenses = SenseCombiner.exec(newishSenses);
-			Env outputEnv = UpdateSenses.update(newishSenses, env, true);
-			outputEnv.rawEnv = newEnv.rawEnv;
-			outputEnv = RemoveOldSensesFromEnv.exec(newishSenses, outputEnv);
-			UploadOrientationChangesToDB.upload(outputEnv);
-			VisualOutputOfSensesFromSensesAndImage.execute(outputEnv.abstractEnv.senses, outputEnv.rawEnv.currentDisplay.getSubimage(200, 300, 50, 50), "outputEnv");
+			Thread.sleep(1000);
+			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
+			Env env = new Env();
+			DatabaseHandler.uploadEnvToDatabase(env, myConnection);
+			VisualOutputOfSensesFromSensesAndImage.execute(env.abstractEnv.senses, env.rawEnv.currentDisplay, "before");
+			Thread.sleep(3000);
+			env = UpdateEnv.update(env, myConnection);
+			VisualOutputOfSensesFromSensesAndImage.execute(env.abstractEnv.senses, env.rawEnv.currentDisplay, "after");
 			System.out.println();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		
+		}	
 	}
 }

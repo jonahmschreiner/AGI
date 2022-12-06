@@ -282,7 +282,7 @@ public class UpdateSenses {
 					oldEnvIn.abstractEnv.dbSenseList = oldEnvIn.abstractEnv.dbSenseList + numOfSenses + " ";
 					currentSense.dbId = numOfSenses;
 				} catch (Exception e) {
-					
+					e.printStackTrace();
 				}
 				myState.executeBatch();
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");

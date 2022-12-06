@@ -13,6 +13,7 @@ import java.util.List;
 import EnvAndDatabaseServiceMethods.CreateDeepCopyOfEnv;
 import EnvAndDatabaseServiceMethods.DatabaseHandler;
 import EnvAndDatabaseServiceMethods.ExecuteCoreAction;
+import EnvAndDatabaseServiceMethods.RemoveOldSensesFromEnv;
 import EnvAndDatabaseServiceMethods.UpdateConditionEnvInDBToBeThisEnv;
 import EnvAndDatabaseServiceMethods.UpdateEnv;
 import EnvAndDatabaseServiceMethods.UpdateSenses;
@@ -72,6 +73,10 @@ public class ExecuteActivity {
 					envIn = UpdateEnv.update(envIn, myConnection);
 					fw.append(" EXECACT: Updating Env after Sub-Activity Execution Finished\n");
 					fw.flush();
+					//PUT BREAKPOINT HERE
+					
+					
+					
 					if (currActivityId > (Constants.numOfCoreActions + Constants.numOfRawPropActivities)) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
 						fw.append(" EXECACT: Executed Sub-Activity is not a core action\n");
 						fw.flush();
@@ -284,6 +289,8 @@ public class ExecuteActivity {
 				}
 				fw.append(" EXECACT: Sub-Activity Execution Finished. Evaluating and Closing Down Condition Env of Top-Level Action\n");
 				fw.flush();
+				fw.append("JSD envIn senses size: " + envIn.abstractEnv.senses.size() + "\n");
+				fw.flush();
 				//attempt to close down current activity's condition env
 				if (activityId > Constants.numOfCoreActions) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
 					fw.append(" EXECACT: Top Activity was not a Core Action;");
@@ -337,6 +344,8 @@ public class ExecuteActivity {
 									break;
 								}
 							}
+							
+							//TODO DO THIS match condition env senses to prevEnv ones and compare them in raw env closing instead of comparing the current env to the condition env for some reason???
 							fw.append("made it here pos 1");
 							fw.flush();
 							//for each sense in current Env, check to see if the current sense has the same values as any result in the condition env results and if so adds them to a condition env
@@ -375,10 +384,23 @@ public class ExecuteActivity {
 							List<Sense> prevEnvSensesList = new ArrayList<Sense>();
 							prevEnvSensesList.addAll(prevEnv.abstractEnv.senses);
 							int conditionEnvSensesSize = conditionEnvSenses.size();
-							prevEnv = UpdateSenses.update(conditionEnvSenses, prevEnv, false, myConnection); 
-
-							fw.append("made it here pos 2");
+							fw.append("conditionEnvSenses size: " + conditionEnvSenses.size() + "\n");
 							fw.flush();
+							prevEnv = UpdateSenses.update(conditionEnvSenses, prevEnv, false, myConnection); 
+							//Attempting to fix senses not being removed from condition env bug
+							
+						
+							//
+							fw.append("made it here pos 2\n");
+							fw.flush();
+							fw.append("prevEnv.abstractEnv.recentlyChangedOldSenses.size(): " + prevEnv.abstractEnv.recentlyChangedOldSenses.size() + "\n");
+							fw.flush();
+							for (int i = 0; i < prevEnv.abstractEnv.senses.size(); i++) {
+								Sense currSense = prevEnv.abstractEnv.senses.get(i);
+								fw.append("prevEnv sense " + i + ": " + currSense.orientation.color + "\n");
+								fw.flush();
+							}
+							
 							//abstract env closing
 							for (int j = 0; j < prevEnv.abstractEnv.recentlyChangedOldSenses.size(); j++) {
 								int currIndex = prevEnv.abstractEnv.recentlyChangedOldSenses.get(j);
@@ -422,6 +444,8 @@ public class ExecuteActivity {
 							}
 							
 							fw.append("made it here pos 3");
+							fw.flush();
+							fw.append("\nnewConditionEnvSenseListSize: " + newConditionEnv.abstractEnv.senses.size() + "\n");
 							fw.flush();
 							//
 							newConditionEnv = UpdateConditionEnvInDBToBeThisEnv.update(newConditionEnv, activityId, myConnection, fw);

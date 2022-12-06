@@ -69,7 +69,6 @@ public class SetUpActivitiesToTryQueueIfNecessary { //come back and change so it
 				fw.flush();
 				queueIn.addAll(testList);
 			} catch (Exception e) {
-				e.printStackTrace();
 				try {
 					fw.append("-2 error: " + e.getMessage() + "\n");
 					fw.flush();
