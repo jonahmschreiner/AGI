@@ -158,14 +158,14 @@ public class UpdateConditionEnvInDBToBeThisEnv {
 						sqlCommand = "INSERT INTO ConditionSense (ConditionEnv, ConditionSenseDefinition, ConditionOrientation, ConditionOrientationChange) VALUES (" + conditionEnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ", " + matchingOChangeId + ");";
 						myState.execute(sqlCommand);
 						DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
-						currentSense.dbId = dbocr.conditionSenseCount;
+						//currentSense.dbId = dbocr.conditionSenseCount;
 						//myState.addBatch(sqlCommand);
 						
 						EnvSenseListSerializedString = EnvSenseListSerializedString + (firstConditionSenseId + i - numOfSenseMatches) + " ";
 						conditionEnvIn.abstractEnv.dbSenseList = conditionEnvIn.abstractEnv.dbSenseList + (firstConditionSenseId + i - numOfSenseMatches) + " ";
 					} else {
 						EnvSenseListSerializedString = EnvSenseListSerializedString + (senseFound) + " ";
-						currentSense.dbId = senseFound;//recently added (might break shit)
+						//currentSense.dbId = senseFound;//recently added (might break shit)
 						conditionEnvIn.abstractEnv.dbSenseList = conditionEnvIn.abstractEnv.dbSenseList + (senseFound) + " ";
 						numOfSenseMatches++;
 					}

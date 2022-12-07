@@ -84,7 +84,7 @@ public class UploadConditionEnvToDB {
 				sqlCommand = "INSERT INTO ConditionSense (ConditionEnv, ConditionSenseDefinition, ConditionOrientation, ConditionOrientationChange) VALUES (" + conditionEnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ", " + matchingOChangeId + ");";
 				myState.execute(sqlCommand);
 				DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
-				currentSense.dbId = dbocr.conditionSenseCount;
+				//currentSense.dbId = dbocr.conditionSenseCount;
 				EnvSenseListSerializedString = EnvSenseListSerializedString + (firstConditionSenseId + i) + " ";
 				conditionEnvIn.abstractEnv.dbSenseList = conditionEnvIn.abstractEnv.dbSenseList + (firstConditionSenseId + i) + " ";
 				

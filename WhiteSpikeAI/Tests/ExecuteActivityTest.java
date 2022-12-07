@@ -33,9 +33,9 @@ public class ExecuteActivityTest {
 			File file = new File("/home/agi/Desktop/test.txt");
 			FileWriter fw = new FileWriter(file);
 			Env env = new Env();
-			//DatabaseHandler.uploadEnvToDatabase(env, myConnection);
-			Env conditionEnv = CreateDeepCopyOfEnv.exec(env);
-			conditionEnv = UploadConditionEnvToDB.exec(conditionEnv, myConnection);
+			DatabaseHandler.uploadEnvToDatabase(env, myConnection);
+//			Env conditionEnv = CreateDeepCopyOfEnv.exec(env);
+//			conditionEnv = UploadConditionEnvToDB.exec(conditionEnv, myConnection);
 			env = UpdateEnv.update(env, myConnection);
 			Statement myState = myConnection.createStatement();
 //			String sqlCommand = "INSERT INTO Activity (ConditionEnv, CoreActivity, SubActivities, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + conditionEnv.dbId + ", -1, \"48 49\", 2, 3, 1);"; //goal: increase sense 1's x pos

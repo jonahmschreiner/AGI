@@ -367,6 +367,7 @@ public class DatabaseHandler {
 				} else {
 					EnvSenseListSerializedString = EnvSenseListSerializedString + (senseFound) + " ";
 					envIn.abstractEnv.dbSenseList = envIn.abstractEnv.dbSenseList + (senseFound) + " ";
+					currentSense.dbId = senseFound;
 					numOfSenseMatches++;
 				}
 
