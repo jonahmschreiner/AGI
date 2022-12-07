@@ -13,7 +13,6 @@ import java.util.List;
 import EnvAndDatabaseServiceMethods.CreateDeepCopyOfEnv;
 import EnvAndDatabaseServiceMethods.DatabaseHandler;
 import EnvAndDatabaseServiceMethods.ExecuteCoreAction;
-import EnvAndDatabaseServiceMethods.RemoveOldSensesFromEnv;
 import EnvAndDatabaseServiceMethods.UpdateConditionEnvInDBToBeThisEnv;
 import EnvAndDatabaseServiceMethods.UpdateEnv;
 import EnvAndDatabaseServiceMethods.UpdateSenses;
@@ -23,7 +22,6 @@ import Structure.DBObjectCountResults;
 import Structure.Env;
 import Structure.PixelColorRange;
 import Structure.PixelOverallChange;
-import Structure.RawEnv;
 import Structure.Sense;
 public class ExecuteActivity {
 	public static Env execByDBId(Env envIn, int activityId, FileWriter fw, Connection myConnection) throws IOException {
@@ -254,9 +252,7 @@ public class ExecuteActivity {
 //									}
 //								}
 								
-								//create senses string adjust this to handle the property closing down
-								
-								//TODO instead of uploading a new one, update the old one??
+
 								newConditionEnv = UpdateConditionEnvInDBToBeThisEnv.update(newConditionEnv, currActivityId, myConnection, fw);
 								//
 								fw.append(" EXECACT: narrowed-down condition env uploading to db finished\n");
@@ -358,7 +354,7 @@ public class ExecuteActivity {
 								}
 							}
 							
-							//TODO DO THIS match condition env senses to prevEnv ones and compare them in raw env closing instead of comparing the current env to the condition env for some reason???
+							// DO THIS match condition env senses to prevEnv ones and compare them in raw env closing instead of comparing the current env to the condition env for some reason???
 							fw.append("made it here pos 1");
 							fw.flush();
 							double existingConEnvCpuUsage = 0;
