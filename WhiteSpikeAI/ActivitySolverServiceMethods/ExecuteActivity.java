@@ -285,12 +285,10 @@ public class ExecuteActivity {
 							fw.append("Condition Env Id of New Activity: " + dbocr.conditionEnvCount + ". New Activity Id: " + (dbocr.activityCount + 1));
 							fw.flush();
 							String sqlCommand = "";
-							try {
+							if (associatedSense < 0 && associatedSense > (-1 * Constants.numOfRawProps) - 3) {
+								sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + associatedSense + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
+							} else {
 								sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + s.dbId + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
-							} catch (Exception h) {
-								fw.append("fuck this error: " + h.getMessage() + "\n");
-								fw.append("sql for this error is: " + sqlCommand + "\n");
-								fw.flush();
 							}
 							try {
 								Statement myState = myConnection.createStatement();
