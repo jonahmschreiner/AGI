@@ -18,7 +18,9 @@ public class ExecuteCoreAction {
 			System.out.println("I sense there was a fuck up");
 		}
 		if (coreActionIndex == 1) {
-			if (rawEnvIn.mouseLocation.x > 604) { //TODO remove these when going back to normal env
+			if (rawEnvIn.mouseLocation.x > 804) { //TODO remove these when going back to normal env
+				//changed from 604 to 804 for testing conditional solutions
+				
 				//for testing
 				try {
 					fw.append("X POS BEFORE Core Action 1 " + MouseInfo.getPointerInfo().getLocation().x + " ");
