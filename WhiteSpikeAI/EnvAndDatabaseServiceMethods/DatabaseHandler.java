@@ -395,7 +395,7 @@ public class DatabaseHandler {
 		ResultSet output = null;
 		try {
 			Statement myState = myConnection.createStatement();
-			String sqlCommand = "SELECT CoreActivity, SubActivities, ConditionEnv, PropertyId, increaseOrDecreaseProp FROM Activity WHERE id=" + idIn + ";";
+			String sqlCommand = "SELECT CoreActivity, AssociatedSense, SubActivities, ConditionEnv, PropertyId, increaseOrDecreaseProp FROM Activity WHERE id=" + idIn + ";";
 			output = myState.executeQuery(sqlCommand);
 		} catch (Exception e) {
 			

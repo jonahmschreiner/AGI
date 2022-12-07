@@ -38,11 +38,13 @@ public class ExecuteActivity {
 		int propId = -1;
 		int increaseOrDecreaseProp = -1;
 		int coreActivityToExecute = -1;
+		int associatedSense = -99999;
 		try {
 			rs.next();	
 			try {
 				propId = rs.getInt("PropertyId");
 				increaseOrDecreaseProp = rs.getInt("increaseOrDecreaseProp");
+				associatedSense = rs.getInt("AssociatedSense");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -528,7 +530,13 @@ public class ExecuteActivity {
 						//create new activity that does the same sense prop change but with the current Env as the condition env
 						prevEnv = UploadConditionEnvToDB.exec(prevEnv, myConnection);
 						DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
-						String sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + s.dbId + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
+						String sqlCommand = "";
+						if (associatedSense < 0 && associatedSense > (-1 * Constants.numOfRawProps) - 3) {
+							sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + associatedSense + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
+						} else {
+							sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + s.dbId + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
+						}
+
 						try {
 							Statement myState = myConnection.createStatement();
 							myState.execute(sqlCommand);

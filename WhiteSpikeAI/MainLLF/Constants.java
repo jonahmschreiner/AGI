@@ -10,4 +10,5 @@ public class Constants {
 	static final public int SenseComparisonColorMatchBonus = 100;
 	static final public int numOfCoreActions = 6; //was 429 when using everything
 	static final public int numOfRawPropActivities = 4;
+	static final public int numOfRawProps = 2;
 }
