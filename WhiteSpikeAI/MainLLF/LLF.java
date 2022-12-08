@@ -209,6 +209,14 @@ public class LLF {
 			} else {//the sense to solve a prop for isn't currently present in the env
 				fw.append(" activity " + currentActivityToSolveID + " was not solved using activity or activity combo: " + activitiesToTryQueue.get(0) + " because the associated sense was not present in the env\n");
 				fw.flush();
+				try {
+					Statement myState = myConnection.createStatement();
+					String sqlCommand = "UPDATE Activity SET numOfSolveAttempts=numOfSolveAttempts + 1 WHERE id=" + currentActivityToSolveID + ";";
+					myState.execute(sqlCommand);
+				} catch (Exception e) {
+					fw.append(e.getMessage() + "\n");
+					fw.flush();
+				}		
 				activitiesToTryQueue.clear();
 				actionQueue.clear();
 				activitiesToSolveQueue.remove(0);
