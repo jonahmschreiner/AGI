@@ -66,6 +66,7 @@ public class LLF {
 		
 		//for testing
 		int testCount = 0;
+		boolean testFlag = false;
 		//
 		try {
 			boolean continueLooping = true;
@@ -84,9 +85,14 @@ public class LLF {
 //				}
 //			}
 			if (activitiesToSolveQueue.size() > 0) {
-				if (activitiesToSolveQueue.get(0) == 11) {
+				System.out.println("some issue: " + activitiesToSolveQueue.get(0));
+			}
+			
+			if (activitiesToSolveQueue.size() > 0) {
+				if (activitiesToSolveQueue.get(0) == 30 || activitiesToSolveQueue.get(0) == 31) {
 					Point testPoint = MouseInfo.getPointerInfo().getLocation();
-					System.out.println("");
+					System.out.println("I changed the env");
+					testFlag = true;
 					try {
 						Thread.sleep(4000);
 						Util util = new Util();
@@ -96,7 +102,7 @@ public class LLF {
 					}
 				}
 			}
-			if (testCount == 51) {
+			if (testCount == 301) {
 				System.out.println();
 			}
 			//
@@ -107,6 +113,16 @@ public class LLF {
 			fw.append(" start of new life loop iteration\n");
 			fw.flush();
 			activitiesToSolveQueue = SetUpActivitiesToSolveQueueIfNecessary.setup(activitiesToSolveQueue, fw, myConnection);
+			//for testing TODO
+			System.out.println("wtf: " + testCount);
+			if (testCount == 1) {
+				activitiesToSolveQueue.set(0, 30);
+				activitiesToSolveQueue.set(1, 31);
+			}
+			System.out.println("fml: " + activitiesToSolveQueue.get(0));
+			System.out.println("test1: " + activitiesToSolveQueue.get(0).equals(31));
+			System.out.println("test2: " + (activitiesToSolveQueue.get(0) == 31));
+			//
 			System.out.println("activities to solve set up if necessary");
 			fw.append(" activities to solve queue set up (count: " + activitiesToSolveQueue.size() + ")\n");
 			fw.flush();
@@ -154,9 +170,10 @@ public class LLF {
 			int currentActivityToSolveID = activitiesToSolveQueue.get(0);
 			
 			//for testing
-			if (currentActivityToSolveID == 11) {
+			if (currentActivityToSolveID == 31 && testFlag) {
 				System.out.println("");
 			}
+			testFlag = false;
 			//
 			Sense s = GetSenseAssociatedWithActivity.execute(env, currentActivityToSolveID, myConnection);
 			System.out.println("sense associated with activity gotten");

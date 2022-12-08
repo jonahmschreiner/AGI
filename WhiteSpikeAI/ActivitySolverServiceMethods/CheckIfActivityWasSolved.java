@@ -57,6 +57,10 @@ public class CheckIfActivityWasSolved {
 					output = true;
 				} else if (propId == 4 && increaseOrDecreaseProp == senseIn.orientationChanges.yChange) {
 					output = true;
+				} else if (propId == 6 && increaseOrDecreaseProp == -1 && envIn.abstractEnv.recentlyRemovedSenses.contains(senseIn)) {
+					output = true;
+				} else if (propId == 6 && increaseOrDecreaseProp == 1 && envIn.abstractEnv.senses.contains(senseIn)) {
+					output = true;
 				}
 			} else if (propId == 5 && increaseOrDecreasePropAsString.equals(senseIn.orientationChanges.colorChange)) {
 				output = true;

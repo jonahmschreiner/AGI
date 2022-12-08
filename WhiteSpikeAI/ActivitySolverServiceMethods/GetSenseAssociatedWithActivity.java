@@ -64,6 +64,20 @@ public class GetSenseAssociatedWithActivity {
 				}
 				
 				if (output == null) {
+					List<Sense> rrs = envIn.abstractEnv.recentlyRemovedSenses;
+					for (int i = 0; i < rrs.size(); i++) {
+						Sense currPotMatch = rrs.get(i);
+						PixelColorRange currPCR = new PixelColorRange(currPotMatch.orientation.color);
+						if (currPotMatch.orientation.height == height && currPotMatch.orientation.width == width 
+								&& currPotMatch.orientation.rotation == rotation && currPotMatch.orientation.position.x == x 
+								&& currPotMatch.orientation.position.y == y && currPCR.color.equals(color)) {
+							output = currPotMatch;
+							break;
+						}
+					}
+				}
+				
+				if (output == null) {
 					List<Sense> senses = envIn.abstractEnv.senses;
 					for (int i = 0; i < senses.size(); i++) {
 						Sense currPotMatch = senses.get(i);

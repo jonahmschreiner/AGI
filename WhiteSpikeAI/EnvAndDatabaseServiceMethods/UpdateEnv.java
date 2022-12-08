@@ -16,6 +16,7 @@ public class UpdateEnv {
 	public static Env update(Env envIn, Connection myConnection) {
 		envIn.abstractEnv.recentlyChangedOldSenses.clear();
 		envIn.abstractEnv.recentlyAddedSenses.clear();
+		envIn.abstractEnv.recentlyRemovedSenses.clear();
 		Env newEnv = new Env(0);
 		newEnv.rawEnv = newEnv.senseRawEnv(envIn);
 		BufferedImage newImage = newEnv.rawEnv.currentDisplay.getSubimage(605, 271, 468, 398);

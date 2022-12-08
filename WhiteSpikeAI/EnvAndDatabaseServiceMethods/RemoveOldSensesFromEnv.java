@@ -82,6 +82,7 @@ public class RemoveOldSensesFromEnv {
 						if (currOvSense2.blob.pixels.containsAll(currSenseBlobPixelsCopy)) {	
 							removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currSense.dbId, oldEnvIn, myConnection, updateDB);
 							//UpdateSenseToBeSenseIn.update(currSense, currOvSense2, oldEnvIn, myConnection);
+							oldEnvIn.abstractEnv.recentlyRemovedSenses.add(currSense);
 							oldEnvIn.abstractEnv.senses.remove(currSense);
 							flag2 = false;
 						}
@@ -103,6 +104,7 @@ public class RemoveOldSensesFromEnv {
 					}				
 					if (flag) {
 						removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currSense.dbId, oldEnvIn, myConnection, updateDB);
+						oldEnvIn.abstractEnv.recentlyRemovedSenses.add(currSense);
 						oldEnvIn.abstractEnv.senses.remove(currSense);
 					} else {
 						
