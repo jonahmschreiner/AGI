@@ -80,8 +80,8 @@ public class RemoveOldSensesFromEnv {
 					Sense currOvSense2 = overlappingSenses.get(l);
 					if (currOvSense2.blob.pixels != currSense.blob.pixels) {
 						if (currOvSense2.blob.pixels.containsAll(currSenseBlobPixelsCopy)) {	
-							removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currOvSense2.dbId, oldEnvIn, myConnection, updateDB);
-							UpdateSenseToBeSenseIn.update(currSense, currOvSense2, oldEnvIn, myConnection);
+							removeSenseFromAbstractEnvDBSenseListInJavaAndDB(currSense.dbId, oldEnvIn, myConnection, updateDB);
+							//UpdateSenseToBeSenseIn.update(currSense, currOvSense2, oldEnvIn, myConnection);
 							oldEnvIn.abstractEnv.senses.remove(currSense);
 							flag2 = false;
 						}
@@ -109,7 +109,7 @@ public class RemoveOldSensesFromEnv {
 					}
 				}
 			}
-			if (updateDB) {
+			if (updateDB) { //pretty sure this is a duplicate sql call
 				DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
 				String updateEnvSQLCommand = "UPDATE Env SET Senses=\"" + oldEnvIn.abstractEnv.dbSenseList + "\" WHERE id=" + dbocr.envCount + ";";
 				myState.execute(updateEnvSQLCommand);

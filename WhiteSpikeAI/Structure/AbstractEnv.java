@@ -8,6 +8,7 @@ public class AbstractEnv {
 	public String dbSenseList = "";
 	public List<Integer> recentlyChangedOldSenses = new ArrayList<Integer>(); //index of senses in the abstract env senses list whose orientation changed
 	public List<Sense> recentlyAddedSenses = new ArrayList<Sense>(); //senses that are brand new upon this update iteration
+	public List<Sense> recentlyRemovedSenses = new ArrayList<Sense>(); //senses that existed in previous iteration but disappeared in this one
 	public AbstractEnv() {}
 	public AbstractEnv(List<Sense> sensesIn) {
 		this.senses = sensesIn;

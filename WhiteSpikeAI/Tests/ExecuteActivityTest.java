@@ -37,7 +37,7 @@ public class ExecuteActivityTest {
 //			Env conditionEnv = CreateDeepCopyOfEnv.exec(env);
 //			conditionEnv = UploadConditionEnvToDB.exec(conditionEnv, myConnection);
 			env = UpdateEnv.update(env, myConnection);
-			Statement myState = myConnection.createStatement();
+			//Statement myState = myConnection.createStatement();
 //			String sqlCommand = "INSERT INTO Activity (ConditionEnv, CoreActivity, SubActivities, AssociatedSense, PropertyId, increaseOrDecreaseProp) VALUES (" + conditionEnv.dbId + ", -1, \"48 49\", 2, 3, 1);"; //goal: increase sense 1's x pos
 //			myState.execute(sqlCommand);
 //			DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);

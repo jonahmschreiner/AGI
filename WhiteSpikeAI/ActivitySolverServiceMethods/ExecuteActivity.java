@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import EnvAndDatabaseServiceMethods.CreateDeepCopyOfEnv;
@@ -24,7 +25,7 @@ import Structure.PixelColorRange;
 import Structure.PixelOverallChange;
 import Structure.Sense;
 public class ExecuteActivity {
-	public static Env execByDBId(Env envIn, int activityId, FileWriter fw, Connection myConnection) throws IOException {
+	public static Env execByDBId(Env envIn, int activityId, FileWriter fw, Connection myConnection) throws IOException { 
 		Env prevEnv = CreateDeepCopyOfEnv.exec(envIn);
 		fw.append(" EXECACT: CreateDeepCopyOfEnv Finished\n");
 		fw.flush();
@@ -181,11 +182,11 @@ public class ExecuteActivity {
 								//recentlyChangedOldSenses should contain the indexes of the existing db conditionEnv senses that are present in this condition env
 								//loop through them and compare to currPrevEnv.abstractEnv.senses. any differences make that property irrelevant
 								
-								
+								HashMap<Integer, Integer> map = GetSenseAssociatedWithActivity.createIdToIndexMap(prevEnv.abstractEnv.senses);
 								for (int j = 0; j < currPrevEnv.abstractEnv.recentlyChangedOldSenses.size(); j++) {
 									int currIndex = currPrevEnv.abstractEnv.recentlyChangedOldSenses.get(j);
-									Sense currSense = currPrevEnv.abstractEnv.senses.get(currIndex);
-									Sense currPrevEnvSense = currPrevEnvSensesList.get(currIndex);
+									Sense currSense = prevEnv.abstractEnv.senses.get(map.get(currIndex));
+									Sense currPrevEnvSense = currPrevEnvSensesList.get(map.get(currIndex));
 									PixelColorRange currConSensepcr = new PixelColorRange(currPrevEnvSense.orientation.color);
 									PixelColorRange currSensepcr = null;
 									if (currSense.orientation.color != null) {
@@ -426,10 +427,11 @@ public class ExecuteActivity {
 							}
 							
 							//abstract env closing
+							HashMap<Integer, Integer> map = GetSenseAssociatedWithActivity.createIdToIndexMap(prevEnv.abstractEnv.senses);
 							for (int j = 0; j < prevEnv.abstractEnv.recentlyChangedOldSenses.size(); j++) {
 								int currIndex = prevEnv.abstractEnv.recentlyChangedOldSenses.get(j);
-								Sense currSense = prevEnv.abstractEnv.senses.get(currIndex);
-								Sense prevEnvSense = prevEnvSensesList.get(currIndex);
+								Sense currSense = prevEnv.abstractEnv.senses.get(map.get(currIndex));
+								Sense prevEnvSense = prevEnvSensesList.get(map.get(currIndex));
 								PixelColorRange currConSensepcr = new PixelColorRange(prevEnvSense.orientation.color);
 								PixelColorRange currSensepcr = null;
 								if (currSense.orientation.color != null) {

@@ -166,12 +166,12 @@ public class UpdateSenses {
 					//replace oldSense with newSense
 					int index = envSenses.indexOf(oldSense);
 					envSenses.set(index, newSense);
-					oldEnvIn.abstractEnv.recentlyChangedOldSenses.add(index);
+					oldEnvIn.abstractEnv.recentlyChangedOldSenses.add(newSense.dbId);//changed from index to newSense.dbId
 				} else { //just update java-side stuff
 					sensesIn.remove(newSense);
 					int index = envSenses.indexOf(oldSense);
 					envSenses.set(index, newSense);
-					oldEnvIn.abstractEnv.recentlyChangedOldSenses.add(index);
+					oldEnvIn.abstractEnv.recentlyChangedOldSenses.add(newSense.dbId);//changed from index to newSense.dbId
 					newSense.dbId = oldSense.dbId;
 				}
 			}

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
 
 import MainLLF.Constants;
@@ -34,9 +35,11 @@ public class GetSenseAssociatedWithActivity {
 				
 				//loop through env recentlyChangedOldSenses and recentlyAddedSenses (if not found in the first one) to find the match
 				
+				//TODO create hashmap of dbIds matching to indexes in abstractEnv.senses
+				HashMap<Integer, Integer> dbIdToIndex = createIdToIndexMap(envIn.abstractEnv.senses);
 				List<Integer> rcos = envIn.abstractEnv.recentlyChangedOldSenses;
 				for (int i = 0; i < rcos.size(); i++) {
-					Sense currPotMatch = envIn.abstractEnv.senses.get(rcos.get(i));
+					Sense currPotMatch = envIn.abstractEnv.senses.get(dbIdToIndex.get(rcos.get(i)));
 					PixelColorRange currPCR = new PixelColorRange(currPotMatch.orientation.color);
 					if (currPotMatch.orientation.height == height && currPotMatch.orientation.width == width 
 							&& currPotMatch.orientation.rotation == rotation && currPotMatch.orientation.position.x == x 
@@ -82,5 +85,14 @@ public class GetSenseAssociatedWithActivity {
 			//e.printStackTrace();
 		}
 		return output;
+	}
+	
+	public static HashMap<Integer, Integer> createIdToIndexMap (List<Sense> sensesIn) {
+		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+		for (int i = 0; i < sensesIn.size(); i++) {
+			Sense currSense = sensesIn.get(i);
+			map.put(currSense.dbId, i);
+		}
+		return map;
 	}
 }
