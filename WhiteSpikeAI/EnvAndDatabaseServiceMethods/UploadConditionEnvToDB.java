@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import MainLLF.Constants;
-import Structure.DBObjectCountResults;
+import Structure.DBObjectHighestValueResults;
 import Structure.Env;
 import Structure.PixelColorRange;
 import Structure.Sense;
@@ -83,7 +83,7 @@ public class UploadConditionEnvToDB {
 				//Sense
 				sqlCommand = "INSERT INTO ConditionSense (ConditionEnv, ConditionSenseDefinition, ConditionOrientation, ConditionOrientationChange) VALUES (" + conditionEnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ", " + matchingOChangeId + ");";
 				myState.execute(sqlCommand);
-				DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
+				DBObjectHighestValueResults dbocr = new DBObjectHighestValueResults(myConnection);
 				//currentSense.dbId = dbocr.conditionSenseCount;
 				EnvSenseListSerializedString = EnvSenseListSerializedString + (firstConditionSenseId + i) + " ";
 				conditionEnvIn.abstractEnv.dbSenseList = conditionEnvIn.abstractEnv.dbSenseList + (firstConditionSenseId + i) + " ";
@@ -92,9 +92,9 @@ public class UploadConditionEnvToDB {
 			
 			createEnvSQLCommand = createEnvSQLCommand + EnvSenseListSerializedString + "\");";
 			myState.execute(createEnvSQLCommand);
-			DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
+			DBObjectHighestValueResults dbocr = new DBObjectHighestValueResults(myConnection);
 			conditionEnvIn.dbId = dbocr.conditionEnvCount;
-			
+			System.out.println("huh: " + conditionEnvIn.dbId);
 			
 			removeForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=1;";
 			removeChecksState.execute(removeForeignKeyChecksCommand);

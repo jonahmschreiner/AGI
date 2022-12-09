@@ -13,7 +13,7 @@ import EnvAndDatabaseServiceMethods.UpdateEnv;
 import EnvAndDatabaseServiceMethods.UploadConditionEnvToDB;
 import EnvAndDatabaseServiceMethods.Util;
 import MainLLF.Constants;
-import Structure.DBObjectCountResults;
+import Structure.DBObjectHighestValueResults;
 import Structure.Env;
 
 public class ExecuteActivityTest {

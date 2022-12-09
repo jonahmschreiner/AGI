@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
 import Structure.AbstractEnv;
 import Structure.Blob;
 import Structure.BoundingBox;
-import Structure.DBObjectCountResults;
+import Structure.DBObjectHighestValueResults;
 import Structure.Env;
 import Structure.Pixel;
 import Structure.PixelColorRange;
@@ -112,7 +112,7 @@ public class RemoveOldSensesFromEnv {
 				}
 			}
 			if (updateDB) { //pretty sure this is a duplicate sql call
-				DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
+				DBObjectHighestValueResults dbocr = new DBObjectHighestValueResults(myConnection);
 				String updateEnvSQLCommand = "UPDATE Env SET Senses=\"" + oldEnvIn.abstractEnv.dbSenseList + "\" WHERE id=" + dbocr.envCount + ";";
 				myState.execute(updateEnvSQLCommand);
 				String readdForeignKeyChecksCommand = "SET FOREIGN_KEY_CHECKS=1;";

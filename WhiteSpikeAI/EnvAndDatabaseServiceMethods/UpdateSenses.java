@@ -16,7 +16,7 @@ import java.util.Set;
 
 import EnvAndDatabaseServiceMethods.ComparisonScoreBasedOnOrientation;
 import MainLLF.Constants;
-import Structure.DBObjectCountResults;
+import Structure.DBObjectHighestValueResults;
 import Structure.Env;
 import Structure.Orientation;
 import Structure.Sense;
@@ -223,8 +223,11 @@ public class UpdateSenses {
 							myState.execute(sqlCommand);
 							sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, OrientationChange) VALUES (" + totalNumberOfEnvs + ", " + senseDefId + ", " + orientationCount + ", " + orientationChangesCount + ");";
 							myState.execute(sqlCommand);
-							DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
+							DBObjectHighestValueResults dbocr = new DBObjectHighestValueResults(myConnection);
 							currentSense.dbId = dbocr.senseCount;
+							
+							//activity generation
+							DatabaseHandler.createActivitiesFromSense(myConnection, oldEnvIn.dbId, currentSense.dbId, i);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -261,6 +264,10 @@ public class UpdateSenses {
 								myState.execute(sqlCommand);
 								sqlCommand = "INSERT INTO Sense (Env, SenseDefinition, Orientation, OrientationChange) VALUES (" + totalNumberOfEnvs + ", " + senseDefCount + ", " + orientationCount + ", "  + orientationChangesCount + ");";
 								myState.execute(sqlCommand);
+								
+								//activity generation
+								DatabaseHandler.createActivitiesFromSense(myConnection, oldEnvIn.dbId, currentSense.dbId, i);
+								
 							} catch (Exception f) {
 								f.printStackTrace();
 							}
@@ -288,9 +295,9 @@ public class UpdateSenses {
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 				LocalDateTime localDate = LocalDateTime.now();
 				String timestamp = dtf.format(localDate);
-				String createEnvSQLCommand = "INSERT INTO Env (CpuUsage, CreationDateTime, Senses) VALUES (" + oldEnvIn.rawEnv.currentCpuUsage +  ", \"" + timestamp + "\", \"" + oldEnvIn.abstractEnv.dbSenseList + "\");";
+				String createEnvSQLCommand = "INSERT INTO Env (MouseX, MouseY, CpuUsage, CreationDateTime, CurrentDateTime, Senses) VALUES (" + oldEnvIn.rawEnv.mouseLocation.x + ", " + oldEnvIn.rawEnv.mouseLocation.y + ", " + oldEnvIn.rawEnv.currentCpuUsage +  ", \"" + timestamp + "\", \"" + oldEnvIn.rawEnv.currentDateTime.toString() + "\", \"" + oldEnvIn.abstractEnv.dbSenseList + "\");";
 				myState.execute(createEnvSQLCommand);
-				DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
+				DBObjectHighestValueResults dbocr = new DBObjectHighestValueResults(myConnection);
 				oldEnvIn.dbId = dbocr.envCount;
 			}
 		}

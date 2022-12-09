@@ -19,7 +19,7 @@ import EnvAndDatabaseServiceMethods.UpdateEnv;
 import EnvAndDatabaseServiceMethods.UpdateSenses;
 import EnvAndDatabaseServiceMethods.UploadConditionEnvToDB;
 import MainLLF.Constants;
-import Structure.DBObjectCountResults;
+import Structure.DBObjectHighestValueResults;
 import Structure.Env;
 import Structure.PixelColorRange;
 import Structure.PixelOverallChange;
@@ -101,6 +101,8 @@ public class ExecuteActivity {
 								}
 								inString = inString + ")";
 								sqlCommand = "SELECT ConditionSenseDefinition.Definition, ConditionOrientation.Height, ConditionOrientation.Width, ConditionOrientation.Rotation, ConditionOrientation.x, ConditionOrientation.y, ConditionOrientation.color FROM ConditionSense INNER JOIN ConditionOrientation ON ConditionSense.ConditionOrientation=ConditionOrientation.id INNER JOIN ConditionSenseDefinition ON ConditionSense.ConditionSenseDefinition=ConditionSenseDefinition.id WHERE ConditionSense.id IN" + inString + ";";
+								fw.append("SQL IDK2: " + sqlCommand);
+								fw.flush();
 								ResultSet rs3 = myState.executeQuery(sqlCommand);
 								List<Sense> conditionEnvSenses = new ArrayList<Sense>();
 								while (true) {
@@ -253,9 +255,13 @@ public class ExecuteActivity {
 //									}
 //								}
 								
-
-								newConditionEnv = UpdateConditionEnvInDBToBeThisEnv.update(newConditionEnv, currActivityId, myConnection, fw);
+								newConditionEnv = UploadConditionEnvToDB.exec(newConditionEnv, myConnection);
+								//newConditionEnv = UpdateConditionEnvInDBToBeThisEnv.update(newConditionEnv, currActivityId, myConnection, fw);
 								//
+								//for testing TODO
+								newConditionEnv.dbId = newConditionEnv.dbId + 1;
+								//
+								
 								fw.append(" EXECACT: narrowed-down condition env uploading to db finished\n");
 								fw.flush();
 //								String conditionSensesString = "";
@@ -263,6 +269,7 @@ public class ExecuteActivity {
 //									conditionSensesString = conditionSensesString + newConditionEnv.abstractEnv.senses.get(l).dbId + " ";
 //								}
 								//replace ConditionEnv in db for this activity with the new ConditionEnv
+								dropConditionEnvUsingActivityId(activityId, myConnection);
 								sqlCommand = "UPDATE Activity SET ConditionEnv=" + newConditionEnv.dbId + "WHERE Activity.id=" + activityId + ";";
 								fw.append("SQL3: " + sqlCommand + "\n");
 								fw.flush();
@@ -278,7 +285,7 @@ public class ExecuteActivity {
 							UploadConditionEnvToDB.exec(currPrevEnv, myConnection);
 							fw.append(" EXECACT: Condition Env Uploading To DB Finished\n");
 							fw.flush();
-							DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
+							DBObjectHighestValueResults dbocr = new DBObjectHighestValueResults(myConnection);
 							fw.append("Condition Env Id of New Activity: " + dbocr.conditionEnvCount + ". New Activity Id: " + (dbocr.activityCount + 1));
 							fw.flush();
 							String sqlCommand = "";
@@ -328,6 +335,8 @@ public class ExecuteActivity {
 							}
 							inString = inString + ")";
 							sqlCommand = "SELECT ConditionSenseDefinition.Definition, ConditionOrientation.Height, ConditionOrientation.Width, ConditionOrientation.Rotation, ConditionOrientation.x, ConditionOrientation.y, ConditionOrientation.color FROM ConditionSense INNER JOIN ConditionOrientation ON ConditionSense.ConditionOrientation=ConditionOrientation.id INNER JOIN ConditionSenseDefinition ON ConditionSense.ConditionSenseDefinition=ConditionSenseDefinition.id WHERE ConditionSense.id IN" + inString + ";";
+							fw.append("SQL IDK: " + sqlCommand);
+							fw.flush();
 							ResultSet rs3 = myState.executeQuery(sqlCommand);
 							List<Sense> conditionEnvSenses = new ArrayList<Sense>();
 							while (true) {
@@ -474,10 +483,15 @@ public class ExecuteActivity {
 							fw.append("\nnewConditionEnvSenseListSize: " + newConditionEnv.abstractEnv.senses.size() + "\n");
 							fw.flush();
 							//
-							newConditionEnv = UpdateConditionEnvInDBToBeThisEnv.update(newConditionEnv, activityId, myConnection, fw);
+							//newConditionEnv = UpdateConditionEnvInDBToBeThisEnv.update(newConditionEnv, activityId, myConnection, fw);
+							newConditionEnv = UploadConditionEnvToDB.exec(newConditionEnv, myConnection);
 							//
 							fw.append("dbId after Update Con Env: " + newConditionEnv.dbId + "\n");
 							fw.flush();
+							
+							//for testing TODO
+							newConditionEnv.dbId = newConditionEnv.dbId + 1;
+							//
 							
 //							for (int j = 0; j < prevEnvSenses2.size(); j++) {
 //								Sense currSense = prevEnvSenses2.get(j);
@@ -510,6 +524,7 @@ public class ExecuteActivity {
 //							}
 							//replace ConditionEnv in db for this activity with the new ConditionEnv
 							//sqlCommand = "UPDATE Activity INNER JOIN ConditionEnv ON Activity.ConditionEnv=ConditionEnv.id SET ConditionEnv.Senses=\"" + conditionSensesString + "\" WHERE Activity.id=" + activityId + ";";
+							dropConditionEnvUsingActivityId(activityId, myConnection);
 							sqlCommand = "UPDATE Activity SET ConditionEnv=" + newConditionEnv.dbId + " WHERE Activity.id=" + activityId + ";";
 							fw.append("SQL2: " + sqlCommand + "\n");
 							fw.flush();
@@ -525,7 +540,7 @@ public class ExecuteActivity {
 						fw.flush();
 						//create new activity that does the same sense prop change but with the current Env as the condition env
 						prevEnv = UploadConditionEnvToDB.exec(prevEnv, myConnection);
-						DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
+						DBObjectHighestValueResults dbocr = new DBObjectHighestValueResults(myConnection);
 						String sqlCommand = "";
 						if (associatedSense < 0 && associatedSense > (-1 * Constants.numOfRawProps) - 3) {
 							sqlCommand = "INSERT INTO Activity (ConditionEnv, AssociatedSense, PropertyId, increaseOrDecreaseProp, CoreActivity) VALUES (" + (dbocr.conditionEnvCount) + ", " + associatedSense + ", " + propId + ", " + increaseOrDecreaseProp + ", " + coreActivityToExecute + ");";
@@ -553,6 +568,51 @@ public class ExecuteActivity {
 		return envIn;
 		
 	}
+	
+	
+	public static void dropConditionEnvUsingActivityId(int activityIdIn, Connection myConnection) {
+		try {
+			Statement myState = myConnection.createStatement();
+			String sqlCommand = "SELECT ConditionEnv FROM Activity WHERE id=" + activityIdIn + ";";
+			ResultSet rs = myState.executeQuery(sqlCommand);
+			rs.next();
+			int conditionEnvId = rs.getInt("ConditionEnv");
+			sqlCommand = "SET FOREIGN_KEY_CHECKS=0;";
+			myState.execute(sqlCommand);
+			sqlCommand = "SELECT Senses FROM ConditionEnv WHERE id=" + conditionEnvId + ";";
+			rs = myState.executeQuery(sqlCommand);
+			rs.next();
+			String sensesString = rs.getString("Senses");
+			String[] sensesStringArray = sensesString.split(" ");
+			for (int i = 0; i < sensesStringArray.length; i++) {
+				int currSenseId = Integer.valueOf(sensesStringArray[i]);
+				sqlCommand = "SELECT ConditionOrientation, ConditionSenseDefinition, ConditionOrientationChange FROM ConditionSense WHERE id=" + currSenseId + ";";
+				rs = myState.executeQuery(sqlCommand);
+				rs.next();
+				int currConOrId = rs.getInt("ConditionOrientation");
+				int currConSenseDefId = rs.getInt("ConditionSenseDefinition");
+				int currConOrChangeId = rs.getInt("ConditionOrientationChange");
+				
+				sqlCommand = "DELETE FROM ConditionOrientation WHERE id=" + currConOrId + ";";
+				myState.execute(sqlCommand);
+				sqlCommand = "DELETE FROM ConditionSenseDefinition WHERE id=" + currConSenseDefId + ";";
+				myState.execute(sqlCommand);
+				sqlCommand = "DELETE FROM ConditionOrientationChange WHERE id=" + currConOrChangeId + ";";
+				myState.execute(sqlCommand);
+				sqlCommand = "DELETE FROM ConditionSense WHERE id=" + currSenseId + ";";
+				myState.execute(sqlCommand);
+			}
+			sqlCommand = "DELETE FROM ConditionEnv WHERE id=" + conditionEnvId + ";";
+			myState.execute(sqlCommand);
+			sqlCommand = "SET FOREIGN_KEY_CHECKS=1;";
+			myState.execute(sqlCommand);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 	
 	public static Color createColorFromRange(String rangeIn) {
 		Color output = null;

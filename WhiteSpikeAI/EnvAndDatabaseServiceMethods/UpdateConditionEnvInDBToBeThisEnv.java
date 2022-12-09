@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import Structure.DBObjectCountResults;
+import Structure.DBObjectHighestValueResults;
 import Structure.Env;
 import Structure.PixelColorRange;
 import Structure.Sense;
@@ -34,12 +34,9 @@ public class UpdateConditionEnvInDBToBeThisEnv {
 					return UploadConditionEnvToDB.exec(conditionEnvIn, myConnection);
 				}
 				
-				String sqlCommand = "SELECT COUNT(*) AS total FROM ConditionEnv;";
+				
+				String sqlCommand = "SELECT COUNT(*) AS total FROM ConditionSense;";
 				ResultSet rs = myState.executeQuery(sqlCommand);
-				rs.next();
-				int conditionEnvId = rs.getInt("total") + 1;
-				sqlCommand = "SELECT COUNT(*) AS total FROM ConditionSense;";
-				rs = myState.executeQuery(sqlCommand);
 				rs.next();
 				int firstConditionSenseId = rs.getInt("total") + 1;
 				sqlCommand = "SELECT COUNT(*) AS total FROM ConditionOrientation;";
@@ -62,11 +59,11 @@ public class UpdateConditionEnvInDBToBeThisEnv {
 				LocalDateTime localDate = LocalDateTime.now();
 				String timestamp = dtf.format(localDate);
 				String createEnvSQLCommand = "UPDATE ConditionEnv SET CurrentDateTime=\"" + conditionEnvIn.rawEnv.currentDateTime.toString() + "\", CpuUsage=" + conditionEnvIn.rawEnv.currentCpuUsage + ", MouseX=" + conditionEnvIn.rawEnv.mouseLocation.x + ", MouseY=" + conditionEnvIn.rawEnv.mouseLocation.y + ", CreationDateTime= \"" + timestamp + "\", Senses=\"";
-				int numOfSenseDefMatches = 0;
-				int numOfOrientationMatches = 0;
-				int numOfOrientationChangeMatches = 0;
-				int numOfSenseMatches = 0;
 				String EnvSenseListSerializedString = "";
+				
+				//TODO finish fixing the shit. 
+				
+				
 				for (int i = 0; i < conditionEnvIn.abstractEnv.senses.size(); i++) {
 					Sense currentSense = conditionEnvIn.abstractEnv.senses.get(i);
 					
@@ -157,7 +154,7 @@ public class UpdateConditionEnvInDBToBeThisEnv {
 					if (senseFound == -1) {
 						sqlCommand = "INSERT INTO ConditionSense (ConditionEnv, ConditionSenseDefinition, ConditionOrientation, ConditionOrientationChange) VALUES (" + conditionEnvId + ", " + matchingSenseDefId + ", " + matchingOrientationId + ", " + matchingOChangeId + ");";
 						myState.execute(sqlCommand);
-						DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
+						DBObjectHighestValueResults dbocr = new DBObjectHighestValueResults(myConnection);
 						//currentSense.dbId = dbocr.conditionSenseCount;
 						//myState.addBatch(sqlCommand);
 						

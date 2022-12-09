@@ -6,14 +6,14 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import MainLLF.Constants;
-import Structure.DBObjectCountResults;
+import Structure.DBObjectHighestValueResults;
 import Structure.Sense;
 
 public class InsertSenseIntoLatestEnvInDB {
 	public static void insert(Sense currentSense, Connection myConnection) {
 		try {
 			Statement myState = myConnection.createStatement();
-			DBObjectCountResults dbocr = new DBObjectCountResults(myConnection);
+			DBObjectHighestValueResults dbocr = new DBObjectHighestValueResults(myConnection);
 			
 			//Orientation
 			String sqlCommand = "SELECT * FROM Orientation WHERE Height=" + currentSense.orientation.height + " AND Width=" + currentSense.orientation.width + " AND Rotation=" + currentSense.orientation.rotation + " AND x=" + currentSense.orientation.position.x + " AND y=" + currentSense.orientation.position.y + " AND r=" + currentSense.orientation.color.getRed() + " AND g=" + currentSense.orientation.color.getGreen() + " AND b=" + currentSense.orientation.color.getBlue() + ";";
