@@ -14,19 +14,6 @@ import Structure.PixelColorRange;
 import Structure.PixelOverallChange;
 import Structure.Sense;
 public class DatabaseHandler {
-	/*
-	 * CREATE TABLE tablename(columnLabel1 INT PRIMARY KEY AUTO_INCREMENT, columnLabel2 VARCHAR(255), columnLabel3 VARCHAR(255) NOT NULL UNIQUE, columnLabel4 TEXT);
-	 * CREATE DATABASE dbname;
-	 * INSERT INTO tablename (columnLabel1, columnLabel2, columnLabel3, columnLabel4) VALUES (5, 'hello', 'test', 'hey'), VALUES (10, 'hello2', 'test2', 'hey2');
-	 * SELECT columnLabel1, columnLabel2 FROM tablename WHERE columnLabel1 = 2 AND columnLabel2 = 'hello' AND columnLabel3 LIKE 'te%' ORDER BY id ASC LIMIT 2;
-	 * 
-	 * 
-	 * CREATE TABLE tablename (id INT AUTO_INCREMENT, foreignkeyexamplecolumn INT NOT NULL, PRIMARY KEY (id), FOREIGN KEY (foreignkeyexamplecolumn) REFERENCES tablenameofforeignobject(idColumnOfForeignObject)
-	 * 
-	 * SELECT tablecolumn AS exampleAlias FROM tablename INNER JOIN othertablename ON othertablename.othertablecolumn = tablename.tablecolumn;
-	 * 
-	 * DROP TABLE tablename;
-	 */
 	
 	public static void main(String[] args) {
 		setUpDatabase();
@@ -44,9 +31,6 @@ public class DatabaseHandler {
 		try {
 			cleanDatabase();
 			//create database
-//			Runtime run = Runtime.getRuntime();
-//			String command = "";
-//			run.exec(command);
 			Connection createDBConnection = DriverManager.getConnection(Constants.homeurl, Constants.user, Constants.password);
 			Statement createDBState = createDBConnection.createStatement();
 			String createCommand = "CREATE DATABASE whitespikeai;";
@@ -56,8 +40,6 @@ public class DatabaseHandler {
 			
 			Connection myConnection = DriverManager.getConnection(Constants.whitespikeurl, Constants.user, Constants.password);
 			Statement myState = myConnection.createStatement();
-			
-
 			
 			//create tables
 			String sqlCommand = "CREATE TABLE IF NOT EXISTS SenseDefinition (id INT PRIMARY KEY AUTO_INCREMENT, Definition TEXT);";
