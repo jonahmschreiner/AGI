@@ -5,9 +5,10 @@ import Structure.Env;
 import Structure.ExecuteActivityInputWrapper;
 import Structure.ExecuteCurrentActivityPrepWrapper;
 import Structure.ExecuteCurrentActivityWrapper;
+import Structure.LFInputWrapper;
 
 public class ExecuteCurrentActivity {
-	public static ExecuteCurrentActivityWrapper exec(ExecuteActivityInputWrapper eaiw, ExecuteCurrentActivityPrepWrapper ecapw) {
+	public static ExecuteCurrentActivityWrapper exec(ExecuteActivityInputWrapper eaiw, ExecuteCurrentActivityPrepWrapper ecapw, LFInputWrapper LFInput) {
 		ExecuteCurrentActivityWrapper ecaw = new ExecuteCurrentActivityWrapper();
 		ecaw.eaiw = eaiw;
 		String currStr = ecapw.arrayOfSubActivityStrings[ecapw.i];
@@ -16,7 +17,7 @@ public class ExecuteCurrentActivity {
 		ecaw.currPrevEnv.rawEnv.currentCpuUsage = eaiw.envIn.rawEnv.currentCpuUsage;
 		ecaw.currPrevEnv.rawEnv.currentDisplay = eaiw.envIn.rawEnv.currentDisplay;
 		try {
-			eaiw.envIn = ExecuteActivity.execByDBId(eaiw);
+			eaiw.envIn = ExecuteActivity.execByDBId(eaiw, LFInput);
 			eaiw.fw.append(" EXECACT: Execution of a subactivity finished\n");
 			eaiw.fw.flush();
 			ecaw.currPrevEnv.abstractEnv.senses.addAll(eaiw.envIn.abstractEnv.senses);

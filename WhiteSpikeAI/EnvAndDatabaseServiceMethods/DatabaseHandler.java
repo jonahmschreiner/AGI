@@ -64,7 +64,17 @@ public class DatabaseHandler {
 			myState.addBatch(sqlCommand);
 			sqlCommand = "CREATE TABLE IF NOT EXISTS ConditionSense (id INT PRIMARY KEY AUTO_INCREMENT, ConditionEnv INT NOT NULL, ConditionSenseDefinition INT NOT NULL, ConditionOrientation INT NOT NULL, ConditionOrientationChange INT, CONSTRAINT FOREIGN KEY (ConditionOrientation) REFERENCES ConditionOrientation(id), CONSTRAINT FOREIGN KEY (ConditionOrientationChange) REFERENCES OrientationChange(id), CONSTRAINT FOREIGN KEY (ConditionSenseDefinition) REFERENCES ConditionSenseDefinition(id), CONSTRAINT FOREIGN KEY (ConditionEnv) REFERENCES ConditionEnv(id));";
 			myState.addBatch(sqlCommand);
+			sqlCommand = "CREATE TABLE IF NOT EXISTS CountObj(id INT PRIMARY KEY AUTO_INCREMENT, EnvCount INT DEFAULT 0, SenseCount INT DEFAULT 0, OrientationCount INT DEFAULT 0, SenseDefinitionCount INT DEFAULT 0, OrientationChangeCount INT DEFAULT 0);";
+			myState.addBatch(sqlCommand);
+			sqlCommand = "CREATE TABLE IF NOT EXISTS ConditionCountObj(id INT PRIMARY KEY AUTO_INCREMENT, ConditionEnvCount INT DEFAULT 0, ConditionSenseCount INT DEFAULT 0, ConditionOrientationCount INT DEFAULT 0, ConditionOrientationChangeCount INT DEFAULT 0, ConditionSenseDefinitionCount INT DEFAULT 0);";
+			myState.addBatch(sqlCommand);
 			myState.executeBatch();
+			
+			//insert countobj
+			sqlCommand = "INSERT INTO CountObj() VALUES();";
+			myState.execute(sqlCommand);
+			sqlCommand = "INSERT INTO ConditionCountObj() VALUES();";
+			myState.execute(sqlCommand);
 			
 			//insert core action activities
 			Statement CAActivityInsertState = myConnection.createStatement();

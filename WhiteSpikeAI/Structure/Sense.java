@@ -5,8 +5,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import EnvAndDatabaseServiceMethods.UpdateSenses.ComparisonClass;
-
 public class Sense implements Comparable<Sense>{
 	public List<Sense> components = new ArrayList<Sense>();
 	public Orientation orientation = new Orientation();

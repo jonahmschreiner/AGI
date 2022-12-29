@@ -1,7 +1,6 @@
 package EnvAndDatabaseServiceMethods;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,7 +14,8 @@ import java.util.Map;
 import java.util.Set;
 
 import EnvAndDatabaseServiceMethods.ComparisonScoreBasedOnOrientation;
-import MainLLF.Constants;
+
+import Structure.ComparisonClass;
 import Structure.DBObjectHighestValueResults;
 import Structure.Env;
 import Structure.Orientation;
@@ -24,14 +24,6 @@ import Structure.OrientationChanges;
 import Structure.PixelColorRange;
 
 public class UpdateSenses {
-	public static class ComparisonClass{
-		public Map<Integer, Sense> comparisons = new HashMap<Integer, Sense>();
-		int highestScore = -99999;
-		int secondHighestScore = -99999;
-		public ComparisonClass() {}
-	}
-	
-	
 	public static Env update(List<Sense> sensesIn, Env oldEnvIn, boolean updateDatabase, Connection myConnection) throws SQLException {
 		//start database connection for later
 		Statement myState = myConnection.createStatement();

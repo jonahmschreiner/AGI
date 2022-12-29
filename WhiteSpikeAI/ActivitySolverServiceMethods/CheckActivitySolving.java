@@ -1,5 +1,6 @@
 package ActivitySolverServiceMethods;
 
+import LogsAndTestingUtils.WriteSubActivityIsNotACoreAction;
 import MainLLF.Constants;
 import Structure.CheckActivitySolvingWrapper;
 import Structure.ExecuteActivityInputWrapper;
@@ -11,12 +12,7 @@ import Structure.Sense;
 public class CheckActivitySolving {
 	public static CheckActivitySolvingWrapper exec(ExecuteActivityInputWrapper eaiw, ExecuteActivityPrepWrapper eapw, ExecuteCurrentActivityWrapper ecaw) {
 		if (eaiw.currActivityId > (Constants.numOfCoreActions + Constants.numOfRawPropActivities)) { //ensure the sub-activity isn't a core action to avoid errors in env-closing
-			try {
-				eaiw.fw.append(" EXECACT: Executed Sub-Activity is not a core action\n");
-				eaiw.fw.flush();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			WriteSubActivityIsNotACoreAction.exec(eaiw);
 
 			Sense s = GetSenseAssociatedWithActivity.execute(eaiw.envIn, eaiw.currActivityId, eaiw.myConnection);
 			if (CheckIfActivityWasSolved.execute(s, eaiw.currActivityId, eaiw.envIn, eaiw.myConnection)) { //activity solution worked
