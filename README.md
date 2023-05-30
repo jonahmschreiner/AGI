@@ -1,6 +1,6 @@
 What is this repo?
 
-A collection of older version of my implementations of the artificial general intelligence diagrams I drew up. Refer to WhiteSpikeVision for the most recent/cleanest version of the project. That most recent version only has the env creation (enabling the AGI to interact with visual stimuli) completed, while the main decision-making process (the LF and LLF) are only present in the older versions.
+A collection of older versions of my implementations of the artificial general intelligence diagrams I drew up. Refer to WhiteSpikeVision for the most recent/cleanest version of the project. That most recent version only has the env creation (enabling the AGI to interact with visual stimuli) completed, while the main decision-making process (the LF and LLF) are only present in the older versions.
 
 
 So could I make a fully-functional AGI with the stuff in this repo?
